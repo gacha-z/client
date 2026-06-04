@@ -1,0 +1,19 @@
+{
+  "name": "@travel-gacha/eslint-config",
+  "version": "0.0.1",
+  "private": true,
+  "files": [
+    "base.js",
+    "react.js"
+  ],
+  "peerDependencies": {
+    "eslint": ">=8"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-react": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:"
+  }
+}
