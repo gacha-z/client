@@ -16,16 +16,28 @@ apps/mobile/
 │       ├── collection/
 │       └── mission-log/
 ├── components/                   # 컴포넌트: 컴포넌트명/index.tsx + index.css.ts
-│   ├── Header/
-│   ├── Topbar/
-│   ├── TabBar/
-│   ├── ScreenLayout/
-│   └── HomeStatus/
-├── constants/
-│   └── tabs.ts
+├── assets/                       # 이미지·폰트 등
+├── constants/                    # tabs.ts + index.ts
+├── hooks/                        # 모바일 전용 hooks
+├── lib/                          # API re-export 등
+├── stores/                       # 모바일 UI Jotai atom
+├── styles/                       # 앱 공통 스타일 상수
+├── types/                        # 앱 전용 타입
+├── utils/                        # 앱 전용 유틸
 ├── app.json
 └── metro.config.js
 ```
+
+## API · 상태관리 (이미 세팅됨)
+
+| 영역                                  | 위치                              | mobile에서                         |
+| ------------------------------------- | --------------------------------- | ---------------------------------- |
+| Axios + `ApiError` + `getApiClient()` | `packages/api`                    | `@/lib` 또는 `@travel-gacha/api`   |
+| TanStack Query `queryOptions`         | `packages/api/src/queries/*`      | `useQuery(...)`                    |
+| Jotai + `QueryClient` Provider        | `packages/store`                  | `app/_layout.tsx` → `AppProviders` |
+| 공용 atom 예시                        | `packages/store/src/atoms/app.ts` | `useAtom(appReadyAtom)`            |
+
+도메인 API·atom은 **packages**에 추가하고, mobile `stores/`·`hooks/`에는 UI·화면 로컬 상태만 둡니다.
 
 ## 스타일 · 파일 규칙
 
