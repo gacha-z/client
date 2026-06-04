@@ -1,0 +1,13 @@
+node_modules
+.turbo
+.next
+out
+dist
+coverage
+.expo
+.expo-shared
+ios
+android
+pnpm-lock.yaml
+.history
+*.tsbuildinfo
