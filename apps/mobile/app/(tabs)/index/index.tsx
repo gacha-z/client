@@ -1,4 +1,5 @@
 import { Text, View } from 'react-native';
+
 import { ScreenLayout } from '@/components/ScreenLayout';
 
 import { styles } from './index.css';

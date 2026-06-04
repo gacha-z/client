@@ -92,6 +92,7 @@ docs/              # 아키텍처 문서
 
 - [모노레포 구조](./docs/monorepo-architecture.md)
 - [모바일 앱 (라우팅, 스타일, 탭 vs 하위 화면)](./docs/mobile-architecture.md)
+- [API 연동 예시](./docs/api-usage.md)
 
 ## 워크스페이스 패키지 import
 

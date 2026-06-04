@@ -39,6 +39,8 @@ apps/mobile/
 
 도메인 API·atom은 **packages**에 추가하고, mobile `stores/`·`hooks/`에는 UI·화면 로컬 상태만 둡니다.
 
+연동 예시·mutation 패턴: [api-usage.md](./api-usage.md)
+
 ## 스타일 · 파일 규칙
 
 **페이지(`app/`)와 컴포넌트(`components/`) 모두 동일한 규칙**을 따릅니다.
