@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "TravelGacha",
+    "slug": "travel-gacha",
+    "scheme": "travel-gacha",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android", "web"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": ["expo-router", "expo-font"]
+  }
+}

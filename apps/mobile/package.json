@@ -1,0 +1,47 @@
+{
+  "name": "mobile",
+  "version": "0.0.1",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "dev": "expo start",
+    "dev:clear": "expo start -c",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@babel/runtime": "catalog:",
+    "@expo/metro-runtime": "~3.2.3",
+    "@tanstack/react-query": "catalog:",
+    "@travel-gacha/api": "workspace:*",
+    "@travel-gacha/store": "workspace:*",
+    "@travel-gacha/ui": "workspace:*",
+    "@travel-gacha/utils": "workspace:*",
+    "axios": "catalog:",
+    "expo": "catalog:expo",
+    "expo-constants": "catalog:expo",
+    "expo-font": "catalog:expo",
+    "expo-linking": "catalog:expo",
+    "expo-router": "catalog:expo",
+    "expo-status-bar": "catalog:expo",
+    "jotai": "catalog:",
+    "react": "catalog:expo",
+    "react-dom": "18.2.0",
+    "react-native": "catalog:expo",
+    "react-native-gesture-handler": "catalog:expo",
+    "react-native-reanimated": "catalog:expo",
+    "react-native-safe-area-context": "catalog:expo",
+    "react-native-screens": "catalog:expo",
+    "react-native-web": "~0.19.10"
+  },
+  "devDependencies": {
+    "@travel-gacha/eslint-config": "workspace:*",
+    "@types/react": "catalog:",
+    "babel-preset-expo": "catalog:expo",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

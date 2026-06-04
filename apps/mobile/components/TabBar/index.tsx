@@ -1,0 +1,56 @@
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { TABS, tabRouteSegment, type TabItem } from '@/constants/tabs';
+
+import { styles } from './index.css';
+
+const isTabFocused = (tab: TabItem, focusedRouteName: string): boolean => {
+  const segment = tabRouteSegment(tab.name);
+  return (
+    focusedRouteName === segment ||
+    focusedRouteName === tab.name ||
+    focusedRouteName.startsWith(`${tab.name}/`)
+  );
+};
+
+/** 하단 탭 — constants/tabs.ts(TABS)에 있는 화면만 표시 */
+export function TabBar({ state, navigation }: BottomTabBarProps) {
+  const insets = useSafeAreaInsets();
+  const focusedRouteName = state.routes[state.index]?.name ?? '';
+
+  return (
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+      {TABS.map((tab) => {
+        const routeName = tabRouteSegment(tab.name);
+        const isFocused = isTabFocused(tab, focusedRouteName);
+
+        const onPress = () => {
+          const route = state.routes.find((r) => r.name === routeName);
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route?.key,
+            canPreventDefault: true
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(routeName);
+          }
+        };
+
+        return (
+          <Pressable
+            key={tab.name}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            onPress={onPress}
+            style={styles.tab}
+          >
+            <Text style={[styles.label, isFocused && styles.labelFocused]}>{tab.label}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
