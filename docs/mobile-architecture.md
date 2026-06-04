@@ -12,7 +12,7 @@ apps/mobile/
 │       ├── _layout.tsx
 │       ├── index/                # 홈 — 필요 시 _layout.tsx(Stack) + 하위 화면
 │       ├── travel/               # 탭 루트: index/ + (선택) _layout + 상세 폴더
-│       ├── select/
+│       ├── mission-select/
 │       ├── collection/
 │       └── mission-log/
 ├── components/                   # 컴포넌트: 컴포넌트명/index.tsx + index.css.ts
@@ -122,13 +122,13 @@ app/_layout.tsx          →  AppProviders + Stack
 
 ## 5탭
 
-| route          | 라벨      |
-| -------------- | --------- |
-| `/`            | 홈        |
-| `/travel`      | 여행 목록 |
-| `/select`      | 증강      |
-| `/collection`  | 도감 목록 |
-| `/mission-log` | 미션 로그 |
+| route             | 라벨      |
+| ----------------- | --------- |
+| `/`               | 홈        |
+| `/travel`         | 여행 목록 |
+| `/mission-select` | 증강      |
+| `/collection`     | 도감 목록 |
+| `/mission-log`    | 미션 로그 |
 
 ## 탭 vs 탭 밖 화면
 
