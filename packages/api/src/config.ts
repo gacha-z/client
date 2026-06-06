@@ -1,15 +1,17 @@
-type EnvRecord = Record<string, string | undefined>;
+const normalizeEnv = (value: string | undefined): string | undefined =>
+  value && value.length > 0 ? value : undefined;
 
-const readProcessEnv = (): EnvRecord => {
-  const globalProcess = (globalThis as typeof globalThis & { process?: { env?: EnvRecord } })
-    .process;
+const readEnv = (
+  name: 'NEXT_PUBLIC_API_BASE_URL' | 'EXPO_PUBLIC_API_BASE_URL'
+): string | undefined => {
+  const value =
+    typeof process === 'undefined'
+      ? undefined
+      : name === 'NEXT_PUBLIC_API_BASE_URL'
+        ? process.env.NEXT_PUBLIC_API_BASE_URL
+        : process.env.EXPO_PUBLIC_API_BASE_URL;
 
-  return globalProcess?.env ?? {};
-};
-
-const readEnv = (name: string): string | undefined => {
-  const value = readProcessEnv()[name];
-  return value && value.length > 0 ? value : undefined;
+  return normalizeEnv(value);
 };
 
 /** Web: `NEXT_PUBLIC_API_BASE_URL`, Mobile: `EXPO_PUBLIC_API_BASE_URL` (.env 참고) */
