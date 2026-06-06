@@ -16,12 +16,6 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,md,yml,yaml}": "prettier --write"
   },
-  "pnpm": {
-    "overrides": {
-      "react": "18.2.0",
-      "react-dom": "18.2.0"
-    }
-  },
   "devDependencies": {
     "@babel/runtime": "catalog:",
     "husky": "catalog:",

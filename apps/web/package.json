@@ -17,8 +17,8 @@
     "@tanstack/react-query": "catalog:",
     "jotai": "catalog:",
     "next": "catalog:web",
-    "react": "catalog:web",
-    "react-dom": "catalog:web"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
