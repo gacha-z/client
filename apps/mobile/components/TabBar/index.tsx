@@ -7,29 +7,22 @@ import { styles } from './index.css';
 
 type TabBarItemProps = {
   tab: TabItem;
-  isFocused: boolean;
+  focusedRouteName: string;
   routeKey: string | undefined;
   routeName: string;
   navigation: BottomTabBarProps['navigation'];
 };
 
-const isTabFocused = (tab: TabItem, focusedRouteName: string): boolean => {
-  const segment = tabRouteSegment(tab.name);
-  return (
-    focusedRouteName === segment ||
-    focusedRouteName === tab.name ||
-    focusedRouteName.startsWith(`${tab.name}/`)
-  );
-};
-
 /** TabBar 전용 탭 버튼 — memo, useCallback으로 포커스 변경 시 해당 탭만 리렌더 */
 const TabBarItem = memo(function TabBarItem({
   tab,
-  isFocused,
+  focusedRouteName,
   routeKey,
   routeName,
   navigation
 }: TabBarItemProps) {
+  const isFocused = focusedRouteName === routeName;
+
   const onPress = useCallback(() => {
     const event = navigation.emit({
       type: 'tabPress',
@@ -69,7 +62,7 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
           <TabBarItem
             key={tab.name}
             tab={tab}
-            isFocused={isTabFocused(tab, focusedRouteName)}
+            focusedRouteName={focusedRouteName}
             routeKey={route?.key}
             routeName={routeName}
             navigation={navigation}

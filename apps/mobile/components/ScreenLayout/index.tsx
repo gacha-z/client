@@ -8,6 +8,7 @@ import { styles } from './index.css';
 
 type ScreenLayoutProps = {
   title: string;
+  showHeader?: boolean;
   topbarRight?: ReactNode;
   onPressTopbarRight?: () => void;
   scrollable?: boolean;
@@ -17,6 +18,7 @@ type ScreenLayoutProps = {
 /** Header + Topbar + 콘텐츠 공통 화면 뼈대 */
 export function ScreenLayout({
   title,
+  showHeader = true,
   topbarRight,
   onPressTopbarRight,
   scrollable = false,
@@ -30,7 +32,7 @@ export function ScreenLayout({
 
   return (
     <View style={styles.container}>
-      <Header />
+      {showHeader && <Header />}
       <Topbar title={title} right={topbarRight} onPressRight={onPressTopbarRight} />
       {content}
     </View>
