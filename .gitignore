@@ -1,0 +1,55 @@
+# dependencies
+node_modules/
+
+# monorepo / build caches
+.turbo/
+dist/
+*.tsbuildinfo
+
+# Next.js
+.next/
+out/
+
+# Expo / React Native
+.expo/
+.expo-shared/
+ios/
+android/
+.kotlin/
+.metro-health-check*
+
+# test / coverage
+coverage/
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env (커밋 금지 — *.example 만 버전 관리)
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.idea/
+*.swp
+*.swo
+.history/
+
+# tooling caches
+.eslintcache
+.vercel/
+
+# secrets (로컬 키·인증서)
+*.pem
+*.p12
+*.jks
+*.mobileprovision

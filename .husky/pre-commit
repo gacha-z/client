@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+# GUI Git / IDE commit uses a minimal PATH — restore pnpm & node (nvm, Homebrew).
+export PNPM_HOME="${PNPM_HOME:-$HOME/Library/pnpm}"
+export PATH="$PNPM_HOME:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+  . "$HOME/.nvm/nvm.sh"
+  if [ -f .nvmrc ]; then
+    nvm use --silent 2>/dev/null || true
+  fi
+fi
+
+if command -v pnpm >/dev/null 2>&1; then
+  pnpm lint-staged
+  exit $?
+fi
+
+if [ -x "node_modules/.bin/lint-staged" ]; then
+  node_modules/.bin/lint-staged
+  exit $?
+fi
+
+echo "husky pre-commit: pnpm not found. Install pnpm or run \`pnpm install\` in the repo root." >&2
+exit 127

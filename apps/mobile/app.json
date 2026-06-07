@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "여행가챠",
+    "slug": "travel-gacha",
+    "icon": "./assets/images/icon.png",
+    "scheme": "travel-gacha",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android", "web"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": ["expo-router", "expo-font"],
+    "ios": {
+      "bundleIdentifier": "com.gachaz.travel-gacha"
+    }
+  }
+}
