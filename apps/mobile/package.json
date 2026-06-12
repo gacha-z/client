@@ -35,6 +35,7 @@
     "react-native-reanimated": "catalog:expo",
     "react-native-safe-area-context": "catalog:expo",
     "react-native-screens": "catalog:expo",
+    "react-native-svg": "catalog:expo",
     "react-native-web": "catalog:expo"
   },
   "devDependencies": {
