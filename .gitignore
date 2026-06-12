@@ -53,3 +53,7 @@ Thumbs.db
 *.p12
 *.jks
 *.mobileprovision
+
+# Claude Code 작업 파일 (커밋 금지)
+CLAUDE.md
+docs/superpowers/
