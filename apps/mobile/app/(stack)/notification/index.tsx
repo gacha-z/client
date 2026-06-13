@@ -1,13 +1,13 @@
-import { Stack } from 'expo-router';
 import { View, Text } from 'react-native';
+
+import { ScreenLayout } from '@/components/ScreenLayout';
 
 export default function NotificationScreen() {
   return (
-    <>
-      <Stack.Screen options={{ title: '알림' }} />
+    <ScreenLayout title="알림">
       <View>
         <Text>알림</Text>
       </View>
-    </>
+    </ScreenLayout>
   );
 }

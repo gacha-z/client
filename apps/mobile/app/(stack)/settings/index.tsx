@@ -1,13 +1,13 @@
-import { Stack } from 'expo-router';
 import { View, Text } from 'react-native';
+
+import { ScreenLayout } from '@/components/ScreenLayout';
 
 export default function SettingsScreen() {
   return (
-    <>
-      <Stack.Screen options={{ title: '설정' }} />
+    <ScreenLayout title="설정">
       <View>
         <Text>설정</Text>
       </View>
-    </>
+    </ScreenLayout>
   );
 }
