@@ -10,6 +10,7 @@ type ScreenLayoutProps = {
   title: string;
   showHeader?: boolean;
   headerActions?: boolean;
+  showTopbar?: boolean;
   topbarRight?: ReactNode;
   onPressTopbarRight?: () => void;
   scrollable?: boolean;
@@ -21,6 +22,7 @@ export function ScreenLayout({
   title,
   showHeader = true,
   headerActions = false,
+  showTopbar = true,
   topbarRight,
   onPressTopbarRight,
   scrollable = false,
@@ -35,7 +37,7 @@ export function ScreenLayout({
   return (
     <View style={styles.container}>
       {showHeader && <Header showActions={headerActions} />}
-      <Topbar title={title} right={topbarRight} onPressRight={onPressTopbarRight} />
+      {showTopbar && <Topbar title={title} right={topbarRight} onPressRight={onPressTopbarRight} />}
       {content}
     </View>
   );
