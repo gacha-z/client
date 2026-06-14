@@ -8,14 +8,15 @@ import { styles } from './index.css';
 
 type TopbarProps = {
   title: string;
+  showBack?: boolean;
   right?: ReactNode;
   onPressRight?: () => void;
 };
 
 /** 화면별 타이틀 + 액션 영역 */
-export function Topbar({ title, right, onPressRight }: TopbarProps) {
+export function Topbar({ title, showBack, right, onPressRight }: TopbarProps) {
   const router = useRouter();
-  const canGoBack = router.canGoBack();
+  const canGoBack = showBack ?? router.canGoBack();
 
   return (
     <View style={styles.container}>

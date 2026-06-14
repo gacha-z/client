@@ -18,20 +18,22 @@ export function Header({ title = '여행가챠', showActions = true }: HeaderPro
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
-      <View style={styles.left}>
-        <LogoIcon />
-        <Text style={styles.title}>{title}</Text>
-      </View>
-      {showActions && (
-        <View style={styles.actions}>
-          <Pressable onPress={() => router.push('/notification')} hitSlop={8}>
-            <BellIcon size={24} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/settings')} hitSlop={8}>
-            <SettingIcon size={24} />
-          </Pressable>
+      <View style={styles.row}>
+        <View style={styles.left}>
+          <LogoIcon />
+          <Text style={styles.title}>{title}</Text>
         </View>
-      )}
+        {showActions && (
+          <View style={styles.actions}>
+            <Pressable onPress={() => router.push('/notification')} hitSlop={8}>
+              <BellIcon size={24} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/settings')} hitSlop={8}>
+              <SettingIcon size={24} />
+            </Pressable>
+          </View>
+        )}
+      </View>
     </View>
   );
 }
