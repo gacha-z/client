@@ -6,7 +6,7 @@ import { styles } from './index.css';
 
 export default function MissionSelectScreen() {
   return (
-    <ScreenLayout title="증강">
+    <ScreenLayout title="증강" showTopbar={false} headerActions>
       <Text style={styles.text}>증강 화면이 여기에 표시됩니다.</Text>
     </ScreenLayout>
   );

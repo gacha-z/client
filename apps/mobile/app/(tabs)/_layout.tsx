@@ -1,11 +1,11 @@
 import { Tabs } from 'expo-router';
 
-import { TabBar } from '@/components/TabBar';
+import { NavigationBar } from '@/components/NavigationBar';
 import { TABS, tabRouteSegment } from '@/constants/tabs';
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <TabBar {...props} />}>
+    <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <NavigationBar {...props} />}>
       {TABS.map((tab) => (
         <Tabs.Screen
           key={tab.name}

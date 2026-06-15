@@ -4,16 +4,39 @@ import { colors } from '@travel-gacha/ui';
 
 export const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    height: 60,
     backgroundColor: colors.white
+  },
+  back: {
+    position: 'absolute',
+    left: 15,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    zIndex: 1
+  },
+  titleWrapper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20
   },
   title: {
     fontSize: 20,
-    fontWeight: '700',
-    color: colors.grey900
+    fontWeight: '600',
+    color: colors.grey900,
+    textAlign: 'center'
+  },
+  right: {
+    position: 'absolute',
+    right: 20,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    zIndex: 1
   }
 });

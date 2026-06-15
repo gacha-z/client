@@ -4,12 +4,13 @@ export type TabItem = {
   name: TabName;
   label: string;
   title: string;
+  isCenter?: boolean;
 };
 
 export const TABS: TabItem[] = [
   { name: 'index', label: '홈', title: '홈' },
   { name: 'travel', label: '여행 목록', title: '여행 목록' },
-  { name: 'mission-select', label: '증강', title: '증강' },
+  { name: 'mission-select', label: '', title: '증강', isCenter: true },
   { name: 'collection', label: '도감 목록', title: '도감 목록' },
   { name: 'mission-log', label: '미션 로그', title: '미션 로그' }
 ];
