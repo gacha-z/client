@@ -15,6 +15,7 @@ export { HomeIcon } from './HomeIcon';
 export { ListViewIcon } from './ListViewIcon';
 export { LogoIcon } from './LogoIcon';
 export { MissionLogIcon } from './MissionLogIcon';
+export { MoreIcon } from './MoreIcon';
 export { MovieIcon } from './MovieIcon';
 export { PeopleIcon } from './PeopleIcon';
 export { PlaceIcon } from './PlaceIcon';
