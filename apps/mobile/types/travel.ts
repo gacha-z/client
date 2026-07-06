@@ -12,6 +12,13 @@ export type TravelMember = {
   name: string;
 };
 
+export type RegionCandidate = {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+};
+
 export type TravelListItem = {
   id: string;
   title: string;
@@ -57,5 +64,5 @@ export type TravelRecord = {
   title: string;
   period: TravelPeriod;
   members: TravelMember[];
-  days: TravelRecordDay[];
+  days: [TravelRecordDay, ...TravelRecordDay[]];
 };

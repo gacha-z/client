@@ -1,4 +1,4 @@
-import type { TravelListItem, TravelRecord, TravelViewMode } from '@/types';
+import type { RegionCandidate, TravelListItem, TravelRecord, TravelViewMode } from '@/types';
 
 export const TRAVEL_VIEW_MODE_OPTIONS: {
   value: TravelViewMode;
@@ -78,6 +78,27 @@ export const TRAVEL_LIST_MOCK: TravelListItem[] = [
       { name: '강릉 스티커', count: 3 },
       { name: '단체 사진', count: 1 }
     ]
+  }
+];
+
+export const REGION_CANDIDATE_MOCK: RegionCandidate[] = [
+  {
+    id: 'hwacheon',
+    name: '강원도 화천군',
+    description: '물길 산책과 지역 축제를 함께 즐기기 좋은 랜덤 여행 코스예요.',
+    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=520&fit=crop'
+  },
+  {
+    id: 'taean',
+    name: '충청남도 태안군',
+    description: '해안 드라이브와 조용한 바닷마을 풍경을 한 번에 담을 수 있어요.',
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=520&fit=crop'
+  },
+  {
+    id: 'damyang',
+    name: '전라남도 담양군',
+    description: '대나무 숲길과 한적한 골목을 따라 걷기 좋은 감성 여행지예요.',
+    imageUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400&h=520&fit=crop'
   }
 ];
 

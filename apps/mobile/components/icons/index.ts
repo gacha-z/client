@@ -20,5 +20,6 @@ export { MovieIcon } from './MovieIcon';
 export { PeopleIcon } from './PeopleIcon';
 export { PlaceIcon } from './PlaceIcon';
 export { RedoIcon } from './RedoIcon';
+export { RegionRedoIcon } from './RegionRedoIcon';
 export { SettingIcon } from './SettingIcon';
 export { TravelIcon } from './TravelIcon';
