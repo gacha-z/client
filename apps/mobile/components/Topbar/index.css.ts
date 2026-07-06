@@ -5,7 +5,9 @@ import { colors } from '@travel-gacha/ui';
 export const styles = StyleSheet.create({
   container: {
     height: 60,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.grey200
   },
   back: {
     position: 'absolute',

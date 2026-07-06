@@ -5,7 +5,11 @@ import { TABS, tabRouteSegment } from '@/constants/tabs';
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <NavigationBar {...props} />}>
+    <Tabs
+      backBehavior="history"
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <NavigationBar {...props} />}
+    >
       {TABS.map((tab) => (
         <Tabs.Screen
           key={tab.name}

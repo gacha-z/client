@@ -9,19 +9,21 @@ import { styles } from './index.css';
 type TopbarProps = {
   title: string;
   showBack?: boolean;
+  onPressBack?: () => void;
   right?: ReactNode;
   onPressRight?: () => void;
 };
 
 /** 화면별 타이틀 + 액션 영역 */
-export function Topbar({ title, showBack, right, onPressRight }: TopbarProps) {
+export function Topbar({ title, showBack, onPressBack, right, onPressRight }: TopbarProps) {
   const router = useRouter();
   const canGoBack = showBack ?? router.canGoBack();
+  const handleBack = onPressBack ?? (() => router.back());
 
   return (
     <View style={styles.container}>
       {canGoBack && (
-        <Pressable style={styles.back} onPress={() => router.back()} hitSlop={8}>
+        <Pressable style={styles.back} onPress={handleBack} hitSlop={8}>
           <BackIcon />
         </Pressable>
       )}

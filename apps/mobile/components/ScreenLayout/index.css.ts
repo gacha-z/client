@@ -5,7 +5,7 @@ import { colors } from '@travel-gacha/ui';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey50
+    backgroundColor: colors.white
   },
   content: {
     flex: 1,
