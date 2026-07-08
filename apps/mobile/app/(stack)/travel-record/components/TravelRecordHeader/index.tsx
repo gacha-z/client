@@ -36,6 +36,7 @@ export function TravelRecordHeader({
         <Text style={styles.tripTitle}>{title}</Text>
         <AnchoredMenu
           open={deleteVisible}
+          onClose={onToggleDelete}
           offset={2}
           menuStyle={styles.deleteButton}
           trigger={

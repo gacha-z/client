@@ -33,9 +33,6 @@ export const styles = StyleSheet.create({
     color: colors.grey400
   },
   dropdownMenu: {
-    position: 'absolute',
-    top: 36,
-    left: 0,
     width: 80,
     borderRadius: 6,
     borderWidth: 1,

@@ -20,6 +20,7 @@ export function TravelListToolbar() {
     <View style={styles.toolbar}>
       <AnchoredMenu
         open={isOpen}
+        onClose={() => setIsOpen(false)}
         align="left"
         style={styles.dropdownWrap}
         menuStyle={styles.dropdownMenu}
