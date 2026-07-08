@@ -141,8 +141,15 @@ export function NavigationBar({ state, navigation }: BottomTabBarProps) {
         };
 
         if (tab.isCenter) {
-          const { tab: _tab, ...centerProps } = itemProps;
-          return <NavigationBarCenter key={tab.name} {...centerProps} />;
+          return (
+            <NavigationBarCenter
+              key={tab.name}
+              isFocused={itemProps.isFocused}
+              routeKey={itemProps.routeKey}
+              routeName={itemProps.routeName}
+              navigation={itemProps.navigation}
+            />
+          );
         }
         return <NavigationBarItem key={tab.name} {...itemProps} />;
       })}

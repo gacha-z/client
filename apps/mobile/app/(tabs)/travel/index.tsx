@@ -1,13 +1,20 @@
-import { Text } from 'react-native';
+import { View } from 'react-native';
 
 import { ScreenLayout } from '@/components/ScreenLayout';
+import { TRAVEL_LIST_MOCK } from '@/constants';
 
 import { styles } from './index.css';
+import { TravelCard, TravelListToolbar } from './components';
 
 export default function TravelListScreen() {
   return (
     <ScreenLayout title="여행 목록" scrollable headerActions showBack={false}>
-      <Text style={styles.text}>나의 여행 목록이 여기에 표시됩니다.</Text>
+      <TravelListToolbar />
+      <View style={styles.list}>
+        {TRAVEL_LIST_MOCK.map((trip) => (
+          <TravelCard key={trip.id} trip={trip} />
+        ))}
+      </View>
     </ScreenLayout>
   );
 }

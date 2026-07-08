@@ -5,7 +5,9 @@ import { DiaryCard } from '@/components/DiaryCard';
 import { MemberStatusPill } from '@/components/MemberStatusPill';
 import { MissionSelectCard } from '@/components/MissionSelectCard';
 import { PhotoTargetCard } from '@/components/PhotoTargetCard';
+import { RegionCandidateList } from '@/components/RegionCandidateList';
 import { ScreenLayout } from '@/components/ScreenLayout';
+import { REGION_CANDIDATE_MOCK } from '@/constants';
 
 import { styles } from './index.css';
 
@@ -84,6 +86,11 @@ export default function ComponentPreviewScreen() {
           dateTime="2025.09.21 23:50"
           onPress={() => {}}
         />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>RegionCandidateList</Text>
+        <RegionCandidateList items={REGION_CANDIDATE_MOCK} />
       </View>
     </ScreenLayout>
   );
