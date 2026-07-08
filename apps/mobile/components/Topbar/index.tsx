@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import type { Href } from 'expo-router';
 import { useRouter } from 'expo-router';
 
 import { BackIcon } from '@/components/icons';
@@ -10,15 +11,34 @@ type TopbarProps = {
   title: string;
   showBack?: boolean;
   onPressBack?: () => void;
+  fallbackRoute?: Href;
   right?: ReactNode;
   onPressRight?: () => void;
 };
 
 /** 화면별 타이틀 + 액션 영역 */
-export function Topbar({ title, showBack, onPressBack, right, onPressRight }: TopbarProps) {
+export function Topbar({
+  title,
+  showBack,
+  onPressBack,
+  fallbackRoute,
+  right,
+  onPressRight
+}: TopbarProps) {
   const router = useRouter();
   const canGoBack = showBack ?? router.canGoBack();
-  const handleBack = onPressBack ?? (() => router.back());
+  const handleBack =
+    onPressBack ??
+    (() => {
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
+
+      if (fallbackRoute) {
+        router.replace(fallbackRoute);
+      }
+    });
 
   return (
     <View style={styles.container}>

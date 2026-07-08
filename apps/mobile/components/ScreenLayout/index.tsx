@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { ScrollView, View } from 'react-native';
+import type { Href } from 'expo-router';
 
 import { Header } from '@/components/Header';
 import { Topbar } from '@/components/Topbar';
@@ -13,6 +14,7 @@ type ScreenLayoutProps = {
   showTopbar?: boolean;
   showBack?: boolean;
   onPressBack?: () => void;
+  fallbackRoute?: Href;
   topbarRight?: ReactNode;
   onPressTopbarRight?: () => void;
   scrollable?: boolean;
@@ -27,6 +29,7 @@ export function ScreenLayout({
   showTopbar = true,
   showBack,
   onPressBack,
+  fallbackRoute,
   topbarRight,
   onPressTopbarRight,
   scrollable = false,
@@ -46,6 +49,7 @@ export function ScreenLayout({
           title={title}
           showBack={showBack}
           onPressBack={onPressBack}
+          fallbackRoute={fallbackRoute}
           right={topbarRight}
           onPressRight={onPressTopbarRight}
         />
