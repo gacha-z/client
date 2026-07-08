@@ -4,16 +4,16 @@ import { Pressable, Text, View } from 'react-native';
 import { colors } from '@travel-gacha/ui';
 import {
   ArrowDownIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
   CalendarViewIcon,
   CategoryIcon,
   ClockIcon,
   DiaryIcon,
+  LineArrowIcon,
   ListViewIcon,
   MovieIcon,
   PeopleIcon,
-  PlaceIcon
+  PlaceIcon,
+  SolidCaretIcon
 } from '@/components/icons';
 import type { TripStatus } from '@/types';
 
@@ -24,15 +24,16 @@ type TinyIconName =
   | 'location'
   | 'people'
   | 'items'
-  | 'arrowRight'
+  | 'lineArrowLeft'
+  | 'lineArrowRight'
   | 'list'
   | 'calendarView'
   | 'chevronDown'
   | 'missionLog'
   | 'diary'
   | 'clock'
-  | 'caretLeft'
-  | 'caretRight';
+  | 'solidCaretLeft'
+  | 'solidCaretRight';
 
 type TinyIconProps = {
   name: TinyIconName;
@@ -56,8 +57,14 @@ export function TinyIcon({ name, size = 16, color = colors.grey400 }: TinyIconPr
       return <PeopleIcon size={size} color={color} />;
     case 'items':
       return <CategoryIcon size={size} color={color} />;
-    case 'arrowRight':
-      return <ArrowRightIcon size={size} color={color} />;
+    case 'lineArrowLeft':
+      return (
+        <View style={{ transform: [{ rotate: '180deg' }] }}>
+          <LineArrowIcon size={size} color={color} />
+        </View>
+      );
+    case 'lineArrowRight':
+      return <LineArrowIcon size={size} color={color} />;
     case 'list':
       return <ListViewIcon size={size} color={color} />;
     case 'calendarView':
@@ -70,10 +77,14 @@ export function TinyIcon({ name, size = 16, color = colors.grey400 }: TinyIconPr
       return <DiaryIcon size={size} color={color} />;
     case 'clock':
       return <ClockIcon size={size} color={color} />;
-    case 'caretLeft':
-      return <ArrowLeftIcon size={size} color={color} />;
-    case 'caretRight':
-      return <ArrowLeftIcon size={size} color={color} />;
+    case 'solidCaretLeft':
+      return <SolidCaretIcon size={size} color={color} />;
+    case 'solidCaretRight':
+      return (
+        <View style={{ transform: [{ rotate: '180deg' }] }}>
+          <SolidCaretIcon size={size} color={color} />
+        </View>
+      );
     default:
       return null;
   }
@@ -115,7 +126,7 @@ export function StatusBadge({ status }: { status: TripStatus }) {
 
 export function PillButton({
   label,
-  icon = 'arrowRight',
+  icon = 'lineArrowRight',
   iconPosition = 'right',
   onPress,
   disabled = false

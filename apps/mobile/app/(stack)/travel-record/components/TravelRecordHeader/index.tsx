@@ -54,20 +54,15 @@ export function TravelRecordHeader({
       <View style={styles.dateRow}>
         <Pressable onPress={onPreviousDay} disabled={!canGoPreviousDay} hitSlop={8}>
           <TinyIcon
-            name="caretLeft"
+            name="solidCaretLeft"
             size={12}
             color={canGoPreviousDay ? colors.grey400 : colors.white}
           />
         </Pressable>
         <Text style={styles.dateText}>{date}</Text>
-        <Pressable
-          onPress={onNextDay}
-          disabled={!canGoNextDay}
-          hitSlop={8}
-          style={styles.nextDayButton}
-        >
+        <Pressable onPress={onNextDay} disabled={!canGoNextDay} hitSlop={8}>
           <TinyIcon
-            name="caretLeft"
+            name="solidCaretRight"
             size={12}
             color={canGoNextDay ? colors.grey400 : colors.white}
           />

@@ -7,7 +7,7 @@ type Props = {
   color?: string;
 };
 
-export function ArrowLeftIcon({ size = 12, color = colors.grey400 }: Props) {
+export function SolidCaretIcon({ size = 12, color = colors.grey400 }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 12 12" fill="none">
       <Path

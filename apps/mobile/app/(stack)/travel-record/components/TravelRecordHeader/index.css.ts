@@ -62,9 +62,6 @@ export const styles = StyleSheet.create({
     color: colors.grey400,
     fontWeight: '500'
   },
-  nextDayButton: {
-    transform: [{ rotate: '180deg' }]
-  },
   dayActionRow: {
     marginTop: 16,
     flexDirection: 'row',

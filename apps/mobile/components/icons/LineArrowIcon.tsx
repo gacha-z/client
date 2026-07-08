@@ -7,7 +7,7 @@ type Props = {
   color?: string;
 };
 
-export function ArrowRightIcon({ size = 16, color = colors.white }: Props) {
+export function LineArrowIcon({ size = 16, color = colors.white }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
       <Path
