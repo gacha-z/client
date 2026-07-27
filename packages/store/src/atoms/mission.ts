@@ -69,8 +69,9 @@ const initialVerifications = (): Record<string, MemberVerificationStatus> =>
 /**
  * 오늘의 미션 진행 단계
  * 한계: 'selecting' 진입 후 선택 없이 이탈(탭 전환 등)해도 'idle'로 되돌리는 전환이 없음.
- * 현재는 'selecting'을 분기 조건으로 쓰는 코드가 없고, 재진입 시 startMissionSelectionAtom이
- * 다시 'selecting'으로 세팅하므로 무해함 — 추후 'selecting' 상태를 직접 참조하는 기능 추가 시 재검토 필요.
+ * 탭 화면이 마운트 상태를 유지하므로 재진입 시 이탈 시점 그대로("selecting")가 다시 보임 —
+ * 현재 설계상 의도된 동작(진행 중이던 선택을 보존)이지만 명시적인 취소 동선은 없음.
+ * 추후 'selecting' 상태를 직접 참조/분기하는 기능 추가 시 이 점을 재검토 필요.
  */
 export const missionStageAtom = atom<MissionStage>('idle');
 

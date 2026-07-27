@@ -1,11 +1,11 @@
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useRouter } from 'expo-router';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { memo, useCallback, useEffect, useRef } from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { missionPendingAtom, startMissionSelectionAtom } from '@travel-gacha/store';
+import { missionPendingAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import {
   CameraIcon,
@@ -84,7 +84,6 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   navigation
 }: CenterTabProps) {
   const missionPending = useAtomValue(missionPendingAtom);
-  const startSelection = useSetAtom(startMissionSelectionAtom);
   const router = useRouter();
   const floatAnim = useRef(new Animated.Value(0)).current;
 
@@ -102,7 +101,6 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
       router.push('/mission-log-capture');
       return;
     }
-    startSelection();
     const event = navigation.emit({
       type: 'tabPress',
       target: routeKey,
@@ -111,7 +109,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
     if (!isFocused && !event.defaultPrevented) {
       navigation.navigate(routeName);
     }
-  }, [missionPending, startSelection, router, isFocused, navigation, routeKey, routeName]);
+  }, [missionPending, router, isFocused, navigation, routeKey, routeName]);
 
   return (
     <Pressable
