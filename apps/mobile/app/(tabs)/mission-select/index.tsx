@@ -18,7 +18,8 @@ import {
   retryCandidateAtom,
   selectMissionAtom,
   selectedMissionAtom,
-  startMissionSelectionAtom
+  startMissionSelectionAtom,
+  todayCompletedMissionCountAtom
 } from '@travel-gacha/store';
 import { Bigbutton } from '@/components/Bigbutton';
 import { MemberStatusPill } from '@/components/MemberStatusPill';
@@ -41,6 +42,7 @@ export default function MissionSelectScreen() {
   const verifications = useAtomValue(memberVerificationsAtom);
   const allVerified = useAtomValue(allMembersVerifiedAtom);
   const outcomes = useAtomValue(missionOutcomesAtom);
+  const completedCount = useAtomValue(todayCompletedMissionCountAtom);
   const startSelection = useSetAtom(startMissionSelectionAtom);
   const retryCandidate = useSetAtom(retryCandidateAtom);
   const selectMission = useSetAtom(selectMissionAtom);
@@ -73,7 +75,7 @@ export default function MissionSelectScreen() {
           onPressMore={() => {}}
         />
         <ProgressCard
-          completed={MOCK_TODAY_PROGRESS.completed}
+          completed={completedCount}
           total={MOCK_TODAY_PROGRESS.total}
           statusLabel="미션 완료"
           members={MOCK_MEMBERS}

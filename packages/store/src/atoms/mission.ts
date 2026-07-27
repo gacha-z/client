@@ -79,6 +79,11 @@ export const missionStageAtom = atom<MissionStage>('idle');
 /** 오늘 시도한 미션들의 결과를 시간순으로 기록 — 상단 진행도 바를 성공(파랑)/실패(빨강) 순서로 채우는 데 쓰인다 */
 export const missionOutcomesAtom = atom<MissionOutcome[]>([]);
 
+/** 오늘 완료(success)한 미션 수 — 진행도 카드의 "N / total" 카운트에 쓰인다 */
+export const todayCompletedMissionCountAtom = atom(
+  (get) => get(missionOutcomesAtom).filter((outcome) => outcome === 'success').length
+);
+
 /** ③⑦ 캐러셀에 표시되는 미션 후보 3개 */
 export const missionCandidatesAtom = atom<MissionCandidate[]>(createInitialCandidates());
 

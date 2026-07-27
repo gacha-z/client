@@ -6,6 +6,7 @@ export {
   MOCK_TODAY_PROGRESS,
   missionStageAtom,
   missionOutcomesAtom,
+  todayCompletedMissionCountAtom,
   missionCandidatesAtom,
   selectedMissionAtom,
   memberVerificationsAtom,
