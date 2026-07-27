@@ -58,6 +58,7 @@ export default function MissionSelectScreen() {
 
   const handleConfirm = () => {
     if (!selectedId) return;
+    if (!candidates.some((candidate) => candidate.id === selectedId)) return;
     selectMission(selectedId);
     router.replace('/');
   };
@@ -85,13 +86,20 @@ export default function MissionSelectScreen() {
                   reward={candidate.reward}
                   status={selectedId === candidate.id ? 'active' : 'default'}
                   canRetry={candidate.canRetry}
-                  onRetry={() => retryCandidate(candidate.id)}
+                  onRetry={() => {
+                    retryCandidate(candidate.id);
+                    if (selectedId === candidate.id) setSelectedId(null);
+                  }}
                 />
               </Pressable>
             ))}
           </View>
         </ScrollView>
-        <Bigbutton label="미션 선택하기" disabled={!selectedId} onPress={handleConfirm} />
+        <Bigbutton
+          label="미션 선택하기"
+          disabled={!candidates.some((candidate) => candidate.id === selectedId)}
+          onPress={handleConfirm}
+        />
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>오늘의 기록</Text>
           <Text style={styles.sectionHint}>여행의 순간을 남겨보세요!</Text>
