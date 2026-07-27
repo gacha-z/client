@@ -25,13 +25,13 @@ import { styles } from './index.css';
 const RECORD_ITEMS: TodayRecordItem[] = [
   {
     key: 'diary',
-    icon: <DiaryIcon size={20} />,
+    icon: <DiaryIcon size={20} color={colors.blue500} />,
     label: '여행 일기장',
     sublabel: '오늘의 추억을 기록해요.'
   },
   {
     key: 'mission-log',
-    icon: <MovieIcon size={20} />,
+    icon: <MovieIcon size={20} color={colors.blue500} />,
     label: '미션로그 보기',
     sublabel: '함께한 순간을 확인해요.'
   },
