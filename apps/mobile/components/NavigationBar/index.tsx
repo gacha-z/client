@@ -97,7 +97,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   }, [isFocused, floatAnim]);
 
   const onPress = useCallback(() => {
-    if (missionPending) {
+    if (missionPending && isFocused) {
       router.push('/mission-log-capture');
       return;
     }
@@ -120,7 +120,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
     >
       <Animated.View style={[styles.fabRing, { transform: [{ translateY: floatAnim }] }]}>
         <View style={styles.fab}>
-          {missionPending ? <CameraIcon size={30} /> : <CardsIcon size={30} />}
+          {missionPending && isFocused ? <CameraIcon size={30} /> : <CardsIcon size={30} />}
         </View>
       </Animated.View>
     </Pressable>
