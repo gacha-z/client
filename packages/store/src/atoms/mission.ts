@@ -23,6 +23,7 @@ export const MOCK_TODAY_PROGRESS = { completed: 4, total: 5 };
 
 type MissionSource = Omit<MissionCandidate, 'id' | 'canRetry'>;
 
+/** 불변식: 풀 크기는 항상 동시 표시 후보 수보다 커야 함 — 그렇지 않으면 retryCandidateAtom의 중복 방지 로직이 조용히 실패함 */
 const MISSION_POOL: MissionSource[] = [
   {
     placeName: '경포해변',
@@ -96,8 +97,13 @@ export const retryCandidateAtom = atom(null, (get, set, candidateId: string) => 
   if (!target || !target.canRetry) return;
 
   const usedPlaceNames = candidates.map((candidate) => candidate.placeName);
-  const nextSource =
-    MISSION_POOL.find((source) => !usedPlaceNames.includes(source.placeName)) ?? MISSION_POOL[0];
+  const unusedSource = MISSION_POOL.find((source) => !usedPlaceNames.includes(source.placeName));
+  if (!unusedSource) {
+    console.warn(
+      'retryCandidateAtom: MISSION_POOL에 미사용 후보가 없어 중복 미션이 표시될 수 있습니다.'
+    );
+  }
+  const nextSource = unusedSource ?? MISSION_POOL[0];
 
   set(
     missionCandidatesAtom,
