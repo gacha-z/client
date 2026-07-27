@@ -59,6 +59,9 @@ export const styles = StyleSheet.create({
   segmentFilled: {
     backgroundColor: colors.blue500
   },
+  segmentGivenUp: {
+    backgroundColor: '#ff5252'
+  },
   memberRow: {
     flexDirection: 'row',
     gap: 12

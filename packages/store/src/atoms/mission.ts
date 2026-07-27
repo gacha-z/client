@@ -75,6 +75,9 @@ const initialVerifications = (): Record<string, MemberVerificationStatus> =>
  */
 export const missionStageAtom = atom<MissionStage>('idle');
 
+/** 오늘 '미션 포기하기'를 누른 횟수 — 상단 진행도 바에서 포기한 미션을 빨간 세그먼트로 표시하는 데 쓰인다 */
+export const giveUpCountAtom = atom<number>(0);
+
 /** ③⑦ 캐러셀에 표시되는 미션 후보 3개 */
 export const missionCandidatesAtom = atom<MissionCandidate[]>(createInitialCandidates());
 
@@ -134,14 +137,13 @@ export const verifyMemberAtom = atom(null, (get, set, memberId: string) => {
   set(memberVerificationsAtom, { ...get(memberVerificationsAtom), [memberId]: 'verified' });
 });
 
-/** ⑨ "미션 포기하기" — 타이머 없이 즉시 새 미션으로 교체 */
-export const giveUpMissionAtom = atom(null, (get, set) => {
-  const current = get(selectedMissionAtom);
-  const nextSource =
-    MISSION_POOL.find((source) => source.placeName !== current?.placeName) ?? MISSION_POOL[0];
-
-  set(selectedMissionAtom, createCandidate(nextSource));
-  set(memberVerificationsAtom, initialVerifications());
+/** ⑨ "미션 포기하기" — 진행 중이던 미션을 접고 처음부터 다시 후보를 고르도록 selecting 상태로 되돌린다 */
+export const giveUpMissionAtom = atom(null, (_get, set) => {
+  set(giveUpCountAtom, (count) => count + 1);
+  set(missionCandidatesAtom, createInitialCandidates());
+  set(selectedMissionAtom, null);
+  set(memberVerificationsAtom, {});
+  set(missionStageAtom, 'selecting');
 });
 
 /** ⑩ "미션 완료" 확인 → ① idle 상태로 복귀 */
