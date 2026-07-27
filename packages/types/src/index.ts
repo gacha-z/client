@@ -3,5 +3,6 @@ export type {
   TripMember,
   MissionCandidate,
   MemberVerificationStatus,
-  MissionStage
+  MissionStage,
+  MissionOutcome
 } from './mission';

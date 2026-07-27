@@ -3,6 +3,7 @@ import { atom } from 'jotai';
 import type {
   MemberVerificationStatus,
   MissionCandidate,
+  MissionOutcome,
   MissionStage,
   TripMember
 } from '@travel-gacha/types';
@@ -75,8 +76,8 @@ const initialVerifications = (): Record<string, MemberVerificationStatus> =>
  */
 export const missionStageAtom = atom<MissionStage>('idle');
 
-/** 오늘 '미션 포기하기'를 누른 횟수 — 상단 진행도 바에서 포기한 미션을 빨간 세그먼트로 표시하는 데 쓰인다 */
-export const giveUpCountAtom = atom<number>(0);
+/** 오늘 시도한 미션들의 결과를 시간순으로 기록 — 상단 진행도 바를 성공(파랑)/실패(빨강) 순서로 채우는 데 쓰인다 */
+export const missionOutcomesAtom = atom<MissionOutcome[]>([]);
 
 /** ③⑦ 캐러셀에 표시되는 미션 후보 3개 */
 export const missionCandidatesAtom = atom<MissionCandidate[]>(createInitialCandidates());
@@ -139,7 +140,7 @@ export const verifyMemberAtom = atom(null, (get, set, memberId: string) => {
 
 /** ⑨ "미션 포기하기" — 진행 중이던 미션을 접고 처음부터 다시 후보를 고르도록 selecting 상태로 되돌린다 */
 export const giveUpMissionAtom = atom(null, (_get, set) => {
-  set(giveUpCountAtom, (count) => count + 1);
+  set(missionOutcomesAtom, (outcomes) => [...outcomes, 'failure']);
   set(missionCandidatesAtom, createInitialCandidates());
   set(selectedMissionAtom, null);
   set(memberVerificationsAtom, {});
@@ -148,6 +149,7 @@ export const giveUpMissionAtom = atom(null, (_get, set) => {
 
 /** ⑩ "미션 완료" 확인 → ① idle 상태로 복귀 */
 export const clearMissionAtom = atom(null, (_get, set) => {
+  set(missionOutcomesAtom, (outcomes) => [...outcomes, 'success']);
   set(missionStageAtom, 'idle');
   set(selectedMissionAtom, null);
   set(memberVerificationsAtom, {});

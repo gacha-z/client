@@ -5,7 +5,7 @@ export {
   MOCK_TRIP,
   MOCK_TODAY_PROGRESS,
   missionStageAtom,
-  giveUpCountAtom,
+  missionOutcomesAtom,
   missionCandidatesAtom,
   selectedMissionAtom,
   memberVerificationsAtom,

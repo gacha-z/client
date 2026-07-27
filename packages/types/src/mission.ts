@@ -19,5 +19,7 @@ export type MissionCandidate = {
 
 export type MemberVerificationStatus = 'unverified' | 'verified';
 
+export type MissionOutcome = 'success' | 'failure';
+
 /** 'cleared'는 별도 단계로 두지 않는다 — 클리어 모달 확인 즉시 idle로 복귀 (설계 결정 4) */
 export type MissionStage = 'idle' | 'selecting' | 'pending';

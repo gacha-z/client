@@ -10,10 +10,10 @@ import {
   MOCK_TRIP,
   allMembersVerifiedAtom,
   clearMissionAtom,
-  giveUpCountAtom,
   giveUpMissionAtom,
   memberVerificationsAtom,
   missionCandidatesAtom,
+  missionOutcomesAtom,
   missionStageAtom,
   retryCandidateAtom,
   selectMissionAtom,
@@ -40,7 +40,7 @@ export default function MissionSelectScreen() {
   const selectedMission = useAtomValue(selectedMissionAtom);
   const verifications = useAtomValue(memberVerificationsAtom);
   const allVerified = useAtomValue(allMembersVerifiedAtom);
-  const giveUpCount = useAtomValue(giveUpCountAtom);
+  const outcomes = useAtomValue(missionOutcomesAtom);
   const startSelection = useSetAtom(startMissionSelectionAtom);
   const retryCandidate = useSetAtom(retryCandidateAtom);
   const selectMission = useSetAtom(selectMissionAtom);
@@ -77,8 +77,8 @@ export default function MissionSelectScreen() {
           total={MOCK_TODAY_PROGRESS.total}
           statusLabel="미션 완료"
           members={MOCK_MEMBERS}
-          segmented={isPending || giveUpCount > 0}
-          givenUpCount={giveUpCount}
+          segmented={isPending || outcomes.length > 0}
+          outcomes={outcomes}
         />
         {isPending && selectedMission ? (
           <View style={styles.section}>
