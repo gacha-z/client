@@ -66,7 +66,12 @@ const createInitialCandidates = (): MissionCandidate[] =>
 const initialVerifications = (): Record<string, MemberVerificationStatus> =>
   Object.fromEntries(MOCK_MEMBERS.map((member) => [member.id, 'unverified']));
 
-/** 오늘의 미션 진행 단계 */
+/**
+ * 오늘의 미션 진행 단계
+ * 한계: 'selecting' 진입 후 선택 없이 이탈(탭 전환 등)해도 'idle'로 되돌리는 전환이 없음.
+ * 현재는 'selecting'을 분기 조건으로 쓰는 코드가 없고, 재진입 시 startMissionSelectionAtom이
+ * 다시 'selecting'으로 세팅하므로 무해함 — 추후 'selecting' 상태를 직접 참조하는 기능 추가 시 재검토 필요.
+ */
 export const missionStageAtom = atom<MissionStage>('idle');
 
 /** ③⑦ 캐러셀에 표시되는 미션 후보 3개 */
