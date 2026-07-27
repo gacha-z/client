@@ -15,7 +15,7 @@ type TodayRecordGridProps = {
   items: TodayRecordItem[];
 };
 
-/** "오늘의 기록" 바로가기 그리드 (①은 4카드, ⑨는 2카드) */
+/** "오늘의 기록" 바로가기 그리드 — 카드 목록은 호출부(TodayRecordSection)에서 결정 */
 export function TodayRecordGrid({ items }: TodayRecordGridProps) {
   return (
     <View style={styles.grid}>
