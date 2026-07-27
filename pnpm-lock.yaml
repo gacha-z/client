@@ -322,6 +322,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.0(react@18.2.0)
+      '@travel-gacha/types':
+        specifier: workspace:*
+        version: link:../types
       jotai:
         specifier: 'catalog:'
         version: 2.20.0(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@18.3.30)(react@18.2.0)
