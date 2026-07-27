@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import type { TripMember } from '@travel-gacha/types';
 
@@ -37,7 +37,10 @@ export function ProgressCard({
       {segmented ? (
         <View style={styles.segmentedTrack}>
           {[0, 1, 2].map((index) => (
-            <View key={index} style={[styles.segment, index / 3 < ratio && styles.segmentFilled]} />
+            <View
+              key={index}
+              style={[styles.segment, (index + 1) / 3 <= ratio && styles.segmentFilled]}
+            />
           ))}
         </View>
       ) : (
@@ -48,7 +51,11 @@ export function ProgressCard({
       <View style={styles.memberRow}>
         {members.map((member) => (
           <View key={member.id} style={styles.memberItem}>
-            <View style={styles.avatar} />
+            {member.avatarUri ? (
+              <Image source={{ uri: member.avatarUri }} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatarPlaceholder} />
+            )}
             <Text style={styles.memberName}>{member.name}</Text>
             {member.isMissionPicker && (
               <View style={styles.pickerBadge}>
