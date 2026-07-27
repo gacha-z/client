@@ -48,6 +48,9 @@ export default function MissionLogCaptureScreen() {
         )}
       </View>
       <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="촬영 시작"
+        accessibilityState={{ disabled: isRecording }}
         style={[styles.shutter, isRecording && styles.shutterRecording]}
         onPress={handleShutter}
         disabled={isRecording}
