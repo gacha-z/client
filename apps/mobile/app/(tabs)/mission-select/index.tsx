@@ -77,7 +77,7 @@ export default function MissionSelectScreen() {
           total={MOCK_TODAY_PROGRESS.total}
           statusLabel="미션 완료"
           members={MOCK_MEMBERS}
-          segmented={isPending || outcomes.length > 0}
+          segmented
           outcomes={outcomes}
         />
         {isPending && selectedMission ? (
