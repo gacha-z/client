@@ -19,15 +19,13 @@ import {
   selectedMissionAtom,
   startMissionSelectionAtom
 } from '@travel-gacha/store';
-import { colors } from '@travel-gacha/ui';
 import { Bigbutton } from '@/components/Bigbutton';
-import { BookIcon, CardsIcon, DiaryIcon, MovieIcon } from '@/components/icons';
 import { MemberStatusPill } from '@/components/MemberStatusPill';
 import { MissionSelectCard } from '@/components/MissionSelectCard';
 import { Modal } from '@/components/Modal';
 import { ProgressCard } from '@/components/ProgressCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { TodayRecordGrid, type TodayRecordItem } from '@/components/TodayRecordGrid';
+import { TodayRecordSection } from '@/components/TodayRecordSection';
 import { TripStatusBar } from '@/components/TripStatusBar';
 
 import { styles } from './index.css';
@@ -62,48 +60,6 @@ export default function MissionSelectScreen() {
     selectMission(selectedId as string);
     setSelectedId(null);
   };
-
-  const recordItems: TodayRecordItem[] = isPending
-    ? [
-        {
-          key: 'diary',
-          icon: <DiaryIcon size={20} color={colors.blue500} />,
-          label: '여행 일기장',
-          sublabel: '오늘의 추억을 기록해요.'
-        },
-        {
-          key: 'mission-log',
-          icon: <MovieIcon size={20} color={colors.blue500} />,
-          label: '미션로그 보기',
-          sublabel: '함께한 순간을 확인해요.'
-        }
-      ]
-    : [
-        {
-          key: 'diary',
-          icon: <DiaryIcon size={20} color={colors.blue500} />,
-          label: '여행 일기장',
-          sublabel: '오늘의 추억을 기록해요.'
-        },
-        {
-          key: 'mission-log',
-          icon: <MovieIcon size={20} color={colors.blue500} />,
-          label: '미션로그 보기',
-          sublabel: '함께한 순간을 확인해요.'
-        },
-        {
-          key: 'mission-list',
-          icon: <CardsIcon size={20} color={colors.blue500} />,
-          label: '미션 목록 보기',
-          sublabel: '미션 목록을 확인해요.'
-        },
-        {
-          key: 'collection',
-          icon: <BookIcon size={20} />,
-          label: '도감 목록',
-          sublabel: '획득한 아이템을 확인해요.'
-        }
-      ];
 
   return (
     <ScreenLayout title="미션 선택" showTopbar={false} headerActions scrollable>
@@ -196,11 +152,7 @@ export default function MissionSelectScreen() {
             <Bigbutton label="미션 시작하기" onPress={handleStartMission} />
           </View>
         )}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>오늘의 기록</Text>
-          <Text style={styles.sectionHint}>여행의 순간을 남겨보세요!</Text>
-          <TodayRecordGrid items={recordItems} />
-        </View>
+        <TodayRecordSection />
       </View>
       <Modal
         visible={isPending && allVerified && isTabFocused}
