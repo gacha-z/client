@@ -25,6 +25,12 @@ export function ProgressCard({
   outcomes = []
 }: ProgressCardProps) {
   const ratio = total === 0 ? 0 : Math.min(completed / total, 1);
+  const segmentCount = Math.max(total, outcomes.length, 0);
+  if (outcomes.length > total) {
+    console.warn(
+      `ProgressCard: outcomes.length(${outcomes.length})이 total(${total})을 초과했습니다 — 진행도 바가 total보다 커집니다.`
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -39,7 +45,7 @@ export function ProgressCard({
       </View>
       {segmented ? (
         <View style={styles.segmentedTrack}>
-          {Array.from({ length: Math.max(total, 0) }).map((_, index) => {
+          {Array.from({ length: segmentCount }).map((_, index) => {
             const outcome = outcomes[index];
             return (
               <View
