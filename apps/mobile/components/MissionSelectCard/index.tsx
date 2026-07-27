@@ -8,12 +8,14 @@ import { styles } from './index.css';
 type MissionSelectCardStatus = 'active' | 'default' | 'inProgress';
 
 type MissionSelectCardProps = {
-  imageUri: string;
+  imageUri?: string;
   placeName: string;
   description: string;
   address: string;
   reward: string;
   status?: MissionSelectCardStatus;
+  /** false면 "다시하기" 뱃지를 아예 표시하지 않음 (후보당 1회 제한) */
+  canRetry?: boolean;
   onRetry?: () => void;
 };
 
@@ -25,6 +27,7 @@ export function MissionSelectCard({
   address,
   reward,
   status = 'default',
+  canRetry = true,
   onRetry
 }: MissionSelectCardProps) {
   const isInProgress = status === 'inProgress';
@@ -36,7 +39,11 @@ export function MissionSelectCard({
         status === 'active' ? styles.active : isInProgress ? styles.inProgress : styles.default
       ]}
     >
-      <Image source={{ uri: imageUri }} style={styles.thumbnail} />
+      {imageUri ? (
+        <Image source={{ uri: imageUri }} style={styles.thumbnail} />
+      ) : (
+        <View style={[styles.thumbnail, styles.thumbnailPlaceholder]} />
+      )}
       <View style={styles.body}>
         <Text style={styles.placeName}>{placeName}</Text>
         <Text style={styles.description} numberOfLines={2}>
@@ -55,16 +62,18 @@ export function MissionSelectCard({
           </View>
         </View>
       </View>
-      <View style={styles.badge}>
-        {isInProgress ? (
-          <Text style={styles.badgeText}>수행중</Text>
-        ) : (
-          <Pressable style={styles.retryButton} onPress={onRetry} hitSlop={8}>
-            <RedoIcon size={13.2} color={colors.grey400} />
-            <Text style={styles.badgeText}>다시하기</Text>
-          </Pressable>
-        )}
-      </View>
+      {(isInProgress || canRetry) && (
+        <View style={styles.badge}>
+          {isInProgress ? (
+            <Text style={styles.badgeText}>수행중</Text>
+          ) : (
+            <Pressable style={styles.retryButton} onPress={onRetry} hitSlop={8}>
+              <RedoIcon size={13.2} color={colors.grey400} />
+              <Text style={styles.badgeText}>다시하기</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
     </View>
   );
 }

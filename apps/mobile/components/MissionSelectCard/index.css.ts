@@ -29,6 +29,9 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: 153
   },
+  thumbnailPlaceholder: {
+    backgroundColor: colors.grey100
+  },
   body: {
     paddingHorizontal: 16,
     paddingVertical: 10,
