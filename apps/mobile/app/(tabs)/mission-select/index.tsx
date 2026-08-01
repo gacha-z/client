@@ -10,6 +10,7 @@ import {
   MOCK_TRIP,
   allMembersVerifiedAtom,
   clearMissionAtom,
+  dailyMissionLimitReachedAtom,
   giveUpMissionAtom,
   memberVerificationsAtom,
   missionCandidatesAtom,
@@ -43,6 +44,7 @@ export default function MissionSelectScreen() {
   const allVerified = useAtomValue(allMembersVerifiedAtom);
   const outcomes = useAtomValue(missionOutcomesAtom);
   const completedCount = useAtomValue(todayCompletedMissionCountAtom);
+  const limitReached = useAtomValue(dailyMissionLimitReachedAtom);
   const startSelection = useSetAtom(startMissionSelectionAtom);
   const retryCandidate = useSetAtom(retryCandidateAtom);
   const selectMission = useSetAtom(selectMissionAtom);
@@ -150,11 +152,22 @@ export default function MissionSelectScreen() {
           </View>
         ) : (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>오늘의 랜덤 미션</Text>
-            <Text style={styles.sectionHint}>
-              미션 시작하기 버튼을 눌러 오늘의 미션을 시작해보아요!
-            </Text>
-            <Bigbutton label="미션 시작하기" onPress={handleStartMission} />
+            {limitReached ? (
+              <>
+                <Text style={styles.sectionTitle}>오늘의 미션을 모두 완료했어요!</Text>
+                <Text style={styles.sectionHint}>
+                  오늘 도전 가능한 미션이 모두 끝났어요. 내일 새로운 랜덤 미션을 기대해주세요!
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.sectionTitle}>오늘의 랜덤 미션</Text>
+                <Text style={styles.sectionHint}>
+                  미션 시작하기 버튼을 눌러 오늘의 미션을 시작해보아요!
+                </Text>
+              </>
+            )}
+            <Bigbutton label="미션 시작하기" disabled={limitReached} onPress={handleStartMission} />
           </View>
         )}
         <TodayRecordSection />

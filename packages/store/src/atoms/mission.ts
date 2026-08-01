@@ -84,6 +84,11 @@ export const todayCompletedMissionCountAtom = atom(
   (get) => get(missionOutcomesAtom).filter((outcome) => outcome === 'success').length
 );
 
+/** 오늘 시도(성공+포기) 횟수가 total에 도달했는지 — 도달 시 새 미션 시작을 막는다 */
+export const dailyMissionLimitReachedAtom = atom(
+  (get) => get(missionOutcomesAtom).length >= MOCK_TODAY_PROGRESS.total
+);
+
 /** ③⑦ 캐러셀에 표시되는 미션 후보 3개 */
 export const missionCandidatesAtom = atom<MissionCandidate[]>(createInitialCandidates());
 
@@ -99,8 +104,9 @@ export const allMembersVerifiedAtom = atom((get) => {
   return MOCK_MEMBERS.every((member) => verifications[member.id] === 'verified');
 });
 
-/** ① "미션 시작하기" → ③⑦ 캐러셀 화면으로 진입 */
-export const startMissionSelectionAtom = atom(null, (_get, set) => {
+/** ① "미션 시작하기" → ③⑦ 캐러셀 화면으로 진입. 오늘의 시도 한도 도달 시 무시 */
+export const startMissionSelectionAtom = atom(null, (get, set) => {
+  if (get(dailyMissionLimitReachedAtom)) return;
   set(missionCandidatesAtom, createInitialCandidates());
   set(missionStageAtom, 'selecting');
 });
@@ -143,13 +149,22 @@ export const verifyMemberAtom = atom(null, (get, set, memberId: string) => {
   set(memberVerificationsAtom, { ...get(memberVerificationsAtom), [memberId]: 'verified' });
 });
 
-/** ⑨ "미션 포기하기" — 진행 중이던 미션을 접고 처음부터 다시 후보를 고르도록 selecting 상태로 되돌린다 */
-export const giveUpMissionAtom = atom(null, (_get, set) => {
-  set(missionOutcomesAtom, (outcomes) => [...outcomes, 'failure']);
-  set(missionCandidatesAtom, createInitialCandidates());
+/**
+ * ⑨ "미션 포기하기" — 진행 중이던 미션을 접고 처음부터 다시 후보를 고르도록 selecting 상태로 되돌린다.
+ * 단, 이 포기로 오늘의 시도 한도에 도달하면 selecting으로 되돌리지 않고 idle로 보내
+ * "미션 시작하기" 게이트가 곧바로 재도전을 막도록 한다.
+ */
+export const giveUpMissionAtom = atom(null, (get, set) => {
+  const nextOutcomes = [...get(missionOutcomesAtom), 'failure' as const];
+  set(missionOutcomesAtom, nextOutcomes);
   set(selectedMissionAtom, null);
   set(memberVerificationsAtom, {});
-  set(missionStageAtom, 'selecting');
+
+  const reachedLimit = nextOutcomes.length >= MOCK_TODAY_PROGRESS.total;
+  set(missionStageAtom, reachedLimit ? 'idle' : 'selecting');
+  if (!reachedLimit) {
+    set(missionCandidatesAtom, createInitialCandidates());
+  }
 });
 
 /** ⑩ "미션 완료" 확인 → ① idle 상태로 복귀 */
