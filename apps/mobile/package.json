@@ -18,6 +18,7 @@
     "@tanstack/react-query": "catalog:",
     "@travel-gacha/api": "workspace:*",
     "@travel-gacha/store": "workspace:*",
+    "@travel-gacha/types": "workspace:*",
     "@travel-gacha/ui": "workspace:*",
     "@travel-gacha/utils": "workspace:*",
     "axios": "catalog:",

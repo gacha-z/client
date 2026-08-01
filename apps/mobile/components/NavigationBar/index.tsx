@@ -1,4 +1,5 @@
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useRouter } from 'expo-router';
 import { useAtomValue } from 'jotai';
 import { memo, useCallback, useEffect, useRef } from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
@@ -83,6 +84,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   navigation
 }: CenterTabProps) {
   const missionPending = useAtomValue(missionPendingAtom);
+  const router = useRouter();
   const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -95,6 +97,10 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   }, [isFocused, floatAnim]);
 
   const onPress = useCallback(() => {
+    if (missionPending && isFocused) {
+      router.push('/mission-log-capture');
+      return;
+    }
     const event = navigation.emit({
       type: 'tabPress',
       target: routeKey,
@@ -103,7 +109,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
     if (!isFocused && !event.defaultPrevented) {
       navigation.navigate(routeName);
     }
-  }, [isFocused, navigation, routeKey, routeName]);
+  }, [missionPending, router, isFocused, navigation, routeKey, routeName]);
 
   return (
     <Pressable
@@ -114,7 +120,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
     >
       <Animated.View style={[styles.fabRing, { transform: [{ translateY: floatAnim }] }]}>
         <View style={styles.fab}>
-          {missionPending ? <CameraIcon size={30} /> : <CardsIcon size={30} />}
+          {missionPending && isFocused ? <CameraIcon size={30} /> : <CardsIcon size={30} />}
         </View>
       </Animated.View>
     </Pressable>

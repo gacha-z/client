@@ -1,6 +1,7 @@
 export { ArrowDownIcon } from './ArrowDownIcon';
 export { BackIcon } from './BackIcon';
 export { BellIcon } from './BellIcon';
+export { BookIcon } from './BookIcon';
 export { CameraIcon } from './CameraIcon';
 export { CalendarViewIcon } from './CalendarViewIcon';
 export { CardsIcon } from './CardsIcon';
@@ -18,6 +19,7 @@ export { MoreIcon } from './MoreIcon';
 export { MovieIcon } from './MovieIcon';
 export { PeopleIcon } from './PeopleIcon';
 export { PlaceIcon } from './PlaceIcon';
+export { PlaceRoundIcon } from './PlaceRoundIcon';
 export { RedoIcon } from './RedoIcon';
 export { RegionRedoIcon } from './RegionRedoIcon';
 export { SettingIcon } from './SettingIcon';
