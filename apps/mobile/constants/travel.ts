@@ -1,5 +1,15 @@
 import type { RegionCandidate, TravelListItem, TravelRecord, TravelViewMode } from '@/types';
 
+export const TRAVEL_MISSION_COUNT_LIMITS = {
+  min: 1,
+  max: 20
+} as const;
+
+export const TRAVEL_MISSION_COUNT_DEFAULTS = {
+  min: 1,
+  max: 10
+} as const;
+
 export const TRAVEL_VIEW_MODE_OPTIONS: {
   value: TravelViewMode;
   label: string;
