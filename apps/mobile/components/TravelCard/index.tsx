@@ -25,7 +25,9 @@ export function TravelCard({ trip }: { trip: TravelListItem }) {
         <InfoRow icon="calendar">{formatTravelPeriod(trip.period)}</InfoRow>
         <InfoRow icon="location">{trip.location}</InfoRow>
         <InfoRow icon="people">{formatTravelMembers(trip.members)}</InfoRow>
-        <InfoRow icon="items">{formatCollectionItems(trip.items)}</InfoRow>
+        {trip.status !== 'scheduled' && (
+          <InfoRow icon="items">{formatCollectionItems(trip.items)}</InfoRow>
+        )}
       </View>
       <View style={styles.cardFooter}>
         <PillButton

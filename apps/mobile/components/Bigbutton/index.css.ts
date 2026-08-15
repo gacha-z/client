@@ -25,8 +25,8 @@ export const styles = StyleSheet.create({
     opacity: 0.7
   },
   label: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.white
   }
 });

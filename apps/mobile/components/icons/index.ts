@@ -22,6 +22,7 @@ export { PlaceIcon } from './PlaceIcon';
 export { PlaceRoundIcon } from './PlaceRoundIcon';
 export { RedoIcon } from './RedoIcon';
 export { RegionRedoIcon } from './RegionRedoIcon';
+export { RandomIcon } from './RandomIcon';
 export { SettingIcon } from './SettingIcon';
 export { SolidCaretIcon } from './SolidCaretIcon';
 export { TravelIcon } from './TravelIcon';

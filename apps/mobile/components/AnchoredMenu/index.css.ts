@@ -11,6 +11,10 @@ export const styles = StyleSheet.create({
   triggerWrap: {
     alignSelf: 'flex-start'
   },
+  triggerWrapFullWidth: {
+    alignSelf: 'stretch',
+    width: '100%'
+  },
   menu: {
     position: 'absolute',
     zIndex: 30
