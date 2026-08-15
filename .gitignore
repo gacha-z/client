@@ -45,6 +45,7 @@ Thumbs.db
 .history/
 
 # tooling caches
+.corepack-cache/
 .eslintcache
 .vercel/
 
