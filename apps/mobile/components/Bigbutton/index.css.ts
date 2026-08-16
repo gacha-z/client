@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.black
   },
   disabled: {
-    backgroundColor: '#b3b3b3'
+    backgroundColor: colors.grey300
   },
   pressed: {
     opacity: 0.7
