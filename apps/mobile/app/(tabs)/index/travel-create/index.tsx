@@ -1,27 +1,28 @@
-import { useState, type ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
+import { Text, View } from 'react-native';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useSetAtom } from 'jotai';
 
+import { confirmTravelCreationAtom, resetTravelCreationAtom } from '@travel-gacha/store';
 import { Bigbutton } from '@/components/Bigbutton';
 import { FormInput } from '@/components/FormInput';
+import { MemberSelector } from '@/components/MemberSelector';
+import { Modal } from '@/components/Modal';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TravelScheduleCalendar } from '@/components/TravelScheduleCalendar';
-import { TRAVEL_MISSION_COUNT_DEFAULTS, TRAVEL_MISSION_COUNT_LIMITS } from '@/constants';
 import {
-  getValidInitialTravelDateRange,
-  toDateKey,
   TRAVEL_HOUR_OPTIONS,
   TRAVEL_MINUTE_OPTIONS,
-  updateMissionCountRange,
-  type MissionCountRange
-} from '@/utils';
+  TRAVEL_MISSION_COUNT_LIMITS
+} from '@/constants';
+import { RandomIcon } from '@/components/icons';
+import { useTravelCreateForm } from '@/hooks';
+import { formatTravelDate } from '@/utils';
 
 import { styles } from './index.css';
 
 const getParam = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
-
-const displayDate = (value: Date | null) => toDateKey(value ?? new Date()).replaceAll('-', '.');
 
 type FormSectionProps = {
   title: string;
@@ -41,71 +42,62 @@ function FormSection({ title, description, children }: FormSectionProps) {
   );
 }
 
-type MemberSelectorProps = {
-  value: number | null;
-  onChange: (value: number) => void;
-  max?: number;
-};
-
-type ActiveDateField = 'start' | 'end' | null;
-
-function MemberSelector({ value, onChange, max = 10 }: MemberSelectorProps) {
-  return (
-    <View style={styles.memberGrid}>
-      {Array.from({ length: max }, (_, index) => index + 1).map((count) => {
-        const selected = count === value;
-
-        return (
-          <Pressable
-            key={count}
-            accessibilityState={{ selected }}
-            onPress={() => onChange(count)}
-            style={[styles.memberItem, selected && styles.memberItemSelected]}
-          >
-            <Text style={[styles.memberText, selected && styles.memberTextSelected]}>{count}</Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
 export default function TravelCreateScreen() {
+  const router = useRouter();
+  const confirmTravelCreation = useSetAtom(confirmTravelCreationAtom);
+  const resetTravelCreation = useSetAtom(resetTravelCreationAtom);
+  const generatingRef = useRef(false);
   const params = useLocalSearchParams<{ startDate?: string; endDate?: string }>();
-  const [dateRange, setDateRange] = useState(() =>
-    getValidInitialTravelDateRange(getParam(params.startDate), getParam(params.endDate))
-  );
-  const { startDate, endDate } = dateRange;
-  const [title, setTitle] = useState('');
-  const [missionCount, setMissionCount] = useState<MissionCountRange>({
-    ...TRAVEL_MISSION_COUNT_DEFAULTS
+  const {
+    startDate,
+    endDate,
+    title,
+    missionCount,
+    missionTime,
+    memberCount,
+    activeDateField,
+    formComplete,
+    missionTimeLabel,
+    setTitle,
+    setMemberCount,
+    setMissionHour,
+    setMissionMinute,
+    handleMissionCountChange,
+    handleDateRangeChange,
+    toggleDateField,
+    createRequest
+  } = useTravelCreateForm({
+    initialStartDate: getParam(params.startDate),
+    initialEndDate: getParam(params.endDate)
   });
-  const [missionTime, setMissionTime] = useState({ hour: 10, minute: 0 });
-  const [memberCount, setMemberCount] = useState<number | null>(null);
-  const [activeDateField, setActiveDateField] = useState<ActiveDateField>(null);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [isGeneratingCandidates, setIsGeneratingCandidates] = useState(false);
 
-  const handleMissionCountChange = (field: keyof MissionCountRange, value: number) => {
-    setMissionCount((current) =>
-      updateMissionCountRange(
-        current,
-        field,
-        value,
-        TRAVEL_MISSION_COUNT_LIMITS.min,
-        TRAVEL_MISSION_COUNT_LIMITS.max
-      )
-    );
+  useFocusEffect(
+    useCallback(() => {
+      resetTravelCreation();
+    }, [resetTravelCreation])
+  );
+
+  const handleConfirmCreate = () => {
+    if (generatingRef.current) return;
+
+    const request = createRequest();
+    if (!request) return;
+
+    generatingRef.current = true;
+    setIsGeneratingCandidates(true);
+
+    confirmTravelCreation(request);
+    setConfirmationOpen(false);
+    router.push('/region-candidates');
   };
 
-  const handleDateRangeChange = (nextStartDate: Date | null, nextEndDate: Date | null) => {
-    setDateRange({ startDate: nextStartDate, endDate: nextEndDate });
-    if (nextStartDate && nextEndDate) setActiveDateField(null);
+  const handleOpenConfirmation = () => {
+    generatingRef.current = false;
+    setIsGeneratingCandidates(false);
+    setConfirmationOpen(true);
   };
-
-  const toggleDateField = (field: Exclude<ActiveDateField, null>) => {
-    setActiveDateField((current) => (current === field ? null : field));
-  };
-
-  const formComplete = Boolean(startDate && endDate && title.trim() && memberCount);
 
   return (
     <ScreenLayout title="여행 생성" headerActions showTopbar={false} scrollable>
@@ -120,14 +112,14 @@ export default function TravelCreateScreen() {
               <FormInput
                 variant="date"
                 label="시작"
-                value={startDate ? displayDate(startDate) : '-'}
+                value={formatTravelDate(startDate)}
                 expanded={activeDateField === 'start'}
                 onPress={() => toggleDateField('start')}
               />
               <FormInput
                 variant="date"
                 label="종료"
-                value={endDate ? displayDate(endDate) : '-'}
+                value={formatTravelDate(endDate)}
                 expanded={activeDateField === 'end'}
                 onPress={() => toggleDateField('end')}
               />
@@ -177,13 +169,13 @@ export default function TravelCreateScreen() {
                 variant="time"
                 value={missionTime.hour}
                 options={TRAVEL_HOUR_OPTIONS}
-                onValueChange={(hour) => setMissionTime((current) => ({ ...current, hour }))}
+                onValueChange={setMissionHour}
               />
               <FormInput
                 variant="time"
                 value={missionTime.minute}
                 options={TRAVEL_MINUTE_OPTIONS}
-                onValueChange={(minute) => setMissionTime((current) => ({ ...current, minute }))}
+                onValueChange={setMissionMinute}
               />
             </View>
             <Text style={styles.hint}>
@@ -196,8 +188,37 @@ export default function TravelCreateScreen() {
           <MemberSelector value={memberCount} onChange={setMemberCount} />
         </FormSection>
 
-        <Bigbutton label="여행지 추천받기" disabled={!formComplete} onPress={() => {}} />
+        <Bigbutton
+          icon={<RandomIcon />}
+          label="랜덤 지역 3곳 추천 받기"
+          disabled={!formComplete}
+          onPress={handleOpenConfirmation}
+        />
       </View>
+      <Modal
+        visible={confirmationOpen}
+        onClose={() => {
+          if (!isGeneratingCandidates) setConfirmationOpen(false);
+        }}
+        title="여행 정보를 확인해주세요!"
+        confirmText="생성하기"
+        onConfirm={handleConfirmCreate}
+        confirmLoading={isGeneratingCandidates}
+        closeOnBackdropPress={!isGeneratingCandidates}
+        showCloseButton={false}
+      >
+        <View style={styles.confirmationDetails}>
+          <Text style={styles.confirmationText}>여행 제목: {title.trim()}</Text>
+          <Text style={styles.confirmationText}>
+            하루 미션 수: {missionCount.min}~{missionCount.max}개
+          </Text>
+          <Text style={styles.confirmationText}>첫 미션 받을 시각: {missionTimeLabel}</Text>
+          <Text style={styles.confirmationText}>여행 인원: {memberCount}명</Text>
+          <Text style={styles.confirmationText}>
+            여행 날짜: {formatTravelDate(startDate)}~{formatTravelDate(endDate)}
+          </Text>
+        </View>
+      </Modal>
     </ScreenLayout>
   );
 }

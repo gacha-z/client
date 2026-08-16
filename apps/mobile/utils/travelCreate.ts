@@ -1,5 +1,15 @@
 import { isBeforeDay, parseDateKey, startOfDay } from './calendar';
 
+export const getTravelRoomTitle = (title: string | undefined) => `${title?.trim() || '랜덤 여행'}`;
+
+export type TravelPartyType = 'solo' | 'group';
+
+export const getTravelPartyType = (memberCount: number): TravelPartyType =>
+  memberCount === 1 ? 'solo' : 'group';
+
+export const getTravelPartyLabel = (partyType: TravelPartyType) =>
+  partyType === 'solo' ? '혼자여행' : '함께 여행';
+
 export type TravelDateRange = {
   startDate: Date | null;
   endDate: Date | null;
@@ -57,14 +67,3 @@ export const updateMissionCountRange = (
     max: nextMax
   };
 };
-
-export const TRAVEL_HOUR_OPTIONS = Array.from({ length: 24 }, (_, hour) => {
-  const period = hour < 12 ? '오전' : '오후';
-  const displayHour = hour % 12 || 12;
-  return { label: `${period} ${displayHour}시`, value: hour };
-});
-
-export const TRAVEL_MINUTE_OPTIONS = [
-  { label: '00분', value: 0 },
-  { label: '30분', value: 30 }
-];

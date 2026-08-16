@@ -48,31 +48,15 @@ export const styles = StyleSheet.create({
     lineHeight: 22,
     color: colors.grey300
   },
-  memberGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 14
+  confirmationDetails: {
+    alignSelf: 'center',
+    minWidth: 240,
+    gap: 6,
+    paddingVertical: 6
   },
-  memberItem: {
-    width: 42,
-    height: 42,
-    borderWidth: 1,
-    borderColor: colors.grey300,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.white
-  },
-  memberItemSelected: {
-    borderColor: colors.blue500,
-    backgroundColor: colors.blue500
-  },
-  memberText: {
-    fontSize: 18,
-    color: colors.grey300
-  },
-  memberTextSelected: {
-    color: colors.white
+  confirmationText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.grey700
   }
 });

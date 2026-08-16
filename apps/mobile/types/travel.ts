@@ -1,3 +1,5 @@
+import type { RegionCandidate as SharedRegionCandidate } from '@travel-gacha/types';
+
 export type TripStatus = 'scheduled' | 'active' | 'completed';
 
 export type TravelPeriod = {
@@ -12,11 +14,12 @@ export type TravelMember = {
   name: string;
 };
 
-export type RegionCandidate = {
+export type RegionCandidate = SharedRegionCandidate;
+
+export type RegionCandidateSlot = {
   id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
+  region: RegionCandidate;
+  rerollUsed: boolean;
 };
 
 export type TravelListItem = {
