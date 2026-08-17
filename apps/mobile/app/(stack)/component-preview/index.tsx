@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { Bigbutton } from '@/components/Bigbutton';
@@ -7,14 +8,18 @@ import { MissionSelectCard } from '@/components/MissionSelectCard';
 import { PhotoTargetCard } from '@/components/PhotoTargetCard';
 import { RegionCandidateList } from '@/components/RegionCandidateList';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { REGION_CANDIDATE_MOCK } from '@/constants';
+import { REGION_CANDIDATE_MOCK } from '@/mocks/regionCandidates';
+import { createRegionCandidateSlots } from '@/utils';
 
 import { styles } from './index.css';
 
 const SAMPLE_THUMBNAIL = 'https://picsum.photos/seed/gachaz/246/153';
+const REGION_CANDIDATE_SLOT_MOCK = createRegionCandidateSlots(REGION_CANDIDATE_MOCK);
 
 /** 임시 확인용 화면 — 신규 컴포넌트 5종을 한 번에 렌더링한다. 검수 후 삭제 예정. */
 export default function ComponentPreviewScreen() {
+  const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
+
   return (
     <ScreenLayout title="컴포넌트 미리보기" showHeader={false} showBack scrollable>
       <View style={styles.section}>
@@ -90,7 +95,11 @@ export default function ComponentPreviewScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>RegionCandidateList</Text>
-        <RegionCandidateList items={REGION_CANDIDATE_MOCK} />
+        <RegionCandidateList
+          items={REGION_CANDIDATE_SLOT_MOCK}
+          selectedId={selectedRegionId}
+          onSelectionChange={setSelectedRegionId}
+        />
       </View>
     </ScreenLayout>
   );

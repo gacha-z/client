@@ -5,7 +5,6 @@ import { colors } from '@travel-gacha/ui';
 
 export const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: 20,
     paddingBottom: 24,
     gap: 20
   },

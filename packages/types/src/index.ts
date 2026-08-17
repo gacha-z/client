@@ -6,3 +6,4 @@ export type {
   MissionStage,
   MissionOutcome
 } from './mission';
+export type { RegionCandidate, TravelCreateRequest } from './travel';

@@ -14,6 +14,7 @@ type AnchoredMenuProps = {
   style?: StyleProp<ViewStyle>;
   menuStyle?: StyleProp<ViewStyle>;
   offset?: number;
+  fullWidth?: boolean;
 };
 
 export function AnchoredMenu({
@@ -24,7 +25,8 @@ export function AnchoredMenu({
   align = 'right',
   style,
   menuStyle,
-  offset = 4
+  offset = 4,
+  fullWidth = false
 }: AnchoredMenuProps) {
   const triggerRef = useRef<View>(null);
   const opacity = useRef(new Animated.Value(0)).current;
@@ -67,7 +69,11 @@ export function AnchoredMenu({
 
   return (
     <View style={[styles.container, style]}>
-      <View ref={triggerRef} collapsable={false} style={styles.triggerWrap}>
+      <View
+        ref={triggerRef}
+        collapsable={false}
+        style={[styles.triggerWrap, fullWidth && styles.triggerWrapFullWidth]}
+      >
         {trigger}
       </View>
       {visible ? (

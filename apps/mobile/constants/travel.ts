@@ -1,4 +1,4 @@
-import type { RegionCandidate, TravelListItem, TravelRecord, TravelViewMode } from '@/types';
+import type { TravelListItem, TravelRecord, TravelViewMode } from '@/types';
 
 export const TRAVEL_VIEW_MODE_OPTIONS: {
   value: TravelViewMode;
@@ -31,6 +31,50 @@ export const TRAVEL_LIST_MOCK: TravelListItem[] = [
       { name: '파도 조각', count: 1 },
       { name: '아메리카노', count: 1 },
       { name: '먹거리', count: 1 }
+    ]
+  },
+  {
+    id: 'scheduled-jeju',
+    title: '제주 동쪽 감성 여행',
+    status: 'scheduled',
+    period: {
+      startDate: '2026.09.18',
+      endDate: '2026.09.20',
+      nights: 2,
+      days: 3
+    },
+    location: '제주특별자치도 제주시',
+    members: [
+      { id: 'donghyun', name: '김동현' },
+      { id: 'daeun', name: '김다은' },
+      { id: 'jeongseon', name: '이정선' }
+    ],
+    items: [
+      { name: '돌하르방 배지', count: 1 },
+      { name: '바다 엽서', count: 2 },
+      { name: '감귤 키링', count: 1 }
+    ]
+  },
+  {
+    id: 'scheduled-seoul',
+    title: '서울 야경 랜덤 투어',
+    status: 'scheduled',
+    period: {
+      startDate: '2026.10.09',
+      endDate: '2026.10.10',
+      nights: 1,
+      days: 2
+    },
+    location: '서울특별시',
+    members: [
+      { id: 'donghyun', name: '김동현' },
+      { id: 'daeun', name: '김다은' },
+      { id: 'sangmin', name: '한상민' }
+    ],
+    items: [
+      { name: '야경 필름', count: 1 },
+      { name: '한강 스티커', count: 2 },
+      { name: '도시 마그넷', count: 1 }
     ]
   },
   {
@@ -78,27 +122,6 @@ export const TRAVEL_LIST_MOCK: TravelListItem[] = [
       { name: '강릉 스티커', count: 3 },
       { name: '단체 사진', count: 1 }
     ]
-  }
-];
-
-export const REGION_CANDIDATE_MOCK: RegionCandidate[] = [
-  {
-    id: 'hwacheon',
-    name: '강원도 화천군',
-    description: '물길 산책과 지역 축제를 함께 즐기기 좋은 랜덤 여행 코스예요.',
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=520&fit=crop'
-  },
-  {
-    id: 'taean',
-    name: '충청남도 태안군',
-    description: '해안 드라이브와 조용한 바닷마을 풍경을 한 번에 담을 수 있어요.',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=520&fit=crop'
-  },
-  {
-    id: 'damyang',
-    name: '전라남도 담양군',
-    description: '대나무 숲길과 한적한 골목을 따라 걷기 좋은 감성 여행지예요.',
-    imageUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400&h=520&fit=crop'
   }
 ];
 

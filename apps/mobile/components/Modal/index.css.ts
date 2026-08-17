@@ -5,7 +5,7 @@ import { theme } from '@travel-gacha/ui';
 export const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: theme.colors.overlay,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -41,10 +41,18 @@ export const styles = StyleSheet.create({
     marginTop: theme.spacing.md
   },
   confirmButton: {
+    minWidth: 120,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing.sm,
     backgroundColor: theme.colors.blue500,
-    borderRadius: theme.radius.md,
+    borderRadius: theme.radius.lg,
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.lg
+  },
+  confirmButtonDisabled: {
+    backgroundColor: theme.colors.grey300
   },
   confirmButtonText: {
     color: theme.colors.white,

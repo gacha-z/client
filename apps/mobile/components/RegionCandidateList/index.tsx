@@ -1,46 +1,48 @@
-import { useState } from 'react';
 import { View } from 'react-native';
 
-import type { RegionCandidate } from '@/types';
+import type { RegionCandidateSlot } from '@/types';
 
 import { RegionCandidateCard } from '../RegionCandidateCard';
 import { styles } from './index.css';
 
 type RegionCandidateListProps = {
-  items: RegionCandidate[];
-  initialSelectedId?: string | null;
-  onSelectionChange?: (selectedId: string | null) => void;
-  onRetryItem?: (item: RegionCandidate) => void;
+  items: RegionCandidateSlot[];
+  selectedId: string | null;
+  onSelectionChange: (selectedId: string | null) => void;
+  onRetryItem?: (item: RegionCandidateSlot) => void;
+  retryingId?: string | null;
 };
 
 export function RegionCandidateList({
   items,
-  initialSelectedId = null,
+  selectedId,
   onSelectionChange,
-  onRetryItem
+  onRetryItem,
+  retryingId = null
 }: RegionCandidateListProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
-
   const handleSelect = (itemId: string) => {
     const nextSelectedId = selectedId === itemId ? null : itemId;
-
-    setSelectedId(nextSelectedId);
-    onSelectionChange?.(nextSelectedId);
+    onSelectionChange(nextSelectedId);
   };
 
   return (
     <View style={styles.list}>
-      {items.map((item) => (
-        <RegionCandidateCard
-          key={item.id}
-          imageUrl={item.imageUrl}
-          name={item.name}
-          description={item.description}
-          selected={item.id === selectedId}
-          onPress={() => handleSelect(item.id)}
-          onRetry={() => onRetryItem?.(item)}
-        />
-      ))}
+      {items.map((item) => {
+        const retryAvailable = onRetryItem && !item.rerollUsed;
+
+        return (
+          <RegionCandidateCard
+            key={item.id}
+            imageUrl={item.region.imageUrl}
+            name={item.region.name}
+            description={item.region.description}
+            selected={item.id === selectedId}
+            onPress={() => handleSelect(item.id)}
+            onRetry={retryAvailable ? () => onRetryItem(item) : undefined}
+            retryLoading={item.id === retryingId}
+          />
+        );
+      })}
     </View>
   );
 }

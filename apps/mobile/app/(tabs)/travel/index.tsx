@@ -1,10 +1,11 @@
 import { View } from 'react-native';
 
 import { ScreenLayout } from '@/components/ScreenLayout';
+import { TravelCard } from '@/components/TravelCard';
 import { TRAVEL_LIST_MOCK } from '@/constants';
 
 import { styles } from './index.css';
-import { TravelCard, TravelListToolbar } from './components';
+import { TravelListToolbar } from './components';
 
 export default function TravelListScreen() {
   return (
