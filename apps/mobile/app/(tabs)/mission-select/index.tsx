@@ -172,7 +172,7 @@ export default function MissionSelectScreen() {
             <Bigbutton label="미션 시작하기" disabled={limitReached} onPress={handleStartMission} />
           </View>
         )}
-        <TodayRecordSection variant={isPending ? 'pending' : 'full'} />
+        <TodayRecordSection />
       </View>
       <Modal
         visible={isPending && allVerified && isTabFocused}

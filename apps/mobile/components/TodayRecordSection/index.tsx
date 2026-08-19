@@ -34,23 +34,13 @@ const RECORD_ITEMS: TodayRecordItem[] = [
   }
 ];
 
-type TodayRecordSectionProps = {
-  /** pending(⑨ 인증 대기) 단계는 일기장/미션로그 2카드만 노출 — Figma 스펙 기준 */
-  variant?: 'full' | 'pending';
-};
-
-/** "오늘의 기록" 섹션(제목+힌트+바로가기 그리드) — 미션 플로우 전 단계(idle/selecting/pending) 공통 */
-export function TodayRecordSection({ variant = 'full' }: TodayRecordSectionProps) {
-  const items =
-    variant === 'pending'
-      ? RECORD_ITEMS.filter((item) => item.key === 'diary' || item.key === 'mission-log')
-      : RECORD_ITEMS;
-
+/** "오늘의 기록" 섹션(제목+힌트+바로가기 그리드) — 미션 플로우 전 단계(idle/selecting/pending) 공통, 4카드 고정(#11) */
+export function TodayRecordSection() {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>오늘의 기록</Text>
       <Text style={styles.sectionHint}>여행의 순간을 남겨보세요!</Text>
-      <TodayRecordGrid items={items} />
+      <TodayRecordGrid items={RECORD_ITEMS} />
     </View>
   );
 }
