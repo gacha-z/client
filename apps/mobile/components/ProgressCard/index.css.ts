@@ -4,9 +4,9 @@ import { colors } from '@travel-gacha/ui';
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f1f3f8',
+    backgroundColor: colors.surfaceGrey,
     borderWidth: 1,
-    borderColor: '#d9d9d9',
+    borderColor: colors.outlineGrey,
     borderRadius: 16,
     padding: 16,
     gap: 12
@@ -29,11 +29,11 @@ export const styles = StyleSheet.create({
   count: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2c2c2c'
+    color: colors.graphite
   },
   statusLabel: {
     fontSize: 12,
-    color: '#757575'
+    color: colors.warmGrey
   },
   track: {
     height: 8,

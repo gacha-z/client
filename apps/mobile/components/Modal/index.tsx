@@ -24,6 +24,9 @@ type ModalProps = {
   confirmLoading?: boolean;
   closeOnBackdropPress?: boolean;
   showCloseButton?: boolean;
+  /** 화면별 강조색이 기본값(black/blue500)과 다를 때만 지정 — 예: 미션 클리어 모달 */
+  titleColor?: string;
+  confirmButtonColor?: string;
 };
 
 function CloseIcon() {
@@ -50,7 +53,9 @@ export function Modal({
   confirmDisabled = false,
   confirmLoading = false,
   closeOnBackdropPress = true,
-  showCloseButton = true
+  showCloseButton = true,
+  titleColor,
+  confirmButtonColor
 }: ModalProps) {
   return (
     <RNModal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -59,7 +64,10 @@ export function Modal({
         <Pressable accessibilityViewIsModal style={styles.container} onPress={() => {}}>
           <View style={styles.header}>
             {title ? (
-              <Text style={styles.title} numberOfLines={1}>
+              <Text
+                style={[styles.title, titleColor ? { color: titleColor } : undefined]}
+                numberOfLines={1}
+              >
                 {title}
               </Text>
             ) : null}
@@ -87,6 +95,7 @@ export function Modal({
                 disabled={confirmDisabled || confirmLoading}
                 style={[
                   styles.confirmButton,
+                  confirmButtonColor ? { backgroundColor: confirmButtonColor } : undefined,
                   (confirmDisabled || confirmLoading) && styles.confirmButtonDisabled
                 ]}
                 onPress={() => void onConfirm()}

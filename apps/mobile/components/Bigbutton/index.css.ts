@@ -19,14 +19,14 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.black
   },
   disabled: {
-    backgroundColor: colors.grey300
+    backgroundColor: colors.disabledGrey
   },
   pressed: {
     opacity: 0.7
   },
   label: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.white
   }
 });

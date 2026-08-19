@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.white
   },
   default: {
-    borderColor: '#d9d9d9'
+    borderColor: colors.outlineGrey
   },
   active: {
     borderColor: colors.blue500,
@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   },
   description: {
     fontSize: 12,
-    color: '#757575'
+    color: colors.warmGrey
   },
   row: {
     flexDirection: 'row',
@@ -54,12 +54,12 @@ export const styles = StyleSheet.create({
   address: {
     flex: 1,
     fontSize: 12,
-    color: '#979eb1'
+    color: colors.slateGrey
   },
   rewardTag: {
     borderWidth: 1,
-    borderColor: '#447af7',
-    backgroundColor: 'rgba(68,122,247,0.1)',
+    borderColor: colors.indigo500,
+    backgroundColor: colors.indigoTint,
     borderRadius: 4,
     paddingHorizontal: 8,
     paddingVertical: 2
@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
   rewardText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#447af7'
+    color: colors.indigo500
   },
   badge: {
     position: 'absolute',
@@ -86,6 +86,6 @@ export const styles = StyleSheet.create({
   badgeText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#979eb1'
+    color: colors.slateGrey
   }
 });

@@ -25,7 +25,21 @@ export const theme = {
     grey600: '#6b7182',
     grey700: '#545866',
     grey800: '#41444f',
-    grey900: '#32343c'
+    grey900: '#32343c',
+
+    slateGrey: '#979eb1',
+    warmGrey: '#757575',
+    graphite: '#2c2c2c',
+    outlineGrey: '#d9d9d9',
+    surfaceGrey: '#f1f3f8',
+    disabledGrey: '#b3b3b3',
+    slateDark: '#2a2e3a',
+
+    indigo500: '#447af7',
+    indigoTint: 'rgba(68, 122, 247, 0.1)',
+    purple500: '#8a38f5',
+    purpleTint: 'rgba(138, 56, 245, 0.1)',
+    cyan500: '#49bcff'
   },
   spacing: {
     xs: 4,

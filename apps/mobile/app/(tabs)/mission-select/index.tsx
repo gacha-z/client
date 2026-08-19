@@ -22,6 +22,7 @@ import {
   startMissionSelectionAtom,
   todayCompletedMissionCountAtom
 } from '@travel-gacha/store';
+import { colors } from '@travel-gacha/ui';
 import { Bigbutton } from '@/components/Bigbutton';
 import { MemberStatusPill } from '@/components/MemberStatusPill';
 import { MissionSelectCard } from '@/components/MissionSelectCard';
@@ -52,6 +53,7 @@ export default function MissionSelectScreen() {
   const clearMission = useSetAtom(clearMissionAtom);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  const isIdle = stage === 'idle';
   const isSelecting = stage === 'selecting';
   const isPending = stage === 'pending';
   const isTabFocused = pathname === '/mission-select';
@@ -73,7 +75,7 @@ export default function MissionSelectScreen() {
         <TripStatusBar
           tripName={MOCK_TRIP.name}
           day={MOCK_TRIP.day}
-          showMore={!isPending}
+          showMore={isIdle}
           onPressMore={() => {}}
         />
         <ProgressCard
@@ -170,14 +172,16 @@ export default function MissionSelectScreen() {
             <Bigbutton label="미션 시작하기" disabled={limitReached} onPress={handleStartMission} />
           </View>
         )}
-        <TodayRecordSection />
+        <TodayRecordSection variant={isPending ? 'pending' : 'full'} />
       </View>
       <Modal
         visible={isPending && allVerified && isTabFocused}
         onClose={clearMission}
         title="미션을 클리어했어요!"
+        titleColor={colors.slateDark}
         onConfirm={clearMission}
         confirmText="미션 완료"
+        confirmButtonColor={colors.cyan500}
         closeOnBackdropPress={false}
       >
         <Text style={styles.modalBody}>
