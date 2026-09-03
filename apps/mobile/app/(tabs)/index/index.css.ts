@@ -27,17 +27,5 @@ export const styles = StyleSheet.create({
   },
   tripList: {
     gap: 16
-  },
-  signupSuccessEmoji: {
-    marginBottom: 12,
-    fontSize: 42,
-    lineHeight: 50,
-    textAlign: 'center'
-  },
-  signupSuccessMessage: {
-    color: colors.grey700,
-    fontSize: 15,
-    lineHeight: 23,
-    textAlign: 'center'
   }
 });

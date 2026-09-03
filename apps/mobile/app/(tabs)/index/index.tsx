@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAtomValue, useSetAtom } from 'jotai';
 
-import { dismissSignupSuccessModalAtom, signupSuccessModalAtom } from '@travel-gacha/store';
 import { Bigbutton } from '@/components/Bigbutton';
 import { RandomIcon } from '@/components/icons';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { Modal } from '@/components/Modal';
 import { TravelCard } from '@/components/TravelCard';
 import { TravelScheduleCalendar } from '@/components/TravelScheduleCalendar';
 import { TRAVEL_LIST_MOCK } from '@/constants';
@@ -17,8 +14,6 @@ import { styles } from './index.css';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const signupSuccessVisible = useAtomValue(signupSuccessModalAtom);
-  const dismissSignupSuccess = useSetAtom(dismissSignupSuccessModalAtom);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const scheduledTrips = TRAVEL_LIST_MOCK.filter((trip) => trip.status === 'scheduled');
@@ -60,18 +55,6 @@ export default function HomeScreen() {
           </View>
         </View>
       </View>
-      <Modal
-        visible={signupSuccessVisible}
-        title="회원가입 완료"
-        confirmText="여행 시작하기"
-        onClose={dismissSignupSuccess}
-        onConfirm={dismissSignupSuccess}
-      >
-        <Text style={styles.signupSuccessEmoji}>🎉</Text>
-        <Text style={styles.signupSuccessMessage}>
-          여행가챠 가입을 환영해요!{`\n`}이제 새로운 여행을 시작해보세요.
-        </Text>
-      </Modal>
     </ScreenLayout>
   );
 }
