@@ -17,11 +17,14 @@ type ModalProps = {
   visible: boolean;
   onClose: () => void;
   title?: string;
-  children: ReactNode;
+  children?: ReactNode;
   onConfirm?: () => void | Promise<void>;
+  onCancel?: () => void;
   confirmText?: string;
+  cancelText?: string;
   confirmDisabled?: boolean;
   confirmLoading?: boolean;
+  confirmVariant?: 'primary' | 'danger';
   closeOnBackdropPress?: boolean;
   showCloseButton?: boolean;
 };
@@ -46,14 +49,23 @@ export function Modal({
   title,
   children,
   onConfirm,
+  onCancel,
   confirmText = '확인',
+  cancelText = '취소',
   confirmDisabled = false,
   confirmLoading = false,
+  confirmVariant = 'primary',
   closeOnBackdropPress = true,
   showCloseButton = true
 }: ModalProps) {
   return (
-    <RNModal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <RNModal
+      visible={visible}
+      transparent
+      animationType="fade"
+      presentationStyle="overFullScreen"
+      onRequestClose={onClose}
+    >
       <Pressable style={styles.backdrop} onPress={closeOnBackdropPress ? onClose : undefined}>
         {/* 빈 onPress: 배경 Pressable로 터치 이벤트가 전파되어 모달이 닫히는 것을 막음 */}
         <Pressable accessibilityViewIsModal style={styles.container} onPress={() => {}}>
@@ -75,9 +87,27 @@ export function Modal({
               </Pressable>
             ) : null}
           </View>
-          <ScrollView contentContainerStyle={styles.contentContainer}>{children}</ScrollView>
+          {children ? (
+            <ScrollView
+              contentContainerStyle={styles.contentContainer}
+              keyboardShouldPersistTaps="handled"
+            >
+              {children}
+            </ScrollView>
+          ) : null}
           {onConfirm ? (
             <View style={styles.footer}>
+              {onCancel ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: confirmLoading }}
+                  disabled={confirmLoading}
+                  style={[styles.cancelButton, confirmLoading && styles.actionButtonDisabled]}
+                  onPress={onCancel}
+                >
+                  <Text style={styles.cancelButtonText}>{cancelText}</Text>
+                </Pressable>
+              ) : null}
               <Pressable
                 accessibilityRole="button"
                 accessibilityState={{
@@ -87,6 +117,8 @@ export function Modal({
                 disabled={confirmDisabled || confirmLoading}
                 style={[
                   styles.confirmButton,
+                  onCancel && styles.splitActionButton,
+                  confirmVariant === 'danger' && styles.confirmButtonDanger,
                   (confirmDisabled || confirmLoading) && styles.confirmButtonDisabled
                 ]}
                 onPress={() => void onConfirm()}
