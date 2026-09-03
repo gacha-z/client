@@ -1,4 +1,12 @@
 export { appReadyAtom } from './atoms/app';
+export {
+  authStatusAtom,
+  completeLoginAtom,
+  completeSignupAtom,
+  dismissSignupSuccessModalAtom,
+  signupSuccessModalAtom,
+  type AuthStatus
+} from './atoms/auth';
 export { missionPendingAtom } from './atoms/navigation';
 export {
   completeTravelCreationAtom,

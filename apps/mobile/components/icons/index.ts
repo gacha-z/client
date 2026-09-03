@@ -28,3 +28,4 @@ export { RandomIcon } from './RandomIcon';
 export { SettingIcon } from './SettingIcon';
 export { SolidCaretIcon } from './SolidCaretIcon';
 export { TravelIcon } from './TravelIcon';
+export { AppleIcon } from './AppleIcon';
