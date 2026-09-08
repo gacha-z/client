@@ -38,6 +38,7 @@ export const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    gap: theme.spacing.sm,
     marginTop: theme.spacing.md
   },
   confirmButton: {
@@ -51,8 +52,34 @@ export const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.lg
   },
+  splitActionButton: {
+    flex: 1,
+    minWidth: 0
+  },
+  cancelButton: {
+    flex: 1,
+    minWidth: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.grey300,
+    borderRadius: theme.radius.lg,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.lg
+  },
+  actionButtonDisabled: {
+    opacity: 0.5
+  },
+  cancelButtonText: {
+    color: theme.colors.grey600,
+    fontWeight: '600',
+    fontSize: 16
+  },
   confirmButtonDisabled: {
     backgroundColor: theme.colors.grey300
+  },
+  confirmButtonDanger: {
+    backgroundColor: '#d84f4f'
   },
   confirmButtonText: {
     color: theme.colors.white,

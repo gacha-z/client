@@ -1,9 +1,11 @@
 import { StyleSheet } from 'react-native';
 
-import { colors } from '@travel-gacha/ui';
-
 export const styles = StyleSheet.create({
-  text: {
-    color: colors.grey700
+  container: {
+    width: '100%',
+    maxWidth: 520,
+    alignSelf: 'center',
+    paddingBottom: 20,
+    gap: 20
   }
 });
