@@ -13,7 +13,6 @@ import { createRegionCandidateSlots } from '@/utils';
 
 import { styles } from './index.css';
 
-const SAMPLE_THUMBNAIL = 'https://picsum.photos/seed/gachaz/246/153';
 const REGION_CANDIDATE_SLOT_MOCK = createRegionCandidateSlots(REGION_CANDIDATE_MOCK);
 
 /** 임시 확인용 화면 — 신규 컴포넌트 5종을 한 번에 렌더링한다. 검수 후 삭제 예정. */
@@ -33,29 +32,26 @@ export default function ComponentPreviewScreen() {
         <Text style={styles.sectionTitle}>MissionSelectCard</Text>
         <View style={styles.row}>
           <MissionSelectCard
-            imageUri={SAMPLE_THUMBNAIL}
-            placeName="경포해변"
+            title="경포해변"
             description="미션 내용이 들어갑니다. 미션 내용이 들어갑니다."
-            address="상세주소 어쩌구 저쩌구"
-            reward="🌊 파도 조각 x 1"
+            missionType="PHOTO"
+            difficulty={2}
             status="default"
             onRetry={() => {}}
           />
           <MissionSelectCard
-            imageUri={SAMPLE_THUMBNAIL}
-            placeName="경포해변"
+            title="경포해변"
             description="미션 내용이 들어갑니다. 미션 내용이 들어갑니다."
-            address="상세주소 어쩌구 저쩌구"
-            reward="🌊 파도 조각 x 1"
+            missionType="PHOTO"
+            difficulty={2}
             status="active"
             onRetry={() => {}}
           />
           <MissionSelectCard
-            imageUri={SAMPLE_THUMBNAIL}
-            placeName="경포해변"
+            title="경포해변"
             description="미션 내용이 들어갑니다. 미션 내용이 들어갑니다."
-            address="상세주소 어쩌구 저쩌구"
-            reward="🌊 파도 조각 x 1"
+            missionType="PHOTO"
+            difficulty={2}
             status="inProgress"
           />
         </View>
