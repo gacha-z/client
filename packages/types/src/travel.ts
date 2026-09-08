@@ -15,3 +15,13 @@ export type RegionCandidate = {
   description: string;
   imageUrl: string;
 };
+
+export type TripStatus = 'CREATED' | 'CANCELLED' | 'COMPLETED';
+
+export type TripDetail = {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  status: TripStatus;
+};
