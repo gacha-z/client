@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "catalog:",
+    "@travel-gacha/types": "workspace:*",
     "axios": "catalog:"
   },
   "peerDependencies": {
