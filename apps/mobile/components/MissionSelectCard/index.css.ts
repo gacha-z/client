@@ -5,7 +5,7 @@ import { colors } from '@travel-gacha/ui';
 export const styles = StyleSheet.create({
   container: {
     width: 246,
-    height: 286,
+    minHeight: 180,
     borderRadius: 16,
     borderWidth: 1,
     overflow: 'hidden',
@@ -25,19 +25,26 @@ export const styles = StyleSheet.create({
   inProgress: {
     borderColor: colors.blue500
   },
-  thumbnail: {
-    width: '100%',
-    height: 153
-  },
-  thumbnailPlaceholder: {
-    backgroundColor: colors.grey100
-  },
   body: {
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 4
+    paddingVertical: 16,
+    gap: 6
   },
-  placeName: {
+  typeTag: {
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: colors.indigo500,
+    backgroundColor: colors.indigoTint,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2
+  },
+  typeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.indigo500
+  },
+  title: {
     fontSize: 16,
     fontWeight: '800',
     color: colors.black
@@ -51,23 +58,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8
   },
-  address: {
-    flex: 1,
+  difficulty: {
     fontSize: 12,
     color: colors.slateGrey
-  },
-  rewardTag: {
-    borderWidth: 1,
-    borderColor: colors.indigo500,
-    backgroundColor: colors.indigoTint,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 2
-  },
-  rewardText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: colors.indigo500
   },
   badge: {
     position: 'absolute',
