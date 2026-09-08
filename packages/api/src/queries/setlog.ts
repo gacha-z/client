@@ -66,11 +66,12 @@ export const uploadSetlog = async ({
   memberId,
   fileUri
 }: UploadSetlogParams): Promise<SetlogEntry> => {
+  const isMovFile = fileUri.toLowerCase().endsWith('.mov');
   const formData = new FormData();
   formData.append('file', {
     uri: fileUri,
-    name: 'setlog.mp4',
-    type: 'video/mp4'
+    name: isMovFile ? 'setlog.mov' : 'setlog.mp4',
+    type: isMovFile ? 'video/quicktime' : 'video/mp4'
   } as unknown as Blob);
 
   const response = await unwrap(
