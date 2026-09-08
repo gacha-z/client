@@ -56,7 +56,7 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
       ? 'selecting'
       : 'idle';
 
-  const verifiedMemberIds = (setlogsQuery.data ?? []).map((entry) => entry.memberId);
+  const verifiedMemberIds = [...new Set((setlogsQuery.data ?? []).map((entry) => entry.memberId))];
   const allVerified = totalMemberCount > 0 && verifiedMemberIds.length >= totalMemberCount;
 
   useEffect(() => {
