@@ -109,9 +109,13 @@ export const createApiClient = (config?: AxiosRequestConfig): AxiosInstance => {
   });
 
   client.interceptors.request.use(async (requestConfig) => {
-    const token = await authTokenProvider();
-    if (token) {
-      requestConfig.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = await authTokenProvider();
+      if (token) {
+        requestConfig.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.warn('[api] Failed to retrieve auth token:', error);
     }
     return requestConfig;
   });
