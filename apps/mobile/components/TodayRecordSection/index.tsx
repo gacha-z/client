@@ -34,7 +34,7 @@ const RECORD_ITEMS: TodayRecordItem[] = [
   }
 ];
 
-/** "오늘의 기록" 섹션(제목+힌트+바로가기 그리드) — 미션 플로우 전 단계(idle/selecting/pending) 공통 */
+/** "오늘의 기록" 섹션(제목+힌트+바로가기 그리드) — 미션 플로우 전 단계(idle/selecting/pending) 공통, 4카드 고정(#11) */
 export function TodayRecordSection() {
   return (
     <View style={styles.section}>

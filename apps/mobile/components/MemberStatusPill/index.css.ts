@@ -10,12 +10,12 @@ export const styles = StyleSheet.create({
     width: 110,
     borderRadius: 200,
     borderWidth: 1,
-    borderColor: '#d9d9d9',
+    borderColor: colors.outlineGrey,
     backgroundColor: colors.white,
     padding: 8
   },
   unverified: {
-    backgroundColor: 'rgba(138,56,245,0.1)'
+    backgroundColor: colors.purpleTint
   },
   ghost: {
     width: 110,
@@ -53,6 +53,6 @@ export const styles = StyleSheet.create({
     color: colors.blue500
   },
   statusUnverified: {
-    color: '#8a38f5'
+    color: colors.purple500
   }
 });
