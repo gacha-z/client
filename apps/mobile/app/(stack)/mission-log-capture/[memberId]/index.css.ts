@@ -10,6 +10,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 60
   },
+  cameraPreview: {
+    ...StyleSheet.absoluteFillObject
+  },
   header: {
     alignItems: 'center'
   },
