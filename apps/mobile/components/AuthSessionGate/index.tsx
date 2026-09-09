@@ -2,11 +2,14 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { useSetAtom } from 'jotai';
 
+import { setAuthTokenProvider } from '@travel-gacha/api';
 import { authStatusAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
-import { hasAuthSession } from '@/services/authSession';
+import { getAuthToken, hasAuthSession } from '@/services/authSession';
 
 import { styles } from './index.css';
+
+setAuthTokenProvider(getAuthToken);
 
 type AuthSessionGateProps = {
   children: ReactNode;

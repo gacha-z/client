@@ -2,24 +2,52 @@ export type TripMember = {
   id: string;
   name: string;
   avatarUri?: string;
-  /** 오늘의 미션 선택자로 랜덤 지정된 멤버인지 여부 (파티 여행 기능) */
+  role: 'OWNER' | 'MEMBER';
+  /** 오늘의 미션 선택자로 표시할 멤버인지 여부 (클라이언트 전용 — 백엔드는 이 개념을 모델링하지 않는다) */
   isMissionPicker?: boolean;
 };
 
 export type MissionCandidate = {
   id: string;
-  placeName: string;
+  missionId: string;
+  missionType: string;
+  title: string;
   description: string;
-  address: string;
-  reward: string;
-  imageUri?: string;
-  /** 이 후보에 대해 "다시하기"를 아직 사용하지 않았는지 여부 */
-  canRetry: boolean;
+  difficulty: number;
+  isSelected: boolean;
+  isRerolled: boolean;
+};
+
+export type MissionRound = {
+  dayNo: number;
+  assignedOrder: number;
+  targetRoundCount: number;
+  candidates: MissionCandidate[];
+};
+
+export type MissionSelectResult = {
+  tripMissionId: string;
+  missionId: string;
+  missionType: string;
+  title: string;
+  description: string;
+  difficulty: number;
+  startedAt: string;
+};
+
+export type SetlogEntry = {
+  id: string;
+  tripId: string;
+  tripMissionId: string;
+  memberId: string;
+  memberNickname: string;
+  fileUrl: string;
+  slotNo: number;
+  createdAt: string;
 };
 
 export type MemberVerificationStatus = 'unverified' | 'verified';
 
 export type MissionOutcome = 'success' | 'failure';
 
-/** 'cleared'는 별도 단계로 두지 않는다 — 클리어 모달 확인 즉시 idle로 복귀 (설계 결정 4) */
 export type MissionStage = 'idle' | 'selecting' | 'pending';
