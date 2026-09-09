@@ -49,7 +49,12 @@ export default function MissionLogCaptureListScreen() {
               name={member.name}
               time={isVerified ? '촬영완료' : '09:00'}
               ready={isReadyToCapture}
-              onPress={() => router.push(`/mission-log-capture/${member.id}?tripId=${tripId}`)}
+              onPress={() =>
+                router.push({
+                  pathname: '/mission-log-capture/[memberId]',
+                  params: { memberId: member.id, tripId }
+                })
+              }
             />
           );
         })}
