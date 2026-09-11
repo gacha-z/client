@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
+import { isApiError, tripListInfiniteQueryOptions } from '@travel-gacha/api';
 import { Bigbutton } from '@/components/Bigbutton';
 import { RandomIcon } from '@/components/icons';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TravelCard } from '@/components/TravelCard';
 import { TravelScheduleCalendar } from '@/components/TravelScheduleCalendar';
-import { TRAVEL_LIST_MOCK } from '@/constants';
-import { toDateKey } from '@/utils';
+import { getDevMemberId } from '@/services/authSession';
+import { toDateKey, toTravelListItem } from '@/utils';
 
 import { styles } from './index.css';
 
@@ -16,7 +18,19 @@ export default function HomeScreen() {
   const router = useRouter();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const scheduledTrips = TRAVEL_LIST_MOCK.filter((trip) => trip.status === 'scheduled');
+  const scheduledTripsQuery = useInfiniteQuery(
+    tripListInfiniteQueryOptions({
+      status: 'CREATED',
+      dateFrom: toDateKey(new Date()),
+      size: 50,
+      memberId: getDevMemberId()
+    })
+  );
+  const scheduledTrips =
+    scheduledTripsQuery.data?.pages
+      .flatMap((page) => page.trips)
+      .map(toTravelListItem)
+      .filter((trip) => trip.status === 'scheduled') ?? [];
 
   const handleRangeChange = (nextStartDate: Date | null, nextEndDate: Date | null) => {
     setStartDate(nextStartDate);
@@ -49,6 +63,25 @@ export default function HomeScreen() {
         <View style={styles.scheduledSection}>
           <Text style={styles.sectionTitle}>예정된 여행</Text>
           <View style={styles.tripList}>
+            {scheduledTripsQuery.isPending && <ActivityIndicator style={styles.state} />}
+            {scheduledTripsQuery.isError && (
+              <View style={styles.state}>
+                <Text style={styles.stateTitle}>예정된 여행을 불러오지 못했어요.</Text>
+                <Text style={styles.stateDescription}>
+                  {isApiError(scheduledTripsQuery.error)
+                    ? scheduledTripsQuery.error.message
+                    : '잠시 후 다시 시도해주세요.'}
+                </Text>
+                <Pressable style={styles.retryButton} onPress={() => scheduledTripsQuery.refetch()}>
+                  <Text style={styles.retryLabel}>다시 시도</Text>
+                </Pressable>
+              </View>
+            )}
+            {scheduledTripsQuery.isSuccess && scheduledTrips.length === 0 && (
+              <View style={styles.state}>
+                <Text style={styles.stateDescription}>예정된 여행이 없어요.</Text>
+              </View>
+            )}
             {scheduledTrips.map((trip) => (
               <TravelCard key={trip.id} trip={trip} />
             ))}

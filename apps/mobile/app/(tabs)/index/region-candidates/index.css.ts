@@ -65,5 +65,26 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: colors.grey400
+  },
+  state: {
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 32
+  },
+  errorText: {
+    color: colors.grey500,
+    fontSize: 14,
+    textAlign: 'center'
+  },
+  retryButton: {
+    borderRadius: 999,
+    backgroundColor: colors.blue500,
+    paddingHorizontal: 20,
+    paddingVertical: 10
+  },
+  retryLabel: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '700'
   }
 });

@@ -3,7 +3,9 @@ import { Pressable, Share, Text, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { useQuery } from '@tanstack/react-query';
 
+import { tripInviteCodeQueryOptions, tripMembersQueryOptions } from '@travel-gacha/api';
 import { resetTravelCreationAtom, travelCreationAtom } from '@travel-gacha/store';
 import { Bigbutton } from '@/components/Bigbutton';
 import { ScreenLayout } from '@/components/ScreenLayout';
@@ -20,8 +22,6 @@ import { styles } from './index.css';
 
 type ToastState = { message: string; variant: ToastVariant } | null;
 
-const INVITATION_LINK_PLACEHOLDER = '(임시 링크)';
-
 export default function TravelCreatedScreen() {
   const router = useRouter();
   const travelCreation = useAtomValue(travelCreationAtom);
@@ -35,6 +35,15 @@ export default function TravelCreatedScreen() {
   const sharingRef = useRef(false);
   const request = travelCreation.step === 'created' ? travelCreation.request : null;
   const region = travelCreation.step === 'created' ? travelCreation.selectedRegion : null;
+  const tripId = travelCreation.step === 'created' ? travelCreation.tripId : '';
+  const membersQuery = useQuery({
+    ...tripMembersQueryOptions(tripId),
+    enabled: Boolean(tripId)
+  });
+  const inviteCodeQuery = useQuery({
+    ...tripInviteCodeQueryOptions(tripId),
+    enabled: Boolean(tripId) && (request?.memberCount ?? 0) > 1
+  });
   const dismissToast = useCallback(() => setToast(null), []);
 
   useEffect(() => {
@@ -48,9 +57,11 @@ export default function TravelCreatedScreen() {
     if (travelCreation.step === 'candidates') router.replace('/region-candidates');
   }, [router, travelCreation.step]);
 
-  if (!request || !region) return null;
+  if (!request || !region || !tripId) return null;
 
-  const invitationLink = INVITATION_LINK_PLACEHOLDER;
+  const invitationLink = inviteCodeQuery.data
+    ? `https://travel-gacha.app/trip/${inviteCodeQuery.data}`
+    : '';
   const roomTitle = getTravelRoomTitle(request.title);
   const partyType = getTravelPartyType(request.memberCount);
   const partyLabel = getTravelPartyLabel(partyType);
@@ -61,7 +72,7 @@ export default function TravelCreatedScreen() {
   };
 
   const handleCopyLink = async () => {
-    if (copyingRef.current) return;
+    if (copyingRef.current || !invitationLink) return;
 
     copyingRef.current = true;
     setIsCopying(true);
@@ -82,7 +93,7 @@ export default function TravelCreatedScreen() {
   };
 
   const handleShareLink = async () => {
-    if (sharingRef.current) return;
+    if (sharingRef.current || !invitationLink) return;
 
     sharingRef.current = true;
     setIsSharing(true);
@@ -159,6 +170,14 @@ export default function TravelCreatedScreen() {
                 <Text style={styles.infoValue}>{region?.name ?? '-'}</Text>
               </View>
               <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>참여 멤버</Text>
+                <Text style={styles.infoValue}>
+                  {membersQuery.isPending
+                    ? '불러오는 중'
+                    : membersQuery.data?.map((member) => member.name).join(', ') || '나'}
+                </Text>
+              </View>
+              <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>하루 미션</Text>
                 <Text style={styles.infoValue}>
                   최소 {request.minimumMissionCount}개 ~ 최대 {request.maximumMissionCount}개
@@ -176,12 +195,16 @@ export default function TravelCreatedScreen() {
               <Text style={styles.invitationTitle}>여행 멤버 초대하기</Text>
               <View style={styles.linkBox}>
                 <Text style={styles.linkText} numberOfLines={1}>
-                  {invitationLink}
+                  {inviteCodeQuery.isPending
+                    ? '초대 코드를 불러오는 중이에요.'
+                    : inviteCodeQuery.isError
+                      ? '초대 코드를 불러오지 못했어요.'
+                      : invitationLink}
                 </Text>
                 <Pressable
                   accessibilityRole="button"
                   accessibilityState={{ busy: isCopying, disabled: isCopying }}
-                  disabled={isCopying}
+                  disabled={isCopying || !invitationLink}
                   style={styles.copyButton}
                   onPress={() => void handleCopyLink()}
                 >
@@ -193,6 +216,7 @@ export default function TravelCreatedScreen() {
               <Bigbutton
                 label="링크 공유하기"
                 variant="dark"
+                disabled={!invitationLink}
                 loading={isSharing}
                 onPress={() => void handleShareLink()}
               />

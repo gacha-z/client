@@ -44,6 +44,7 @@ type TinyIconProps = {
 const statusMeta: Record<TripStatus, { label: string; color: string; backgroundColor: string }> = {
   scheduled: { label: '여행 예정', color: '#ff5a4f', backgroundColor: colors.white },
   active: { label: '진행중', color: colors.blue500, backgroundColor: colors.white },
+  cancelled: { label: '여행 취소', color: colors.grey500, backgroundColor: colors.white },
   completed: { label: '여행 완료', color: colors.grey500, backgroundColor: colors.white }
 };
 

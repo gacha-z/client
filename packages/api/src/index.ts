@@ -22,10 +22,23 @@ export {
   type UpdateMemberParams
 } from './queries/member';
 export {
+  createTrip,
+  cancelTrip,
+  randomTripRegionsQueryOptions,
+  rerollTripRegion,
+  selectTripRegion,
+  tripListRootKey,
+  tripListQueryKey,
+  tripListInfiniteQueryOptions,
   tripDetailQueryKey,
   tripDetailQueryOptions,
   tripMembersQueryKey,
-  tripMembersQueryOptions
+  tripMembersQueryOptions,
+  tripInviteCodeQueryKey,
+  tripInviteCodeQueryOptions,
+  tripRegionsQueryKey,
+  type CreateTripParams,
+  type TripListParams
 } from './queries/trip';
 export {
   missionCandidatesQueryKey,

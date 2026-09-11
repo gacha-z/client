@@ -4,10 +4,11 @@ import type { RegionCandidate, TravelCreateRequest } from '@travel-gacha/types';
 
 export type TravelCreationState =
   | { step: 'form' }
-  | { step: 'candidates'; request: TravelCreateRequest }
+  | { step: 'candidates'; request: TravelCreateRequest; tripId: string }
   | {
       step: 'created';
       request: TravelCreateRequest;
+      tripId: string;
       selectedRegion: RegionCandidate;
     };
 
@@ -17,9 +18,12 @@ const initialTravelCreationState: TravelCreationState = { step: 'form' };
 export const travelCreationAtom = atom<TravelCreationState>(initialTravelCreationState);
 
 /** 입력 확인 후 지역 후보 선택 단계로 이동한다. */
-export const confirmTravelCreationAtom = atom(null, (_get, set, request: TravelCreateRequest) => {
-  set(travelCreationAtom, { step: 'candidates', request });
-});
+export const confirmTravelCreationAtom = atom(
+  null,
+  (_get, set, payload: { request: TravelCreateRequest; tripId: string }) => {
+    set(travelCreationAtom, { step: 'candidates', ...payload });
+  }
+);
 
 /** 선택한 지역을 확정하고 여행 생성 완료 단계로 이동한다. */
 export const completeTravelCreationAtom = atom(null, (get, set, region: RegionCandidate) => {
@@ -29,6 +33,7 @@ export const completeTravelCreationAtom = atom(null, (get, set, region: RegionCa
   set(travelCreationAtom, {
     step: 'created',
     request: state.request,
+    tripId: state.tripId,
     selectedRegion: region
   });
 });
