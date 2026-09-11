@@ -22,7 +22,8 @@
       ]
     ],
     "ios": {
-      "bundleIdentifier": "com.gachaz.travel-gacha"
+      "bundleIdentifier": "dk.gatcha.app",
+      "appleTeamId": "9H8K632W2X"
     }
   }
 }
