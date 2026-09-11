@@ -12,11 +12,18 @@ type ProfileUpdate = Pick<MockUserProfile, 'nickname' | 'age'>;
 type ProfileEditModalProps = {
   visible: boolean;
   profile: MockUserProfile;
+  loading?: boolean;
   onClose: () => void;
   onSave: (profile: ProfileUpdate) => void;
 };
 
-export function ProfileEditModal({ visible, profile, onClose, onSave }: ProfileEditModalProps) {
+export function ProfileEditModal({
+  visible,
+  profile,
+  loading = false,
+  onClose,
+  onSave
+}: ProfileEditModalProps) {
   const [nickname, setNickname] = useState(profile.nickname);
   const [age, setAge] = useState(String(profile.age));
 
@@ -40,7 +47,9 @@ export function ProfileEditModal({ visible, profile, onClose, onSave }: ProfileE
       visible={visible}
       title="프로필 수정"
       confirmText="저장하기"
-      confirmDisabled={!isValid}
+      confirmDisabled={!isValid || loading}
+      confirmLoading={loading}
+      closeOnBackdropPress={!loading}
       onClose={onClose}
       onConfirm={handleSave}
     >

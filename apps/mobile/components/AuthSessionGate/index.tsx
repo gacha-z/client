@@ -5,7 +5,7 @@ import { useSetAtom } from 'jotai';
 import { setAuthTokenProvider } from '@travel-gacha/api';
 import { authStatusAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
-import { getAuthToken, hasAuthSession } from '@/services/authSession';
+import { getAuthToken, getMemberId, hasAuthSession } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -25,7 +25,7 @@ export function AuthSessionGate({ children }: AuthSessionGateProps) {
 
     const restoreSession = async () => {
       try {
-        const signedIn = await hasAuthSession();
+        const [signedIn] = await Promise.all([hasAuthSession(), getMemberId()]);
         if (mounted) setAuthStatus(signedIn ? 'signedIn' : 'signedOut');
       } catch {
         // 저장소를 읽지 못한 경우 안전하게 비로그인 상태로 시작합니다.

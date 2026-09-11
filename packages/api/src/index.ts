@@ -11,9 +11,15 @@ export {
 } from './client';
 export { exampleQueryKey, exampleQueryOptions, type ExampleResponse } from './queries/example';
 export {
+  createMember,
   currentMemberQueryKey,
   currentMemberQueryOptions,
-  type CurrentMember
+  deleteMember,
+  getCurrentMember,
+  updateMember,
+  type CreateMemberParams,
+  type CurrentMember,
+  type UpdateMemberParams
 } from './queries/member';
 export {
   tripDetailQueryKey,

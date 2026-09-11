@@ -12,10 +12,12 @@ import {
 import { Redirect } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
 
+import { createMember } from '@travel-gacha/api';
 import { authStatusAtom, completeSignupAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { mockSignup } from '@/mocks/auth';
+import { saveMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -38,12 +40,12 @@ export default function SignupScreen() {
   const nicknameError = nicknameTouched && normalizedNickname.length === 0;
   const ageError =
     ageTouched &&
-    (age.length === 0 || !Number.isInteger(parsedAge) || parsedAge < 1 || parsedAge > 120);
+    (age.length === 0 || !Number.isInteger(parsedAge) || parsedAge < 1 || parsedAge > 150);
   const isValid =
     normalizedNickname.length > 0 &&
     Number.isInteger(parsedAge) &&
     parsedAge >= 1 &&
-    parsedAge <= 120;
+    parsedAge <= 150;
 
   const handleSignup = async () => {
     setNicknameTouched(true);
@@ -55,6 +57,8 @@ export default function SignupScreen() {
     setSubmitError(null);
 
     try {
+      const memberId = await createMember({ nickname: normalizedNickname, age: parsedAge });
+      await saveMemberId(memberId);
       await mockSignup({ nickname: normalizedNickname, age: parsedAge });
       completeSignup();
     } catch {
@@ -129,7 +133,7 @@ export default function SignupScreen() {
               </View>
               {ageError && (
                 <Text accessibilityLiveRegion="polite" style={styles.fieldError}>
-                  나이는 1세부터 120세까지 입력할 수 있어요.
+                  나이는 1세부터 150세까지 입력할 수 있어요.
                 </Text>
               )}
             </View>
