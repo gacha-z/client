@@ -22,6 +22,16 @@ export {
   type UpdateMemberParams
 } from './queries/member';
 export {
+  notificationListInfiniteQueryOptions,
+  notificationListQueryKey,
+  notificationListRootKey,
+  readNotification,
+  type NotificationItem,
+  type NotificationListPage,
+  type NotificationListParams,
+  type ReadNotificationParams
+} from './queries/notification';
+export {
   createTrip,
   cancelTrip,
   randomTripRegionsQueryOptions,
