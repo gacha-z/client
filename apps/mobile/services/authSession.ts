@@ -4,7 +4,9 @@ import * as SecureStore from 'expo-secure-store';
 const AUTH_SESSION_KEY = 'travel-gacha.auth-session';
 const MOCK_ACCOUNT_KEY = 'travel-gacha.mock-account';
 const AUTH_TOKEN_KEY = 'travel-gacha.auth-token';
+const MEMBER_ID_KEY = 'travel-gacha.member-id';
 const STORED_VALUE = 'true';
+let cachedMemberId: number | undefined;
 
 function getWebStorage() {
   if (typeof globalThis.localStorage === 'undefined') return null;
@@ -79,4 +81,33 @@ export function saveAuthToken(token: string) {
 
 export function clearAuthToken() {
   return deleteItem(AUTH_TOKEN_KEY);
+}
+
+export async function getMemberId(): Promise<number | undefined> {
+  if (cachedMemberId) return cachedMemberId;
+
+  const storedMemberId = Number(await getItem(MEMBER_ID_KEY));
+  if (Number.isInteger(storedMemberId) && storedMemberId > 0) {
+    cachedMemberId = storedMemberId;
+    return storedMemberId;
+  }
+
+  return getDevMemberId();
+}
+
+export async function saveMemberId(memberId: number): Promise<void> {
+  cachedMemberId = memberId;
+  await setItem(MEMBER_ID_KEY, String(memberId));
+}
+
+export async function clearMemberId(): Promise<void> {
+  cachedMemberId = undefined;
+  await deleteItem(MEMBER_ID_KEY);
+}
+
+/** 로그인 연동 전, 저장된 회원 ID 또는 .env 값을 동기적으로 조회합니다. */
+export function getDevMemberId(): number | undefined {
+  if (cachedMemberId) return cachedMemberId;
+  const memberId = Number(process.env.EXPO_PUBLIC_DEV_MEMBER_ID);
+  return Number.isInteger(memberId) && memberId > 0 ? memberId : undefined;
 }

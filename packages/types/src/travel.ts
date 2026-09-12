@@ -11,6 +11,7 @@ export type TravelCreateRequest = {
 
 export type RegionCandidate = {
   id: string;
+  candidateId?: string;
   name: string;
   description: string;
   imageUrl: string;
@@ -24,4 +25,34 @@ export type TripDetail = {
   startDate: string;
   endDate: string;
   status: TripStatus;
+  memberLimit: number;
+  joinedMemberCount: number;
+  missionMin: number;
+  missionMax: number;
+  missionStartAt: string;
+  ownerMemberId: string;
+  tripRegionId?: string;
+  tripRegionName?: string;
+  tripRegionImageUrl?: string;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type TripSummary = {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  status: TripStatus;
+  memberLimit: number;
+  joinedMemberCount: number;
+  tripRegionId?: string;
+  tripRegionName?: string;
+  createdAt: string;
+};
+
+export type TripListPage = {
+  trips: TripSummary[];
+  nextCursor: number | null;
+  hasNext: boolean;
 };

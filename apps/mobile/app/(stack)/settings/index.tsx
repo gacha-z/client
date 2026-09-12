@@ -1,7 +1,14 @@
-import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, Pressable, Text, View } from 'react-native';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 
+import {
+  currentMemberQueryOptions,
+  deleteMember,
+  isApiError,
+  updateMember
+} from '@travel-gacha/api';
 import {
   logoutAtom,
   permissionSettingsAtom,
@@ -14,6 +21,7 @@ import { colors } from '@travel-gacha/ui';
 import { ArrowDownIcon } from '@/components/icons';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { mockLogout, mockWithdrawAccount } from '@/mocks/auth';
+import { getDevMemberId } from '@/services/authSession';
 import { AccountConfirmModal } from './components/AccountConfirmModal';
 import { PermissionToggle } from './components/PermissionToggle';
 import { ProfileEditModal } from './components/ProfileEditModal';
@@ -31,9 +39,37 @@ export default function SettingsScreen() {
   const [profileEditorVisible, setProfileEditorVisible] = useState(false);
   const [confirmationType, setConfirmationType] = useState<ConfirmationType>(null);
   const [pendingAction, setPendingAction] = useState<Exclude<ConfirmationType, null> | null>(null);
+  const memberId = getDevMemberId();
+  const memberQuery = useQuery(currentMemberQueryOptions(memberId));
+  const profileMutation = useMutation({
+    mutationFn: updateMember,
+    onSuccess: (member) => {
+      setProfile((current) => ({ ...current, nickname: member.nickname, age: member.age }));
+      setProfileEditorVisible(false);
+    },
+    onError: (error) => {
+      Alert.alert(
+        '프로필 수정 실패',
+        isApiError(error) ? error.message : '잠시 후 다시 시도해주세요.'
+      );
+    }
+  });
+
+  useEffect(() => {
+    if (!memberQuery.data) return;
+    setProfile((current) => ({
+      ...current,
+      nickname: memberQuery.data.nickname,
+      age: memberQuery.data.age
+    }));
+  }, [memberQuery.data, setProfile]);
+
   const saveProfile = (update: Pick<typeof profile, 'nickname' | 'age'>) => {
-    setProfile((current) => ({ ...current, ...update }));
-    setProfileEditorVisible(false);
+    if (!memberId) {
+      Alert.alert('프로필 수정 실패', '회원 ID를 찾을 수 없어요. 다시 로그인해주세요.');
+      return;
+    }
+    profileMutation.mutate({ memberId, ...update });
   };
 
   const updatePermission = (key: keyof PermissionSettings, value: boolean) => {
@@ -58,10 +94,17 @@ export default function SettingsScreen() {
 
     setPendingAction('withdrawal');
     try {
+      if (!memberId) throw new Error('회원 ID를 찾을 수 없어요. 다시 로그인해주세요.');
+      await deleteMember(memberId);
       await mockWithdrawAccount();
       resetSettings();
       setConfirmationType(null);
       withdrawAccount();
+    } catch (error) {
+      Alert.alert(
+        '회원 탈퇴 실패',
+        isApiError(error) || error instanceof Error ? error.message : '잠시 후 다시 시도해주세요.'
+      );
     } finally {
       setPendingAction(null);
     }
@@ -151,6 +194,7 @@ export default function SettingsScreen() {
       <ProfileEditModal
         visible={profileEditorVisible}
         profile={profile}
+        loading={profileMutation.isPending}
         onClose={() => setProfileEditorVisible(false)}
         onSave={saveProfile}
       />

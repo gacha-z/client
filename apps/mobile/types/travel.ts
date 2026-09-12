@@ -1,6 +1,6 @@
 import type { RegionCandidate as SharedRegionCandidate } from '@travel-gacha/types';
 
-export type TripStatus = 'scheduled' | 'active' | 'completed';
+export type TripStatus = 'scheduled' | 'active' | 'cancelled' | 'completed';
 
 export type TravelPeriod = {
   startDate: string;
@@ -30,6 +30,8 @@ export type TravelListItem = {
   location: string;
   members: TravelMember[];
   items: CollectionItemRecord[];
+  joinedMemberCount?: number;
+  memberLimit?: number;
 };
 
 export type TravelViewMode = 'list' | 'calendar';

@@ -9,4 +9,11 @@ export type {
   MissionStage,
   MissionOutcome
 } from './mission';
-export type { RegionCandidate, TravelCreateRequest, TripStatus, TripDetail } from './travel';
+export type {
+  RegionCandidate,
+  TravelCreateRequest,
+  TripStatus,
+  TripDetail,
+  TripSummary,
+  TripListPage
+} from './travel';

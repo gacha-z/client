@@ -27,5 +27,31 @@ export const styles = StyleSheet.create({
   },
   tripList: {
     gap: 16
+  },
+  state: {
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 24
+  },
+  stateTitle: {
+    color: colors.grey700,
+    fontSize: 15,
+    fontWeight: '700'
+  },
+  stateDescription: {
+    color: colors.grey500,
+    fontSize: 14,
+    textAlign: 'center'
+  },
+  retryButton: {
+    borderRadius: 999,
+    backgroundColor: colors.blue500,
+    paddingHorizontal: 20,
+    paddingVertical: 10
+  },
+  retryLabel: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '700'
   }
 });

@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import {
+  isApiError,
+  randomTripRegionsQueryOptions,
+  rerollTripRegion,
+  selectTripRegion,
+  tripDetailQueryKey,
+  tripListRootKey
+} from '@travel-gacha/api';
 import { completeTravelCreationAtom, travelCreationAtom } from '@travel-gacha/store';
 import { Bigbutton } from '@/components/Bigbutton';
 import { RegionCandidateList } from '@/components/RegionCandidateList';
@@ -16,6 +25,7 @@ import { styles } from './index.css';
 
 export default function RegionCandidatesScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const travelCreation = useAtomValue(travelCreationAtom);
   const completeTravelCreation = useSetAtom(completeTravelCreationAtom);
   const [candidateSlots, setCandidateSlots] = useState(() =>
@@ -29,11 +39,24 @@ export default function RegionCandidatesScreen() {
   const rerolledSlotIdsRef = useRef(new Set<string>());
   const creatingTravelRef = useRef(false);
   const request = travelCreation.step === 'form' ? null : travelCreation.request;
+  const tripId = travelCreation.step === 'form' ? '' : travelCreation.tripId;
   const dismissRerollError = useCallback(() => setRerollErrorVisible(false), []);
+  const regionsQuery = useQuery({
+    ...randomTripRegionsQueryOptions(tripId),
+    enabled: Boolean(tripId)
+  });
+  const rerollMutation = useMutation({ mutationFn: rerollTripRegion });
+  const selectMutation = useMutation({ mutationFn: selectTripRegion });
 
   useEffect(() => {
-    if (!request) router.replace('/travel-create');
-  }, [request, router]);
+    if (!request || !tripId) router.replace('/travel-create');
+  }, [request, router, tripId]);
+
+  useEffect(() => {
+    if (regionsQuery.data) {
+      setCandidateSlots(createRegionCandidateSlots(regionsQuery.data));
+    }
+  }, [regionsQuery.data]);
 
   useFocusEffect(
     useCallback(() => {
@@ -51,7 +74,12 @@ export default function RegionCandidatesScreen() {
     setRerollingSlotId(slot.id);
 
     try {
-      const replacement = await requestRegionCandidateRerollMock(candidateSlots);
+      const replacement = slot.region.candidateId
+        ? await rerollMutation.mutateAsync({
+            tripId,
+            tripCandidateId: slot.region.candidateId
+          })
+        : await requestRegionCandidateRerollMock(candidateSlots);
 
       rerolledSlotIdsRef.current.add(slot.id);
       setCandidateSlots((current) => replaceRegionCandidateSlot(current, slot.id, replacement));
@@ -64,19 +92,35 @@ export default function RegionCandidatesScreen() {
     }
   };
 
-  const handleCreateTravel = () => {
-    if (!selectedSlotId || !request || creatingTravelRef.current) return;
+  const handleCreateTravel = async () => {
+    if (!selectedSlotId || !request || !tripId || creatingTravelRef.current) return;
 
     const selectedSlot = candidateSlots.find(({ id }) => id === selectedSlotId);
-    if (!selectedSlot) return;
+    if (!selectedSlot || !Number.isInteger(Number(selectedSlot.region.id))) return;
 
     creatingTravelRef.current = true;
     setIsCreatingTravel(true);
-    completeTravelCreation(selectedSlot.region);
-    router.push('/travel-created');
+    try {
+      await selectMutation.mutateAsync({ tripId, tripRegionId: selectedSlot.region.id });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: tripListRootKey }),
+        queryClient.invalidateQueries({ queryKey: tripDetailQueryKey(tripId) })
+      ]);
+      completeTravelCreation(selectedSlot.region);
+      router.push('/travel-created');
+    } catch {
+      setRerollErrorVisible(true);
+      creatingTravelRef.current = false;
+      setIsCreatingTravel(false);
+    }
   };
 
   if (!request) return null;
+
+  const selectedSlot = candidateSlots.find(({ id }) => id === selectedSlotId);
+  const canSelectRegion = Boolean(
+    regionsQuery.isSuccess && selectedSlot && Number.isInteger(Number(selectedSlot.region.id))
+  );
 
   return (
     <View style={styles.screen}>
@@ -94,6 +138,19 @@ export default function RegionCandidatesScreen() {
           <View style={styles.candidateSection}>
             <Text style={styles.heading}>랜덤 지역 후보</Text>
             <Text style={styles.description}>3가지의 후보 중 1개를 선택하세요!</Text>
+            {regionsQuery.isPending && <ActivityIndicator />}
+            {regionsQuery.isError && (
+              <View style={styles.state}>
+                <Text style={styles.errorText}>
+                  {isApiError(regionsQuery.error)
+                    ? regionsQuery.error.message
+                    : '추천 지역을 불러오지 못했어요.'}
+                </Text>
+                <Pressable style={styles.retryButton} onPress={() => regionsQuery.refetch()}>
+                  <Text style={styles.retryLabel}>다시 시도</Text>
+                </Pressable>
+              </View>
+            )}
             <RegionCandidateList
               items={candidateSlots}
               selectedId={selectedSlotId}
@@ -103,16 +160,16 @@ export default function RegionCandidatesScreen() {
             />
             <Bigbutton
               label="선택한 지역으로 여행 만들기"
-              disabled={!selectedSlotId || !request}
+              disabled={!canSelectRegion}
               loading={isCreatingTravel}
-              onPress={handleCreateTravel}
+              onPress={() => void handleCreateTravel()}
             />
           </View>
         </View>
       </ScreenLayout>
       <Toast
         visible={rerollErrorVisible}
-        message="새로운 지역 후보를 불러오지 못했어요. 다시 시도해주세요."
+        message="요청을 처리하지 못했어요. 다시 시도해주세요."
         variant="error"
         onDismiss={dismissRerollError}
       />

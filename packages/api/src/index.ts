@@ -11,15 +11,44 @@ export {
 } from './client';
 export { exampleQueryKey, exampleQueryOptions, type ExampleResponse } from './queries/example';
 export {
+  createMember,
   currentMemberQueryKey,
   currentMemberQueryOptions,
-  type CurrentMember
+  deleteMember,
+  getCurrentMember,
+  updateMember,
+  type CreateMemberParams,
+  type CurrentMember,
+  type UpdateMemberParams
 } from './queries/member';
 export {
+  notificationListInfiniteQueryOptions,
+  notificationListQueryKey,
+  notificationListRootKey,
+  readNotification,
+  type NotificationItem,
+  type NotificationListPage,
+  type NotificationListParams,
+  type ReadNotificationParams
+} from './queries/notification';
+export {
+  createTrip,
+  cancelTrip,
+  randomTripRegionsQueryOptions,
+  rerollTripRegion,
+  selectTripRegion,
+  tripListRootKey,
+  tripListQueryKey,
+  tripListInfiniteQueryOptions,
   tripDetailQueryKey,
   tripDetailQueryOptions,
   tripMembersQueryKey,
-  tripMembersQueryOptions
+  tripMembersQueryOptions,
+  tripInviteCodeQueryKey,
+  tripInviteCodeQueryOptions,
+  tripRegionsQueryKey,
+  type CreateTripParams,
+  type TripListParams
 } from './queries/trip';
 export {
   missionCandidatesQueryKey,

@@ -10,8 +10,12 @@ import { styles } from './index.css';
 
 export function TravelCard({ trip }: { trip: TravelListItem }) {
   const router = useRouter();
-  const actionLabel = trip.status === 'scheduled' ? '수정하기' : '자세히보기';
-  const actionDisabled = trip.status === 'scheduled';
+  const memberLabel =
+    trip.members.length > 0
+      ? formatTravelMembers(trip.members)
+      : trip.joinedMemberCount !== undefined && trip.memberLimit !== undefined
+        ? `${trip.joinedMemberCount} / ${trip.memberLimit}명`
+        : '-';
 
   return (
     <View style={[commonStyles.card, styles.card]}>
@@ -24,18 +28,18 @@ export function TravelCard({ trip }: { trip: TravelListItem }) {
       <View style={styles.infoBlock}>
         <InfoRow icon="calendar">{formatTravelPeriod(trip.period)}</InfoRow>
         <InfoRow icon="location">{trip.location}</InfoRow>
-        <InfoRow icon="people">{formatTravelMembers(trip.members)}</InfoRow>
-        {trip.status !== 'scheduled' && (
+        <InfoRow icon="people">{memberLabel}</InfoRow>
+        {trip.status !== 'scheduled' && trip.items.length > 0 && (
           <InfoRow icon="items">{formatCollectionItems(trip.items)}</InfoRow>
         )}
       </View>
       <View style={styles.cardFooter}>
         <PillButton
-          label={actionLabel}
-          disabled={actionDisabled}
+          label="자세히보기"
           onPress={() =>
             router.push({
-              pathname: '/travel-record'
+              pathname: '/travel-record',
+              params: { tripId: trip.id }
             })
           }
         />

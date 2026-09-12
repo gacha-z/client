@@ -1,8 +1,10 @@
 import { useCallback, useRef, useState, type ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useSetAtom } from 'jotai';
+import { useMutation } from '@tanstack/react-query';
 
+import { createTrip, isApiError } from '@travel-gacha/api';
 import { confirmTravelCreationAtom, resetTravelCreationAtom } from '@travel-gacha/store';
 import { Bigbutton } from '@/components/Bigbutton';
 import { FormInput } from '@/components/FormInput';
@@ -17,6 +19,7 @@ import {
 } from '@/constants';
 import { RandomIcon } from '@/components/icons';
 import { useTravelCreateForm } from '@/hooks';
+import { getDevMemberId } from '@/services/authSession';
 import { formatTravelDate } from '@/utils';
 
 import { styles } from './index.css';
@@ -72,6 +75,17 @@ export default function TravelCreateScreen() {
   });
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [isGeneratingCandidates, setIsGeneratingCandidates] = useState(false);
+  const createTripMutation = useMutation({
+    mutationFn: createTrip,
+    onError: (error) => {
+      generatingRef.current = false;
+      setIsGeneratingCandidates(false);
+      Alert.alert(
+        '여행 생성 실패',
+        isApiError(error) ? error.message : '여행을 생성하지 못했어요. 다시 시도해주세요.'
+      );
+    }
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -88,9 +102,16 @@ export default function TravelCreateScreen() {
     generatingRef.current = true;
     setIsGeneratingCandidates(true);
 
-    confirmTravelCreation(request);
-    setConfirmationOpen(false);
-    router.push('/region-candidates');
+    createTripMutation.mutate(
+      { ...request, memberId: getDevMemberId() },
+      {
+        onSuccess: (tripId) => {
+          confirmTravelCreation({ request, tripId });
+          setConfirmationOpen(false);
+          router.push('/region-candidates');
+        }
+      }
+    );
   };
 
   const handleOpenConfirmation = () => {

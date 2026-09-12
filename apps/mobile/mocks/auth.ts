@@ -1,5 +1,6 @@
 import {
   clearAuthSession,
+  clearMemberId,
   clearMockAccount,
   hasMockAccount,
   saveAuthSession,
@@ -38,5 +39,6 @@ export function mockLogout() {
 /** TODO: 실제 회원 탈퇴 API 호출로 교체합니다. */
 export async function mockWithdrawAccount(): Promise<void> {
   await clearAuthSession();
+  await clearMemberId();
   await clearMockAccount();
 }

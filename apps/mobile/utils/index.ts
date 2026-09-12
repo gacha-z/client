@@ -3,3 +3,4 @@ export * from './regionCandidates';
 export * from './travelCreate';
 export * from './travelCreateFormat';
 export * from './travelRecord';
+export * from './tripList';
