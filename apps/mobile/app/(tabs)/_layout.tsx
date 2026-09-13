@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs } from 'expo-router/tabs';
 
 import { AuthenticatedRoute } from '@/components/AuthenticatedRoute';
 import { NavigationBar } from '@/components/NavigationBar';

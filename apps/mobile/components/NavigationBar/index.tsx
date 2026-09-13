@@ -1,4 +1,4 @@
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import type { BottomTabBarProps } from 'expo-router/tabs';
 import { useRouter } from 'expo-router';
 import { useAtomValue } from 'jotai';
 import { memo, useCallback, useEffect, useRef } from 'react';
