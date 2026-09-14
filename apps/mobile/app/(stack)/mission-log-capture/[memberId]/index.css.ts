@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 60
   },
   cameraPreview: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFill
   },
   header: {
     alignItems: 'center'
