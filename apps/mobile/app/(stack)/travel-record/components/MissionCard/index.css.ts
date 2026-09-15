@@ -4,21 +4,12 @@ import { colors } from '@travel-gacha/ui';
 
 export const styles = StyleSheet.create({
   missionCard: {
-    minHeight: 144,
     padding: 12,
+    gap: 6
+  },
+  headerRow: {
     flexDirection: 'row',
-    gap: 12
-  },
-  thumbnail: {
-    width: 124,
-    height: 124,
-    borderRadius: 3,
-    overflow: 'hidden',
-    backgroundColor: colors.blue100
-  },
-  missionContent: {
-    flex: 1,
-    minWidth: 0
+    gap: 6
   },
   missionTitle: {
     fontSize: 15,
@@ -26,15 +17,41 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.grey900
   },
-  missionMeta: {
-    marginTop: 6,
-    gap: 3
+  missionDescription: {
+    fontSize: 13,
+    lineHeight: 19,
+    color: colors.grey600
   },
-  rewardTags: {
-    marginTop: 6,
+  setlogList: {
+    marginTop: 4,
+    gap: 6
+  },
+  setlogRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 5
+    justifyContent: 'space-between',
+    gap: 8
+  },
+  setlogMember: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.grey700
+  },
+  downloadButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: colors.blue50
+  },
+  downloadLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.blue500
+  },
+  emptyText: {
+    marginTop: 4,
+    fontSize: 13,
+    color: colors.grey400
   }
 });
