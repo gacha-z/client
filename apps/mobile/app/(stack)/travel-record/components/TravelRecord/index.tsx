@@ -43,7 +43,7 @@ export function TravelRecord({ travel }: TravelRecordProps) {
 
       <View style={styles.summaryRow}>
         <SummaryBox label="달성한 미션" value={`${daySummary.completedMissionCount} 개`} />
-        <SummaryBox label="수집 아이템" value={`${daySummary.collectedItemCount} 개`} />
+        <SummaryBox label="업로드된 셋로그" value={`${daySummary.setlogCount} 개`} />
       </View>
 
       <View style={styles.missionList}>
