@@ -34,6 +34,11 @@ export {
 export {
   createTrip,
   cancelTrip,
+  joinTrip,
+  leaveTrip,
+  kickTripMember,
+  transferTripOwner,
+  updateTrip,
   randomTripRegionsQueryOptions,
   rerollTripRegion,
   selectTripRegion,
@@ -48,7 +53,8 @@ export {
   tripInviteCodeQueryOptions,
   tripRegionsQueryKey,
   type CreateTripParams,
-  type TripListParams
+  type TripListParams,
+  type UpdateTripParams
 } from './queries/trip';
 export {
   missionCandidatesQueryKey,

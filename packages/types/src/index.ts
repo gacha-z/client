@@ -15,5 +15,6 @@ export type {
   TripStatus,
   TripDetail,
   TripSummary,
-  TripListPage
+  TripListPage,
+  TripUpdateRequest
 } from './travel';

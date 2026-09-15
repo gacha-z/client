@@ -7,7 +7,8 @@ import type {
   TripListPage,
   TripMember,
   TripStatus,
-  TripSummary
+  TripSummary,
+  TripUpdateRequest
 } from '@travel-gacha/types';
 import { getApiClient, unwrap, type ApiEnvelope } from '../client';
 
@@ -83,6 +84,10 @@ type TripCreateResponse = {
 
 type TripInviteCodeResponse = {
   inviteCode: string;
+};
+
+type TripJoinResponse = {
+  tripId: number;
 };
 
 const toTripDetail = (response: TripDetailResponse): TripDetail => ({
@@ -308,3 +313,91 @@ export const tripInviteCodeQueryOptions = (tripId: string) =>
     staleTime: Infinity,
     retry: 1
   });
+
+export const joinTrip = async ({
+  code,
+  memberId
+}: {
+  code: string;
+  memberId: number;
+}): Promise<string> => {
+  const response = await unwrap(
+    getApiClient().post<ApiEnvelope<TripJoinResponse>>(
+      '/api/v1/trips/join',
+      { code },
+      { params: { userId: memberId } }
+    )
+  );
+  return String(response.tripId);
+};
+
+export const leaveTrip = async ({
+  tripId,
+  memberId
+}: {
+  tripId: string;
+  memberId: number;
+}): Promise<void> => {
+  await unwrap(
+    getApiClient().post<ApiEnvelope<unknown>>(`/api/v1/trips/${tripId}/leave`, undefined, {
+      params: { userId: memberId }
+    })
+  );
+};
+
+export const kickTripMember = async ({
+  tripId,
+  targetMemberId,
+  memberId
+}: {
+  tripId: string;
+  targetMemberId: string;
+  memberId: number;
+}): Promise<void> => {
+  await unwrap(
+    getApiClient().delete<ApiEnvelope<unknown>>(
+      `/api/v1/trips/${tripId}/members/${targetMemberId}`,
+      { params: { userId: memberId } }
+    )
+  );
+};
+
+export const transferTripOwner = async ({
+  tripId,
+  newOwnerMemberId,
+  memberId
+}: {
+  tripId: string;
+  newOwnerMemberId: string;
+  memberId: number;
+}): Promise<void> => {
+  await unwrap(
+    getApiClient().patch<ApiEnvelope<unknown>>(`/api/v1/trips/${tripId}/owner`, undefined, {
+      params: { newOwnerMemberId: Number(newOwnerMemberId), userId: memberId }
+    })
+  );
+};
+
+export type UpdateTripParams = TripUpdateRequest & { tripId: string; memberId: number };
+
+export const updateTrip = async ({
+  tripId,
+  memberId,
+  missionStartHour,
+  missionStartMinute,
+  ...rest
+}: UpdateTripParams): Promise<TripDetail> => {
+  const missionStartTime =
+    missionStartHour !== undefined && missionStartMinute !== undefined
+      ? `${String(missionStartHour).padStart(2, '0')}:${String(missionStartMinute).padStart(2, '0')}`
+      : undefined;
+
+  const response = await unwrap(
+    getApiClient().patch<ApiEnvelope<TripDetailResponse>>(
+      `/api/v1/trips/${tripId}`,
+      { ...rest, missionStartTime },
+      { params: { userId: memberId } }
+    )
+  );
+  return toTripDetail(response);
+};
