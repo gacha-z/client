@@ -6,6 +6,7 @@ import { setAuthTokenProvider } from '@travel-gacha/api';
 import { authStatusAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { getAuthToken, getMemberId, hasAuthSession } from '@/services/authSession';
+import { syncPushNotificationStatusSilently } from '@/services/pushNotifications';
 
 import { styles } from './index.css';
 
@@ -25,8 +26,9 @@ export function AuthSessionGate({ children }: AuthSessionGateProps) {
 
     const restoreSession = async () => {
       try {
-        const [signedIn] = await Promise.all([hasAuthSession(), getMemberId()]);
+        const [signedIn, memberId] = await Promise.all([hasAuthSession(), getMemberId()]);
         if (mounted) setAuthStatus(signedIn ? 'signedIn' : 'signedOut');
+        if (signedIn && memberId) void syncPushNotificationStatusSilently(memberId);
       } catch {
         // 저장소를 읽지 못한 경우 안전하게 비로그인 상태로 시작합니다.
         if (mounted) setAuthStatus('signedOut');
