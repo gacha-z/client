@@ -7,7 +7,10 @@ export type {
   SetlogEntry,
   MemberVerificationStatus,
   MissionStage,
-  MissionOutcome
+  MissionOutcome,
+  MissionHistoryStatus,
+  MissionHistoryItem,
+  MissionHistoryDay
 } from './mission';
 export type {
   RegionCandidate,

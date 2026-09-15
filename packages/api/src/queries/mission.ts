@@ -1,6 +1,12 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import type { MissionCandidate, MissionRound, MissionSelectResult } from '@travel-gacha/types';
+import type {
+  MissionCandidate,
+  MissionHistoryDay,
+  MissionHistoryStatus,
+  MissionRound,
+  MissionSelectResult
+} from '@travel-gacha/types';
 import { getApiClient, unwrap, type ApiEnvelope } from '../client';
 
 type MissionCandidateResponse = {
@@ -135,6 +141,67 @@ export const completeMission = async ({
     )
   );
 };
+
+type MissionHistoryItemResponse = {
+  dayNo: number;
+  assignedOrder: number;
+  tripMissionId: number;
+  missionId: number;
+  missionType: string;
+  title: string;
+  description: string;
+  difficulty: number;
+  status: MissionHistoryStatus;
+  startedAt?: string | null;
+  completedAt?: string | null;
+  failedAt?: string | null;
+};
+
+type MissionHistoryDayResponse = {
+  dayNo: number;
+  missions: MissionHistoryItemResponse[];
+};
+
+export const missionHistoryQueryKey = (tripId: string) =>
+  ['trips', tripId, 'missions', 'history'] as const;
+
+export const missionHistoryQueryOptions = ({
+  tripId,
+  memberId
+}: {
+  tripId: string;
+  memberId?: number;
+}) =>
+  queryOptions({
+    queryKey: missionHistoryQueryKey(tripId),
+    queryFn: async (): Promise<MissionHistoryDay[]> => {
+      const response = await unwrap(
+        getApiClient().get<ApiEnvelope<MissionHistoryDayResponse[]>>(
+          `/api/v1/trips/${tripId}/missions/history`,
+          { params: { userId: memberId } }
+        )
+      );
+      return response.map((day) => ({
+        dayNo: day.dayNo,
+        missions: day.missions.map((mission) => ({
+          tripMissionId: String(mission.tripMissionId),
+          dayNo: mission.dayNo,
+          assignedOrder: mission.assignedOrder,
+          missionId: String(mission.missionId),
+          missionType: mission.missionType,
+          title: mission.title,
+          description: mission.description,
+          difficulty: mission.difficulty,
+          status: mission.status,
+          startedAt: mission.startedAt ?? undefined,
+          completedAt: mission.completedAt ?? undefined,
+          failedAt: mission.failedAt ?? undefined
+        }))
+      }));
+    },
+    staleTime: 30 * 1000,
+    retry: 1
+  });
 
 export type FailMissionParams = {
   tripId: string;
