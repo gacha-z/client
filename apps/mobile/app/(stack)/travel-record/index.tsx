@@ -8,18 +8,19 @@ import {
   cancelTrip,
   isApiError,
   leaveTrip,
+  missionHistoryQueryOptions,
   tripDetailQueryKey,
   tripDetailQueryOptions,
   tripInviteCodeQueryOptions,
   tripListRootKey,
-  tripMembersQueryOptions
+  tripMembersQueryOptions,
+  tripSetlogsQueryOptions
 } from '@travel-gacha/api';
 import { Modal } from '@/components/Modal';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { InfoRow, StatusBadge } from '@/components/TravelPrimitives';
-import { TRAVEL_RECORD_MOCK } from '@/constants';
 import { getDevMemberId } from '@/services/authSession';
-import { toDateKey, toTravelListItem } from '@/utils';
+import { buildTravelRecord, toDateKey, toTravelListItem } from '@/utils';
 
 import { TravelRecord } from './components/TravelRecord';
 import { styles } from './index.css';
@@ -35,10 +36,19 @@ export default function TravelRecordScreen() {
   const [cancelVisible, setCancelVisible] = useState(false);
   const [leaveVisible, setLeaveVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const devMemberId = getDevMemberId();
   const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
   const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
   const inviteCodeQuery = useQuery({
     ...tripInviteCodeQueryOptions(tripId),
+    enabled: Boolean(tripId)
+  });
+  const missionHistoryQuery = useQuery({
+    ...missionHistoryQueryOptions({ tripId, memberId: devMemberId }),
+    enabled: Boolean(tripId)
+  });
+  const setlogsQuery = useQuery({
+    ...tripSetlogsQueryOptions({ tripId, memberId: devMemberId }),
     enabled: Boolean(tripId)
   });
   const cancelMutation = useMutation({
@@ -62,7 +72,6 @@ export default function TravelRecordScreen() {
   });
 
   const trip = tripQuery.data;
-  const devMemberId = getDevMemberId();
   const isOwner = Boolean(
     trip && devMemberId !== undefined && trip.ownerMemberId === String(devMemberId)
   );
@@ -120,15 +129,14 @@ export default function TravelRecordScreen() {
 
   const cardTrip = toTravelListItem(trip);
   const missionTime = trip.missionStartAt.slice(11, 16);
-  const travelRecord = {
-    ...TRAVEL_RECORD_MOCK,
-    id: trip.id,
+  const travelRecord = buildTravelRecord({
+    tripId: trip.id,
     title: trip.title,
     period: cardTrip.period,
-    members:
-      membersQuery.data?.map((member) => ({ id: member.id, name: member.name })) ??
-      TRAVEL_RECORD_MOCK.members
-  };
+    members: membersQuery.data?.map((member) => ({ id: member.id, name: member.name })) ?? [],
+    missionHistory: missionHistoryQuery.data ?? [],
+    setlogs: setlogsQuery.data ?? []
+  });
 
   return (
     <ScreenLayout title="여행 상세" scrollable headerActions showBack fallbackRoute="/travel">
@@ -204,7 +212,11 @@ export default function TravelRecordScreen() {
 
         <View style={styles.recordSection}>
           <Text style={styles.sectionTitle}>여행 기록</Text>
-          <TravelRecord travel={travelRecord} />
+          {missionHistoryQuery.isPending ? <ActivityIndicator /> : null}
+          {missionHistoryQuery.isSuccess && !travelRecord ? (
+            <Text style={styles.stateDescription}>아직 진행된 미션이 없어요.</Text>
+          ) : null}
+          <TravelRecord travel={travelRecord ?? undefined} />
         </View>
 
         {isOwner && trip.status === 'CREATED' ? (
