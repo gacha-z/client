@@ -19,6 +19,17 @@ export type RegionCandidate = {
 
 export type TripStatus = 'CREATED' | 'CANCELLED' | 'COMPLETED';
 
+export type TripUpdateRequest = {
+  title?: string;
+  startDate?: string;
+  endDate?: string;
+  memberLimit?: number;
+  missionMin?: number;
+  missionMax?: number;
+  missionStartHour?: number;
+  missionStartMinute?: number;
+};
+
 export type TripDetail = {
   id: string;
   title: string;

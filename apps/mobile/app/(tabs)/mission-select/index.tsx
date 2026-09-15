@@ -3,12 +3,16 @@ import { useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, usePathname } from 'expo-router';
 import * as Location from 'expo-location';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 
 import {
   currentMemberQueryOptions,
+  isApiError,
+  kickTripMember,
   tripDetailQueryOptions,
+  tripInviteCodeQueryOptions,
+  tripMembersQueryKey,
   tripMembersQueryOptions
 } from '@travel-gacha/api';
 import { missionOutcomesAtom } from '@travel-gacha/store';
@@ -24,7 +28,9 @@ import { TodayRecordSection } from '@/components/TodayRecordSection';
 import { TripStatusBar } from '@/components/TripStatusBar';
 import { useTodayMission } from '@/hooks';
 import { getDevMemberId } from '@/services/authSession';
+import { toDateKey } from '@/utils';
 
+import { MemberInviteSection } from './components/MemberInviteSection';
 import { styles } from './index.css';
 
 /** dayNo를 기준으로 한 명을 "오늘의 미션 선택자"로 표시한다 (클라이언트 전용 cosmetic 배지) */
@@ -41,8 +47,11 @@ export default function MissionSelectScreen() {
   const pathname = usePathname();
   const isTabFocused = pathname === '/mission-select';
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [kickTarget, setKickTarget] = useState<TripMember | null>(null);
+  const devMemberId = getDevMemberId();
+  const queryClient = useQueryClient();
 
-  const memberQuery = useQuery(currentMemberQueryOptions(getDevMemberId()));
+  const memberQuery = useQuery(currentMemberQueryOptions(devMemberId));
   const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
   const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
   const outcomes = useAtomValue(missionOutcomesAtom);
@@ -51,6 +60,27 @@ export default function MissionSelectScreen() {
     tripId,
     memberId: memberQuery.data?.id ?? null,
     totalMemberCount: membersQuery.data?.length ?? 0
+  });
+
+  const isOwner = Boolean(
+    tripQuery.data && memberQuery.data && tripQuery.data.ownerMemberId === memberQuery.data.id
+  );
+  const isBeforeTripStart = Boolean(
+    tripQuery.data && toDateKey(new Date()) < tripQuery.data.startDate
+  );
+  const inviteCodeQuery = useQuery({
+    ...tripInviteCodeQueryOptions(tripId),
+    enabled: Boolean(tripId) && isBeforeTripStart
+  });
+  const kickMutation = useMutation({
+    mutationFn: kickTripMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tripMembersQueryKey(tripId) });
+      setKickTarget(null);
+    },
+    onError: (error) => {
+      Alert.alert('강퇴 실패', isApiError(error) ? error.message : '잠시 후 다시 시도해주세요.');
+    }
   });
 
   if (!tripId) {
@@ -177,6 +207,14 @@ export default function MissionSelectScreen() {
               onPress={handleConfirmSelection}
             />
           </View>
+        ) : isBeforeTripStart && !mission.limitReached ? (
+          <MemberInviteSection
+            tripTitle={tripQuery.data?.title ?? ''}
+            inviteCode={inviteCodeQuery.data}
+            members={membersQuery.data ?? []}
+            isOwner={isOwner}
+            onPressKick={setKickTarget}
+          />
         ) : (
           <View style={styles.section}>
             {mission.limitReached ? (
@@ -209,6 +247,23 @@ export default function MissionSelectScreen() {
         <Text style={styles.modalBody}>
           축하합니다 🎉🎉{'\n'}아이템 획득 후, 새로운 미션에 도전해보아요!
         </Text>
+      </Modal>
+      <Modal
+        visible={Boolean(kickTarget)}
+        title={`${kickTarget?.name ?? ''}님을 강퇴하시겠어요?`}
+        onClose={() => setKickTarget(null)}
+        onCancel={() => setKickTarget(null)}
+        onConfirm={() => {
+          if (!devMemberId || !kickTarget) return;
+          kickMutation.mutate({ tripId, targetMemberId: kickTarget.id, memberId: devMemberId });
+        }}
+        cancelText="돌아가기"
+        confirmText="강퇴"
+        confirmVariant="danger"
+        confirmLoading={kickMutation.isPending}
+        closeOnBackdropPress={!kickMutation.isPending}
+      >
+        <Text style={styles.modalBody}>강퇴된 멤버는 초대 코드로 다시 참여할 수 있어요.</Text>
       </Modal>
     </ScreenLayout>
   );

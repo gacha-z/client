@@ -28,6 +28,15 @@ export const styles = StyleSheet.create({
   tripList: {
     gap: 16
   },
+  joinLink: {
+    alignItems: 'center',
+    paddingVertical: 4
+  },
+  joinLinkLabel: {
+    color: colors.blue500,
+    fontSize: 14,
+    fontWeight: '700'
+  },
   state: {
     alignItems: 'center',
     gap: 10,

@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   cancelTrip,
   isApiError,
+  leaveTrip,
   tripDetailQueryKey,
   tripDetailQueryOptions,
   tripInviteCodeQueryOptions,
@@ -18,7 +19,7 @@ import { ScreenLayout } from '@/components/ScreenLayout';
 import { InfoRow, StatusBadge } from '@/components/TravelPrimitives';
 import { TRAVEL_RECORD_MOCK } from '@/constants';
 import { getDevMemberId } from '@/services/authSession';
-import { toTravelListItem } from '@/utils';
+import { toDateKey, toTravelListItem } from '@/utils';
 
 import { TravelRecord } from './components/TravelRecord';
 import { styles } from './index.css';
@@ -32,6 +33,7 @@ export default function TravelRecordScreen() {
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = getParam(tripIdParam) ?? '';
   const [cancelVisible, setCancelVisible] = useState(false);
+  const [leaveVisible, setLeaveVisible] = useState(false);
   const [copied, setCopied] = useState(false);
   const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
   const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
@@ -50,16 +52,30 @@ export default function TravelRecordScreen() {
       router.replace('/travel');
     }
   });
+  const leaveMutation = useMutation({
+    mutationFn: leaveTrip,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: tripListRootKey });
+      setLeaveVisible(false);
+      router.replace('/travel');
+    }
+  });
 
   const trip = tripQuery.data;
   const devMemberId = getDevMemberId();
   const isOwner = Boolean(
     trip && devMemberId !== undefined && trip.ownerMemberId === String(devMemberId)
   );
+  const isBeforeTripStart = Boolean(trip && toDateKey(new Date()) < trip.startDate);
 
   const handleCancel = () => {
     if (!devMemberId || !tripId) return;
     cancelMutation.mutate({ tripId, requestMemberId: devMemberId });
+  };
+
+  const handleLeave = () => {
+    if (!devMemberId || !tripId) return;
+    leaveMutation.mutate({ tripId, memberId: devMemberId });
   };
 
   const handleCopyInviteCode = async () => {
@@ -141,7 +157,19 @@ export default function TravelRecordScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>여행 멤버</Text>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>여행 멤버</Text>
+            {isOwner && !isBeforeTripStart ? (
+              <Pressable
+                style={styles.manageButton}
+                onPress={() =>
+                  router.push({ pathname: '/travel-record/members', params: { tripId } })
+                }
+              >
+                <Text style={styles.manageLabel}>관리</Text>
+              </Pressable>
+            ) : null}
+          </View>
           {membersQuery.isPending ? <ActivityIndicator /> : null}
           {membersQuery.isError ? (
             <Text style={styles.stateDescription}>멤버를 불러오지 못했어요.</Text>
@@ -184,6 +212,12 @@ export default function TravelRecordScreen() {
             <Text style={styles.cancelLabel}>여행 취소하기</Text>
           </Pressable>
         ) : null}
+
+        {!isOwner && trip.status === 'CREATED' ? (
+          <Pressable style={styles.cancelButton} onPress={() => setLeaveVisible(true)}>
+            <Text style={styles.cancelLabel}>여행 나가기</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       <Modal
@@ -206,6 +240,30 @@ export default function TravelRecordScreen() {
             {isApiError(cancelMutation.error)
               ? cancelMutation.error.message
               : '여행을 취소하지 못했어요.'}
+          </Text>
+        ) : null}
+      </Modal>
+
+      <Modal
+        visible={leaveVisible}
+        title="여행에서 나가시겠어요?"
+        onClose={() => setLeaveVisible(false)}
+        onCancel={() => setLeaveVisible(false)}
+        onConfirm={handleLeave}
+        cancelText="돌아가기"
+        confirmText="나가기"
+        confirmVariant="danger"
+        confirmLoading={leaveMutation.isPending}
+        closeOnBackdropPress={!leaveMutation.isPending}
+      >
+        <Text style={styles.modalDescription}>
+          나가면 이 여행방의 기록에 더 이상 접근할 수 없어요.
+        </Text>
+        {leaveMutation.isError ? (
+          <Text style={styles.errorText}>
+            {isApiError(leaveMutation.error)
+              ? leaveMutation.error.message
+              : '여행에서 나가지 못했어요.'}
           </Text>
         ) : null}
       </Modal>

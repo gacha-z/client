@@ -41,6 +41,18 @@ export const styles = StyleSheet.create({
   },
   recordSection: { gap: 12 },
   sectionTitle: { color: colors.grey900, fontSize: 16, fontWeight: '800' },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  manageButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: colors.grey50
+  },
+  manageLabel: { color: colors.grey700, fontSize: 13, fontWeight: '700' },
   memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   memberName: { color: colors.grey700, fontSize: 14 },
   memberRole: { color: colors.blue500, fontSize: 13, fontWeight: '700' },
