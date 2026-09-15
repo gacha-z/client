@@ -60,6 +60,13 @@ export default function HomeScreen() {
           disabled={!startDate || !endDate}
           onPress={handleStartRandomTravel}
         />
+        <Pressable
+          accessibilityRole="button"
+          style={styles.joinLink}
+          onPress={() => router.push('/travel-join')}
+        >
+          <Text style={styles.joinLinkLabel}>초대 코드로 여행 참여하기</Text>
+        </Pressable>
         <View style={styles.scheduledSection}>
           <Text style={styles.sectionTitle}>예정된 여행</Text>
           <View style={styles.tripList}>
