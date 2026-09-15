@@ -52,6 +52,43 @@ export const missionSetlogsQueryOptions = (tripMissionId: string) =>
     retry: 1
   });
 
+export type TripSetlogsParams = {
+  tripId: string;
+  memberId?: number;
+};
+
+export const tripSetlogsQueryKey = (tripId: string) => ['trips', tripId, 'setlogs'] as const;
+
+export const tripSetlogsQueryOptions = ({ tripId, memberId }: TripSetlogsParams) =>
+  queryOptions({
+    queryKey: tripSetlogsQueryKey(tripId),
+    queryFn: async (): Promise<SetlogEntry[]> => {
+      const response = await unwrap(
+        getApiClient().get<ApiEnvelope<SetlogResponse[]>>(`/api/v1/trips/${tripId}/setlogs`, {
+          params: { userId: memberId }
+        })
+      );
+      return response.map(toSetlogEntry);
+    },
+    staleTime: 30 * 1000,
+    retry: 1
+  });
+
+export const downloadSetlog = async ({
+  setlogId,
+  memberId
+}: {
+  setlogId: string;
+  memberId: number;
+}): Promise<string> => {
+  const response = await unwrap(
+    getApiClient().get<ApiEnvelope<{ fileUrl: string }>>(`/api/v1/setlogs/${setlogId}/download`, {
+      params: { userId: memberId }
+    })
+  );
+  return response.fileUrl;
+};
+
 export type UploadSetlogParams = {
   tripId: string;
   tripMissionId: string;

@@ -59,6 +59,8 @@ export {
 export {
   missionCandidatesQueryKey,
   missionCandidatesQueryOptions,
+  missionHistoryQueryKey,
+  missionHistoryQueryOptions,
   selectMissionCandidate,
   rerollMissionCandidate,
   completeMission,
@@ -79,6 +81,10 @@ export {
 export {
   missionSetlogsQueryKey,
   missionSetlogsQueryOptions,
+  tripSetlogsQueryKey,
+  tripSetlogsQueryOptions,
   uploadSetlog,
-  type UploadSetlogParams
+  downloadSetlog,
+  type UploadSetlogParams,
+  type TripSetlogsParams
 } from './queries/setlog';

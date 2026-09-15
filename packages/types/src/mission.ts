@@ -46,6 +46,28 @@ export type SetlogEntry = {
   createdAt: string;
 };
 
+export type MissionHistoryStatus = 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'NOT_PERFORMED';
+
+export type MissionHistoryItem = {
+  tripMissionId: string;
+  dayNo: number;
+  assignedOrder: number;
+  missionId: string;
+  missionType: string;
+  title: string;
+  description: string;
+  difficulty: number;
+  status: MissionHistoryStatus;
+  startedAt?: string;
+  completedAt?: string;
+  failedAt?: string;
+};
+
+export type MissionHistoryDay = {
+  dayNo: number;
+  missions: MissionHistoryItem[];
+};
+
 export type MemberVerificationStatus = 'unverified' | 'verified';
 
 export type MissionOutcome = 'success' | 'failure';
