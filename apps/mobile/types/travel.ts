@@ -1,4 +1,7 @@
-import type { RegionCandidate as SharedRegionCandidate } from '@travel-gacha/types';
+import type {
+  MissionHistoryStatus,
+  RegionCandidate as SharedRegionCandidate
+} from '@travel-gacha/types';
 
 export type TripStatus = 'scheduled' | 'active' | 'cancelled' | 'completed';
 
@@ -41,13 +44,21 @@ export type CollectionItemRecord = {
   count: number;
 };
 
+export type MissionSetlogRecord = {
+  id: string;
+  memberNickname: string;
+  fileUrl: string;
+  slotNo: number;
+};
+
 export type MissionRecord = {
   id: string;
   title: string;
-  place: string;
-  successTime: string;
-  photoUrl: string;
-  collectedItems: CollectionItemRecord[];
+  description: string;
+  difficulty: number;
+  status: MissionHistoryStatus;
+  completedAt?: string;
+  setlogs: MissionSetlogRecord[];
 };
 
 export type DiaryRecord = {
