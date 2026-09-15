@@ -63,6 +63,14 @@ export {
   type FailMissionParams
 } from './queries/mission';
 export {
+  registerDevice,
+  updateDevicePermissions,
+  type DeviceOsType,
+  type DevicePermissionStatus,
+  type RegisterDeviceParams,
+  type UpdateDevicePermissionsParams
+} from './queries/device';
+export {
   missionSetlogsQueryKey,
   missionSetlogsQueryOptions,
   uploadSetlog,
