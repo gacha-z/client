@@ -13,7 +13,8 @@ function getWebStorage() {
   return globalThis.localStorage;
 }
 
-async function getItem(key: string) {
+/** 플랫폼별 보안 저장소 — authSession 외 모듈(예: deviceSession)에서도 재사용합니다. */
+export async function getItem(key: string) {
   if (Platform.OS === 'web') {
     return getWebStorage()?.getItem(key) ?? null;
   }
@@ -21,7 +22,7 @@ async function getItem(key: string) {
   return SecureStore.getItemAsync(key);
 }
 
-async function setItem(key: string, value: string) {
+export async function setItem(key: string, value: string) {
   if (Platform.OS === 'web') {
     getWebStorage()?.setItem(key, value);
     return;
@@ -30,7 +31,7 @@ async function setItem(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
-async function deleteItem(key: string) {
+export async function deleteItem(key: string) {
   if (Platform.OS === 'web') {
     getWebStorage()?.removeItem(key);
     return;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, Text, View } from 'react-native';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 
@@ -22,6 +22,11 @@ import { ArrowDownIcon } from '@/components/icons';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { mockLogout, mockWithdrawAccount } from '@/mocks/auth';
 import { getDevMemberId } from '@/services/authSession';
+import { clearDeviceId } from '@/services/deviceSession';
+import {
+  getPushNotificationStatus,
+  requestPushNotificationRegistration
+} from '@/services/pushNotifications';
 import { AccountConfirmModal } from './components/AccountConfirmModal';
 import { PermissionToggle } from './components/PermissionToggle';
 import { ProfileEditModal } from './components/ProfileEditModal';
@@ -64,6 +69,16 @@ export default function SettingsScreen() {
     }));
   }, [memberQuery.data, setProfile]);
 
+  useEffect(() => {
+    let mounted = true;
+    void getPushNotificationStatus().then((granted) => {
+      if (mounted) setPermissions((current) => ({ ...current, pushNotification: granted }));
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [setPermissions]);
+
   const saveProfile = (update: Pick<typeof profile, 'nickname' | 'age'>) => {
     if (!memberId) {
       Alert.alert('프로필 수정 실패', '회원 ID를 찾을 수 없어요. 다시 로그인해주세요.');
@@ -74,6 +89,28 @@ export default function SettingsScreen() {
 
   const updatePermission = (key: keyof PermissionSettings, value: boolean) => {
     setPermissions((current) => ({ ...current, [key]: value }));
+  };
+
+  const handleTogglePushNotification = async (value: boolean) => {
+    if (!memberId) return;
+
+    if (!value) {
+      Alert.alert(
+        '앱 푸시 알림 끄기',
+        '앱 알림 권한은 기기 설정에서 끌 수 있어요. 설정 화면으로 이동할까요?',
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '설정으로 이동', onPress: () => void Linking.openSettings() }
+        ]
+      );
+      return;
+    }
+
+    const granted = await requestPushNotificationRegistration(memberId);
+    setPermissions((current) => ({ ...current, pushNotification: granted }));
+    if (!granted) {
+      Alert.alert('알림 권한이 꺼져있어요', '기기 설정에서 앱 알림 권한을 허용해주세요.');
+    }
   };
 
   const handleLogout = async () => {
@@ -97,6 +134,7 @@ export default function SettingsScreen() {
       if (!memberId) throw new Error('회원 ID를 찾을 수 없어요. 다시 로그인해주세요.');
       await deleteMember(memberId);
       await mockWithdrawAccount();
+      await clearDeviceId();
       resetSettings();
       setConfirmationType(null);
       withdrawAccount();
@@ -166,7 +204,7 @@ export default function SettingsScreen() {
                 <PermissionToggle
                   label="앱 푸시 알림"
                   value={permissions.pushNotification}
-                  onValueChange={(value) => updatePermission('pushNotification', value)}
+                  onValueChange={(value) => void handleTogglePushNotification(value)}
                 />
               </View>
             )}
