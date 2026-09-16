@@ -20,7 +20,7 @@ import {
 import { colors } from '@travel-gacha/ui';
 import { ArrowDownIcon } from '@/components/icons';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { mockLogout, mockWithdrawAccount } from '@/mocks/auth';
+import { clearSessionAfterWithdrawal, signOut } from '@/services/auth';
 import { getDevMemberId } from '@/services/authSession';
 import { clearDeviceId } from '@/services/deviceSession';
 import {
@@ -118,7 +118,7 @@ export default function SettingsScreen() {
 
     setPendingAction('logout');
     try {
-      await mockLogout();
+      await signOut();
       setConfirmationType(null);
       logout();
     } finally {
@@ -133,7 +133,7 @@ export default function SettingsScreen() {
     try {
       if (!memberId) throw new Error('회원 ID를 찾을 수 없어요. 다시 로그인해주세요.');
       await deleteMember(memberId);
-      await mockWithdrawAccount();
+      await clearSessionAfterWithdrawal();
       await clearDeviceId();
       resetSettings();
       setConfirmationType(null);

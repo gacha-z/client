@@ -10,6 +10,7 @@ export {
   type ApiEnvelope
 } from './client';
 export { exampleQueryKey, exampleQueryOptions, type ExampleResponse } from './queries/example';
+export { loginWithApple, logout, refreshTokens, type AppleLoginResult } from './queries/auth';
 export {
   createMember,
   currentMemberQueryKey,

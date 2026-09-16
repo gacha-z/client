@@ -2,8 +2,8 @@ import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 const AUTH_SESSION_KEY = 'travel-gacha.auth-session';
-const MOCK_ACCOUNT_KEY = 'travel-gacha.mock-account';
 const AUTH_TOKEN_KEY = 'travel-gacha.auth-token';
+const REFRESH_TOKEN_KEY = 'travel-gacha.refresh-token';
 const MEMBER_ID_KEY = 'travel-gacha.member-id';
 const STORED_VALUE = 'true';
 let cachedMemberId: number | undefined;
@@ -53,19 +53,6 @@ export function clearAuthSession() {
   return deleteItem(AUTH_SESSION_KEY);
 }
 
-/** API 연동 전, 회원가입을 마친 mock 계정인지 구분하기 위한 값입니다. */
-export async function hasMockAccount() {
-  return (await getItem(MOCK_ACCOUNT_KEY)) === STORED_VALUE;
-}
-
-export function saveMockAccount() {
-  return setItem(MOCK_ACCOUNT_KEY, STORED_VALUE);
-}
-
-export function clearMockAccount() {
-  return deleteItem(MOCK_ACCOUNT_KEY);
-}
-
 /**
  * 실제 로그인 연동 전까지, `EXPO_PUBLIC_DEV_JWT`가 설정되어 있으면 그 값을 우선 사용합니다.
  * 없으면 저장된 토큰(추후 실제 로그인 완료 시 saveAuthToken으로 채워짐)을 사용합니다.
@@ -82,6 +69,18 @@ export function saveAuthToken(token: string) {
 
 export function clearAuthToken() {
   return deleteItem(AUTH_TOKEN_KEY);
+}
+
+export function getRefreshToken() {
+  return getItem(REFRESH_TOKEN_KEY);
+}
+
+export function saveRefreshToken(token: string) {
+  return setItem(REFRESH_TOKEN_KEY, token);
+}
+
+export function clearRefreshToken() {
+  return deleteItem(REFRESH_TOKEN_KEY);
 }
 
 export async function getMemberId(): Promise<number | undefined> {

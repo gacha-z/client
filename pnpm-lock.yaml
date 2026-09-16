@@ -79,6 +79,9 @@ catalogs:
     expo:
       specifier: ^57.0.22
       version: 57.0.22
+    expo-apple-authentication:
+      specifier: ^57.0.2
+      version: 57.0.2
     expo-camera:
       specifier: ^57.0.5
       version: 57.0.5
@@ -208,6 +211,9 @@ importers:
       expo:
         specifier: catalog:expo
         version: 57.0.22(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.21)(react-dom@19.2.3(react@19.2.3))(react-native-web@0.21.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native-worklets@0.10.4(@babel/core@7.29.7)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+      expo-apple-authentication:
+        specifier: catalog:expo
+        version: 57.0.2(expo@57.0.22)(react-native@0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo-camera:
         specifier: catalog:expo
         version: 57.0.5(@types/emscripten@1.41.6)(expo@57.0.22)(react-native-web@0.21.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
@@ -2725,6 +2731,13 @@ packages:
   execa@8.0.1:
     resolution: {integrity: sha512-VyhnebXciFV2DESc+p6B+y0LjSm0krU4OgJN44qFAhBY0TJ+1V61tYD2+wHusZ6F9n5K+vl8k0sTy7PEfV4qpg==}
     engines: {node: '>=16.17'}
+
+  expo-apple-authentication@57.0.2:
+    resolution: {integrity: sha512-00KnlyRceRKski+ljZz8q8JhJZ4D3ZScU+Y0RqS6ElJ8GaCWfd7Qh5tMr47yIU/dKDrOnkzkFUM+6vyHS5HI7Q==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+      react-native: '*'
 
   expo-application@57.0.3:
     resolution: {integrity: sha512-t/CxeLio0NjY9/cOak1tQp62/hAUjzJxmhR4rVUR7K5bb9YoEtfl1ZekTn+Iuh+dYOMYzF0l72ODMSmY3CR1NA==}
@@ -8263,6 +8276,12 @@ snapshots:
       onetime: 6.0.0
       signal-exit: 4.1.0
       strip-final-newline: 3.0.0
+
+  expo-apple-authentication@57.0.2(expo@57.0.22)(react-native@0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3):
+    dependencies:
+      expo: 57.0.22(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.21)(react-dom@19.2.3(react@19.2.3))(react-native-web@0.21.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native-worklets@0.10.4(@babel/core@7.29.7)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+      react: 19.2.3
+      react-native: 0.86.3(@babel/core@7.29.7)(@react-native-community/cli@13.6.9)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3)
 
   expo-application@57.0.3(expo@57.0.22):
     dependencies:

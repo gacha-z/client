@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, Text, useWindowDimensions, View } from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { Redirect } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { authStatusAtom, completeLoginAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { AppleIcon, LogoIcon } from '@/components/icons';
-import { mockAppleLogin } from '@/mocks/auth';
+import { signInWithApple } from '@/services/auth';
 
 import { styles } from './index.css';
 
@@ -27,9 +28,27 @@ export default function LoginScreen() {
     setErrorMessage(null);
 
     try {
-      const result = await mockAppleLogin();
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL
+        ]
+      });
+      if (!credential.identityToken) {
+        throw new Error('Apple로부터 로그인 토큰을 받지 못했어요.');
+      }
+
+      const result = await signInWithApple(credential.identityToken);
       completeLogin(result);
-    } catch {
+    } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ERR_REQUEST_CANCELED'
+      ) {
+        return;
+      }
       setErrorMessage('로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsLoading(false);

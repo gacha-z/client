@@ -12,12 +12,11 @@ import {
 import { Redirect } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
 
-import { createMember } from '@travel-gacha/api';
+import { updateMember } from '@travel-gacha/api';
 import { authStatusAtom, completeSignupAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { mockSignup } from '@/mocks/auth';
-import { saveMemberId } from '@/services/authSession';
+import { getDevMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -57,9 +56,9 @@ export default function SignupScreen() {
     setSubmitError(null);
 
     try {
-      const memberId = await createMember({ nickname: normalizedNickname, age: parsedAge });
-      await saveMemberId(memberId);
-      await mockSignup({ nickname: normalizedNickname, age: parsedAge });
+      const memberId = getDevMemberId();
+      if (!memberId) throw new Error('회원 ID를 찾을 수 없어요. 다시 로그인해주세요.');
+      await updateMember({ memberId, nickname: normalizedNickname, age: parsedAge });
       completeSignup();
     } catch {
       setSubmitError('가입 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
