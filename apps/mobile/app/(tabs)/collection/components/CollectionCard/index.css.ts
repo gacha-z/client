@@ -40,47 +40,19 @@ export const styles = StyleSheet.create({
   categoryLabelLocked: {
     color: colors.grey400
   },
-  regionItemTag: {
+  itemTag: {
     borderColor: '#93d4aa',
     backgroundColor: '#edf8f1'
   },
-  regionItemLabel: {
+  itemLabel: {
     color: '#287548'
   },
-  travelCountTag: {
+  badgeTag: {
     borderColor: colors.blue400,
     backgroundColor: colors.blue50
   },
-  travelCountLabel: {
+  badgeLabel: {
     color: colors.blue700
-  },
-  regionExplorationTag: {
-    borderColor: '#bda8e8',
-    backgroundColor: '#f5f0ff'
-  },
-  regionExplorationLabel: {
-    color: '#6f4ba8'
-  },
-  regionAchievementTag: {
-    borderColor: '#f1c27d',
-    backgroundColor: '#fff5e8'
-  },
-  regionAchievementLabel: {
-    color: '#9a5b16'
-  },
-  missionDiaryTag: {
-    borderColor: '#aab7ee',
-    backgroundColor: '#eef1ff'
-  },
-  missionDiaryLabel: {
-    color: '#4d5d9e'
-  },
-  foodCafeTag: {
-    borderColor: '#f1aaa0',
-    backgroundColor: '#fff0ed'
-  },
-  foodCafeLabel: {
-    color: '#a44c42'
   },
   iconWrap: {
     width: 28,
@@ -89,6 +61,11 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  itemImage: {
+    width: 28,
+    height: 28,
+    borderRadius: 4
   },
   copy: {
     gap: 4

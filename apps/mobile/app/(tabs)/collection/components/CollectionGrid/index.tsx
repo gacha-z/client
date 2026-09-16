@@ -1,12 +1,10 @@
 import { Text, View } from 'react-native';
 
-import type { CollectionEntry } from '@/constants';
-
-import { CollectionCard } from '../CollectionCard';
+import { CollectionCard, type CollectionViewEntry } from '../CollectionCard';
 import { styles } from './index.css';
 
 type CollectionGridProps = {
-  entries: ReadonlyArray<CollectionEntry>;
+  entries: ReadonlyArray<CollectionViewEntry>;
   unlockedIds: ReadonlySet<string>;
 };
 
