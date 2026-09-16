@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "catalog:expo",
     "@tanstack/react-query": "catalog:",
     "@travel-gacha/types": "workspace:*",
     "jotai": "catalog:"

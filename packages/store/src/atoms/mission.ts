@@ -1,6 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { atom } from 'jotai';
+import { atomWithStorage, createJSONStorage, unwrap } from 'jotai/utils';
 
 import type { MissionOutcome, MissionSelectResult, MissionStage } from '@travel-gacha/types';
+
+const missionStorage = createJSONStorage<MissionSelectResult | null>(() => AsyncStorage);
 
 /**
  * 오늘의 미션 진행 단계 — API 연동 후에는 useTodayMission 훅이 서버 응답을 기반으로
@@ -19,6 +23,13 @@ export const missionOutcomesAtom = atom<MissionOutcome[]>([]);
 /**
  * 오늘 선택되어 진행 중인 미션 — select API 응답을 그대로 캐시한다.
  * 한계: 백엔드에 "현재 진행 중인 미션" 조회 API가 없어, 이 값의 유일한 출처는 select
- * 응답뿐이다. 앱을 재시작하면 이 값을 잃고 selecting 단계로 되돌아간다 (알려진 제약).
+ * 응답뿐이다. 앱 재시작 시에도 유지되도록 AsyncStorage에 영속화한다.
+ * unwrap으로 감싸 AsyncStorage 조회가 끝나기 전까지는 null을 반환하게 해,
+ * 기존 소비처(Suspense 미사용)가 동기 값으로 계속 읽을 수 있도록 한다.
  */
-export const activeMissionAtom = atom<MissionSelectResult | null>(null);
+const persistedActiveMissionAtom = atomWithStorage<MissionSelectResult | null>(
+  'activeMission',
+  null,
+  missionStorage
+);
+export const activeMissionAtom = unwrap(persistedActiveMissionAtom, (prev) => prev ?? null);

@@ -15,6 +15,7 @@
   "dependencies": {
     "@babel/runtime": "catalog:",
     "@expo/metro-runtime": "catalog:expo",
+    "@react-native-async-storage/async-storage": "catalog:expo",
     "@tanstack/react-query": "catalog:",
     "@travel-gacha/api": "workspace:*",
     "@travel-gacha/store": "workspace:*",
