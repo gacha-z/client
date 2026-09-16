@@ -74,6 +74,18 @@ export const tripSetlogsQueryOptions = ({ tripId, memberId }: TripSetlogsParams)
     retry: 1
   });
 
+export const missionSetlogsDownloadQueryKey = (tripMissionId: string) =>
+  ['missions', tripMissionId, 'setlogs', 'download'] as const;
+
+export const downloadMissionSetlogs = async (tripMissionId: string): Promise<SetlogEntry[]> => {
+  const response = await unwrap(
+    getApiClient().get<ApiEnvelope<SetlogResponse[]>>(
+      `/api/v1/missions/${tripMissionId}/setlogs/download`
+    )
+  );
+  return response.map(toSetlogEntry);
+};
+
 export const downloadSetlog = async ({
   setlogId,
   memberId

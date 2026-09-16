@@ -89,6 +89,8 @@ export {
 export {
   missionSetlogsQueryKey,
   missionSetlogsQueryOptions,
+  missionSetlogsDownloadQueryKey,
+  downloadMissionSetlogs,
   tripSetlogsQueryKey,
   tripSetlogsQueryOptions,
   uploadSetlog,
