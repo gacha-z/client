@@ -3,14 +3,14 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { useQueries } from '@tanstack/react-query';
 
 import { badgesQueryOptions, isApiError, itemsQueryOptions } from '@travel-gacha/api';
+import { CollectionGrid } from '@/components/Collection/CollectionGrid';
+import { CollectionSummary } from '@/components/Collection/CollectionSummary';
+import type { CollectionViewEntry } from '@/components/Collection/CollectionCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { COLLECTION_FILTERS, type CollectionFilterValue } from '@/constants';
 import { getDevMemberId } from '@/services/authSession';
 
 import { CollectionFilter } from './components/CollectionFilter';
-import { CollectionGrid } from './components/CollectionGrid';
-import { CollectionSummary } from './components/CollectionSummary';
-import type { CollectionViewEntry } from './components/CollectionCard';
 import { styles } from './index.css';
 
 export default function CollectionScreen() {
