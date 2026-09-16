@@ -14,7 +14,7 @@
    - `apps/mobile/eas.json`에 `development`/`preview`/`production` 빌드 프로필, `cli.appVersionSource: "remote"`
 
 2. **환경변수**
-   - `EXPO_PUBLIC_API_BASE_URL` = `http://ec2-13-125-237-45.ap-northeast-2.compute.amazonaws.com/` (⚠️ 평문 HTTP — 1.6 참고, HTTPS 전환 필요)
+   - `EXPO_PUBLIC_API_BASE_URL` = `https://www.gatchaz.kro.kr` (2026-09-16, HTTPS로 전환. 이전 EC2 평문 HTTP 주소는 폐기)
 
 3. **iOS 배포 인증서 / Provisioning Profile — 수동 생성 + 로컬 자격증명**
    - **왜 수동인가**: `eas build`/`eas submit`이 Apple Developer Portal에 자동 로그인하려는 단계에서 아래 에러가 반복 발생 — 계정/권한/버전 문제 아님, EAS/`@expo/apple-utils`의 Apple 세션 통신 관련 버그로 추정.
@@ -70,16 +70,9 @@
 
 ## 1. ⚠️ TODO — 아직 남은 것
 
-### 1.1 ATS 예외 임시 등록 (HTTP → HTTPS 전환 필요)
+### 1.1 ATS 예외 임시 등록 (HTTP → HTTPS 전환 필요) — ✅ 2026-09-16 완료
 
-`EXPO_PUBLIC_API_BASE_URL`이 현재 평문 HTTP라 `app.json`의 `ios.infoPlist.NSAppTransportSecurity.NSExceptionDomains`에 해당 도메인 예외를 **임시로** 등록해 둔 상태.
-
-**반드시 나중에 되돌려야 함:**
-
-- 백엔드(EC2)에 HTTPS 적용 (ACM + ALB, 또는 Let's Encrypt/Nginx 등)
-- `EXPO_PUBLIC_API_BASE_URL`을 `https://`로 변경
-- `app.json`에서 `NSAppTransportSecurity` 예외 블록 제거
-- App Store 정식 심사 전 반드시 HTTPS로 전환할 것 (평문 HTTP 사용 사유를 심사에서 물어볼 수 있음)
+백엔드 주소를 `https://www.gatchaz.kro.kr`로 전환. `EXPO_PUBLIC_API_BASE_URL`(EAS production 환경변수)을 갱신하고, `app.json`의 `NSAppTransportSecurity`/`NSExceptionDomains` 예외 블록 제거.
 
 ### 1.2 스플래시 스크린 미설정
 
