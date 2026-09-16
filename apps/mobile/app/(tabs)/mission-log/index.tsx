@@ -98,7 +98,7 @@ export default function MissionLogScreen() {
   };
 
   return (
-    <ScreenLayout title="셋로그" scrollable showBack={false}>
+    <ScreenLayout title="미션로그" scrollable showBack={false}>
       <View style={styles.container}>
         {tripListQuery.isPending ? <ActivityIndicator style={styles.state} /> : null}
         {tripListQuery.isSuccess && !selectedTrip ? (
@@ -122,7 +122,7 @@ export default function MissionLogScreen() {
               <ActivityIndicator style={styles.state} />
             ) : null}
             {missionHistoryQuery.isSuccess && setlogs.length === 0 ? (
-              <Text style={styles.emptyText}>아직 업로드된 셋로그가 없어요.</Text>
+              <Text style={styles.emptyText}>아직 업로드된 미션로그가 없어요.</Text>
             ) : null}
             <View style={styles.list}>
               {setlogs.map((setlog) => (

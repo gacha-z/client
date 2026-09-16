@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { ScrollView, View, type ScrollViewProps } from 'react-native';
 import type { Href } from 'expo-router';
 
@@ -18,6 +18,7 @@ type ScreenLayoutProps = {
   topbarRight?: ReactNode;
   onPressTopbarRight?: () => void;
   scrollable?: boolean;
+  scrollViewRef?: Ref<ScrollView>;
   keyboardShouldPersistTaps?: ScrollViewProps['keyboardShouldPersistTaps'];
   children: ReactNode;
 };
@@ -34,11 +35,13 @@ export function ScreenLayout({
   topbarRight,
   onPressTopbarRight,
   scrollable = false,
+  scrollViewRef,
   keyboardShouldPersistTaps,
   children
 }: ScreenLayoutProps) {
   const content = scrollable ? (
     <ScrollView
+      ref={scrollViewRef}
       contentContainerStyle={styles.scrollContent}
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
     >

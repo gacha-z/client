@@ -81,7 +81,7 @@ export function MissionCard({ mission }: MissionCardProps) {
           ))}
         </View>
       ) : (
-        <Text style={styles.emptyText}>아직 업로드된 셋로그가 없어요.</Text>
+        <Text style={styles.emptyText}>아직 업로드된 미션로그가 없어요.</Text>
       )}
     </View>
   );

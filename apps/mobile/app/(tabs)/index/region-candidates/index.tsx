@@ -134,7 +134,7 @@ export default function RegionCandidatesScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScreenLayout title="랜덤 지역 후보" headerActions showTopbar={false} scrollable>
+      <ScreenLayout title="랜덤 지역 후보" headerActions showBack fallbackRoute="/" scrollable>
         <View style={styles.content}>
           <View style={styles.notice}>
             <View style={styles.noticeCircleLarge} />

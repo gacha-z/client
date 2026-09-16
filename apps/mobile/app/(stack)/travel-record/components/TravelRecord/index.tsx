@@ -11,9 +11,11 @@ import { styles } from './index.css';
 
 type TravelRecordProps = {
   travel?: TravelRecordData;
+  onPressMissionLog?: () => void;
+  onPressDiary?: () => void;
 };
 
-export function TravelRecord({ travel }: TravelRecordProps) {
+export function TravelRecord({ travel, onPressMissionLog, onPressDiary }: TravelRecordProps) {
   const [deleteVisible, setDeleteVisible] = useState(false);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const days = travel?.days ?? [];
@@ -39,11 +41,13 @@ export function TravelRecord({ travel }: TravelRecordProps) {
         onToggleDelete={() => setDeleteVisible((visible) => !visible)}
         onPreviousDay={() => canGoPreviousDay && setSelectedDayIndex((index) => index - 1)}
         onNextDay={() => canGoNextDay && setSelectedDayIndex((index) => index + 1)}
+        onPressMissionLog={onPressMissionLog}
+        onPressDiary={onPressDiary}
       />
 
       <View style={styles.summaryRow}>
         <SummaryBox label="달성한 미션" value={`${daySummary.completedMissionCount} 개`} />
-        <SummaryBox label="업로드된 셋로그" value={`${daySummary.setlogCount} 개`} />
+        <SummaryBox label="업로드된 미션로그" value={`${daySummary.setlogCount} 개`} />
       </View>
 
       <View style={styles.missionList}>

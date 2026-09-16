@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ActivityIndicator, Image, Pressable, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { ActivityIndicator, Image, Pressable, Text, View, type ScrollView } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ import { Modal } from '@/components/Modal';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { InfoRow, StatusBadge } from '@/components/TravelPrimitives';
 import { getDevMemberId } from '@/services/authSession';
-import { buildTravelRecord, toDateKey, toTravelListItem } from '@/utils';
+import { buildTravelRecord, toTravelListItem } from '@/utils';
 
 import { TravelRecord } from './components/TravelRecord';
 import { styles } from './index.css';
@@ -36,6 +36,8 @@ export default function TravelRecordScreen() {
   const [cancelVisible, setCancelVisible] = useState(false);
   const [leaveVisible, setLeaveVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const recordSectionY = useRef(0);
   const devMemberId = getDevMemberId();
   const tripQuery = useQuery({
     ...tripDetailQueryOptions(tripId, devMemberId),
@@ -81,8 +83,6 @@ export default function TravelRecordScreen() {
   const isOwner = Boolean(
     trip && devMemberId !== undefined && trip.ownerMemberId === String(devMemberId)
   );
-  const isBeforeTripStart = Boolean(trip && toDateKey(new Date()) < trip.startDate);
-
   const handleCancel = () => {
     if (!devMemberId || !tripId) return;
     cancelMutation.mutate({ tripId, requestMemberId: devMemberId });
@@ -145,7 +145,14 @@ export default function TravelRecordScreen() {
   });
 
   return (
-    <ScreenLayout title="여행 상세" scrollable headerActions showBack fallbackRoute="/travel">
+    <ScreenLayout
+      title="여행 상세"
+      scrollable
+      scrollViewRef={scrollViewRef}
+      headerActions
+      showBack
+      fallbackRoute="/travel"
+    >
       <View style={styles.content}>
         {trip.tripRegionImageUrl ? (
           <Image source={{ uri: trip.tripRegionImageUrl }} style={styles.regionImage} />
@@ -173,7 +180,7 @@ export default function TravelRecordScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>여행 멤버</Text>
-            {isOwner && !isBeforeTripStart ? (
+            {isOwner ? (
               <Pressable
                 style={styles.manageButton}
                 onPress={() =>
@@ -216,13 +223,24 @@ export default function TravelRecordScreen() {
           </View>
         </View>
 
-        <View style={styles.recordSection}>
+        <View
+          style={styles.recordSection}
+          onLayout={(event) => {
+            recordSectionY.current = event.nativeEvent.layout.y;
+          }}
+        >
           <Text style={styles.sectionTitle}>여행 기록</Text>
           {missionHistoryQuery.isPending ? <ActivityIndicator /> : null}
           {missionHistoryQuery.isSuccess && !travelRecord ? (
             <Text style={styles.stateDescription}>아직 진행된 미션이 없어요.</Text>
           ) : null}
-          <TravelRecord travel={travelRecord ?? undefined} />
+          <TravelRecord
+            travel={travelRecord ?? undefined}
+            onPressMissionLog={() =>
+              scrollViewRef.current?.scrollTo({ y: recordSectionY.current, animated: true })
+            }
+            onPressDiary={() => router.push({ pathname: '/diary', params: { tripId } })}
+          />
         </View>
 
         {isOwner && trip.status === 'CREATED' ? (

@@ -17,6 +17,8 @@ type TravelRecordHeaderProps = {
   onToggleDelete: () => void;
   onPreviousDay: () => void;
   onNextDay: () => void;
+  onPressMissionLog?: () => void;
+  onPressDiary?: () => void;
 };
 
 export function TravelRecordHeader({
@@ -28,7 +30,9 @@ export function TravelRecordHeader({
   deleteVisible,
   onToggleDelete,
   onPreviousDay,
-  onNextDay
+  onNextDay,
+  onPressMissionLog,
+  onPressDiary
 }: TravelRecordHeaderProps) {
   return (
     <View style={styles.header}>
@@ -74,8 +78,13 @@ export function TravelRecordHeader({
           <Text style={styles.dayChipText}>DAY {dayNumber}</Text>
         </View>
         <View style={styles.actionButtons}>
-          <PillButton label="미션로그" icon="missionLog" iconPosition="left" />
-          <PillButton label="일기" icon="diary" iconPosition="left" />
+          <PillButton
+            label="미션로그"
+            icon="missionLog"
+            iconPosition="left"
+            onPress={onPressMissionLog}
+          />
+          <PillButton label="일기" icon="diary" iconPosition="left" onPress={onPressDiary} />
         </View>
       </View>
     </View>

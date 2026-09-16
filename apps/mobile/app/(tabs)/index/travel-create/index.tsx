@@ -2,9 +2,9 @@ import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useSetAtom } from 'jotai';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createTrip, isApiError } from '@travel-gacha/api';
+import { createTrip, isApiError, tripListRootKey } from '@travel-gacha/api';
 import { confirmTravelCreationAtom, resetTravelCreationAtom } from '@travel-gacha/store';
 import { Bigbutton } from '@/components/Bigbutton';
 import { FormInput } from '@/components/FormInput';
@@ -47,6 +47,7 @@ function FormSection({ title, description, children }: FormSectionProps) {
 
 export default function TravelCreateScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const confirmTravelCreation = useSetAtom(confirmTravelCreationAtom);
   const resetTravelCreation = useSetAtom(resetTravelCreationAtom);
   const generatingRef = useRef(false);
@@ -106,6 +107,7 @@ export default function TravelCreateScreen() {
       { ...request, memberId: getDevMemberId() },
       {
         onSuccess: (tripId) => {
+          queryClient.invalidateQueries({ queryKey: tripListRootKey });
           confirmTravelCreation({ request, tripId });
           setConfirmationOpen(false);
           router.push('/region-candidates');
@@ -121,7 +123,7 @@ export default function TravelCreateScreen() {
   };
 
   return (
-    <ScreenLayout title="여행 생성" headerActions showTopbar={false} scrollable>
+    <ScreenLayout title="여행 생성" headerActions showBack fallbackRoute="/" scrollable>
       <View style={styles.content}>
         <FormSection
           title="여행 정보를 입력해주세요!"
