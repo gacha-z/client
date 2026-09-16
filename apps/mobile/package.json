@@ -46,7 +46,8 @@
     "react-native-safe-area-context": "catalog:expo",
     "react-native-screens": "catalog:expo",
     "react-native-svg": "catalog:expo",
-    "react-native-web": "catalog:expo"
+    "react-native-web": "catalog:expo",
+    "react-native-worklets": "catalog:expo"
   },
   "devDependencies": {
     "@travel-gacha/eslint-config": "workspace:*",
