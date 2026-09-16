@@ -35,7 +35,8 @@ export function TodayRecordSection({ tripId }: TodayRecordSectionProps) {
       key: 'mission-list',
       icon: <CardsIcon size={20} color={colors.blue500} />,
       label: '미션 목록 보기',
-      sublabel: '미션 목록을 확인해요.'
+      sublabel: '미션 목록을 확인해요.',
+      onPress: () => router.push({ pathname: '/mission-list', params: { tripId } })
     },
     {
       key: 'collection',
