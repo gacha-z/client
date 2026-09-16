@@ -79,6 +79,14 @@ export {
   type UpdateDevicePermissionsParams
 } from './queries/device';
 export {
+  badgesQueryKey,
+  badgesQueryOptions,
+  collectionItemsQueryKey,
+  itemsQueryOptions,
+  tripCollectionItemsQueryKey,
+  tripCollectionItemsQueryOptions
+} from './queries/collection';
+export {
   missionSetlogsQueryKey,
   missionSetlogsQueryOptions,
   tripSetlogsQueryKey,
