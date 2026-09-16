@@ -70,12 +70,3 @@ export async function requestPushNotificationRegistration(memberId: number): Pro
   await reportPermissionStatus(memberId, granted);
   return granted;
 }
-
-/** 이미 등록된 기기가 있다면 현재 권한 상태만 조용히 서버와 동기화한다 (다이얼로그 없음) */
-export async function syncPushNotificationStatusSilently(memberId: number): Promise<void> {
-  const deviceId = await getDeviceId();
-  if (!deviceId || !Device.isDevice) return;
-
-  const granted = await getPushNotificationStatus();
-  await reportPermissionStatus(memberId, granted);
-}

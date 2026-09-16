@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -78,7 +78,14 @@ export default function MissionLogCaptureScreen() {
     if (!permission?.granted) {
       const result = await requestPermission();
       if (!result.granted) {
-        Alert.alert('오류', '카메라 권한이 필요해요. 설정에서 카메라 접근을 허용해주세요.');
+        Alert.alert(
+          '카메라 권한이 필요해요',
+          '미션로그 촬영을 위해 카메라 접근 권한이 필요해요. 설정 화면으로 이동할까요?',
+          [
+            { text: '취소', style: 'cancel' },
+            { text: '설정으로 이동', onPress: () => void Linking.openSettings() }
+          ]
+        );
         return;
       }
     }

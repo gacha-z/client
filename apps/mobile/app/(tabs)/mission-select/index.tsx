@@ -1,6 +1,6 @@
 // apps/mobile/app/(tabs)/mission-select/index.tsx
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, usePathname } from 'expo-router';
 import * as Location from 'expo-location';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -114,7 +114,14 @@ export default function MissionSelectScreen() {
   const handleComplete = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('오류', '위치 권한이 필요해요. 설정에서 위치 접근을 허용해주세요.');
+      Alert.alert(
+        '위치 권한이 필요해요',
+        '미션 완료 인증을 위해 위치 접근 권한이 필요해요. 설정 화면으로 이동할까요?',
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '설정으로 이동', onPress: () => void Linking.openSettings() }
+        ]
+      );
       return;
     }
 

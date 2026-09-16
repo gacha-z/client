@@ -14,8 +14,7 @@ import {
   permissionSettingsAtom,
   resetSettingsAtom,
   userProfileAtom,
-  withdrawAccountAtom,
-  type PermissionSettings
+  withdrawAccountAtom
 } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { ArrowDownIcon } from '@/components/icons';
@@ -23,6 +22,12 @@ import { ScreenLayout } from '@/components/ScreenLayout';
 import { clearSessionAfterWithdrawal, signOut } from '@/services/auth';
 import { getDevMemberId } from '@/services/authSession';
 import { clearDeviceId } from '@/services/deviceSession';
+import {
+  getCameraPermissionGranted,
+  getLocationPermissionGranted,
+  requestCameraPermission,
+  requestLocationPermission
+} from '@/services/permissions';
 import {
   getPushNotificationStatus,
   requestPushNotificationRegistration
@@ -71,8 +76,12 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     let mounted = true;
-    void getPushNotificationStatus().then((granted) => {
-      if (mounted) setPermissions((current) => ({ ...current, pushNotification: granted }));
+    void Promise.all([
+      getCameraPermissionGranted(),
+      getLocationPermissionGranted(),
+      getPushNotificationStatus()
+    ]).then(([camera, location, pushNotification]) => {
+      if (mounted) setPermissions({ camera, location, pushNotification });
     });
     return () => {
       mounted = false;
@@ -87,21 +96,55 @@ export default function SettingsScreen() {
     profileMutation.mutate({ memberId, ...update });
   };
 
-  const updatePermission = (key: keyof PermissionSettings, value: boolean) => {
-    setPermissions((current) => ({ ...current, [key]: value }));
+  const confirmOpenSettings = (title: string, message: string) => {
+    Alert.alert(title, message, [
+      { text: '취소', style: 'cancel' },
+      { text: '설정으로 이동', onPress: () => void Linking.openSettings() }
+    ]);
+  };
+
+  const handleToggleCamera = async (value: boolean) => {
+    if (!value) {
+      confirmOpenSettings(
+        '카메라 권한 끄기',
+        '카메라 권한은 기기 설정에서 끌 수 있어요. 설정 화면으로 이동할까요?'
+      );
+      return;
+    }
+
+    const granted = await requestCameraPermission(memberId);
+    setPermissions((current) => ({ ...current, camera: granted }));
+    if (!granted) {
+      confirmOpenSettings(
+        '카메라 권한이 꺼져있어요',
+        '기기 설정에서 카메라 접근 권한을 허용해주세요.'
+      );
+    }
+  };
+
+  const handleToggleLocation = async (value: boolean) => {
+    if (!value) {
+      confirmOpenSettings(
+        'GPS 권한 끄기',
+        '위치 권한은 기기 설정에서 끌 수 있어요. 설정 화면으로 이동할까요?'
+      );
+      return;
+    }
+
+    const granted = await requestLocationPermission(memberId);
+    setPermissions((current) => ({ ...current, location: granted }));
+    if (!granted) {
+      confirmOpenSettings('GPS 권한이 꺼져있어요', '기기 설정에서 위치 접근 권한을 허용해주세요.');
+    }
   };
 
   const handleTogglePushNotification = async (value: boolean) => {
     if (!memberId) return;
 
     if (!value) {
-      Alert.alert(
+      confirmOpenSettings(
         '앱 푸시 알림 끄기',
-        '앱 알림 권한은 기기 설정에서 끌 수 있어요. 설정 화면으로 이동할까요?',
-        [
-          { text: '취소', style: 'cancel' },
-          { text: '설정으로 이동', onPress: () => void Linking.openSettings() }
-        ]
+        '앱 알림 권한은 기기 설정에서 끌 수 있어요. 설정 화면으로 이동할까요?'
       );
       return;
     }
@@ -109,7 +152,7 @@ export default function SettingsScreen() {
     const granted = await requestPushNotificationRegistration(memberId);
     setPermissions((current) => ({ ...current, pushNotification: granted }));
     if (!granted) {
-      Alert.alert('알림 권한이 꺼져있어요', '기기 설정에서 앱 알림 권한을 허용해주세요.');
+      confirmOpenSettings('알림 권한이 꺼져있어요', '기기 설정에서 앱 알림 권한을 허용해주세요.');
     }
   };
 
@@ -194,12 +237,12 @@ export default function SettingsScreen() {
                 <PermissionToggle
                   label="카메라"
                   value={permissions.camera}
-                  onValueChange={(value) => updatePermission('camera', value)}
+                  onValueChange={(value) => void handleToggleCamera(value)}
                 />
                 <PermissionToggle
                   label="GPS"
                   value={permissions.location}
-                  onValueChange={(value) => updatePermission('location', value)}
+                  onValueChange={(value) => void handleToggleLocation(value)}
                 />
                 <PermissionToggle
                   label="앱 푸시 알림"
