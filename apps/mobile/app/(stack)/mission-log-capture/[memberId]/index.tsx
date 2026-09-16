@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Linking, Pressable, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -47,6 +47,12 @@ export default function MissionLogCaptureScreen() {
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (permission && !permission.granted && permission.canAskAgain) {
+      requestPermission();
+    }
+  }, [permission, requestPermission]);
 
   const uploadMutation = useMutation({
     mutationFn: (fileUri: string) => {
@@ -121,6 +127,23 @@ export default function MissionLogCaptureScreen() {
 
   if (!permission) {
     return <View style={styles.container} />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={[styles.container, styles.permissionContainer]}>
+        <Text style={styles.permissionText}>미션로그 촬영을 위해 카메라 접근 권한이 필요해요.</Text>
+        <Pressable
+          accessibilityRole="button"
+          style={styles.permissionButton}
+          onPress={() => (permission.canAskAgain ? requestPermission() : Linking.openSettings())}
+        >
+          <Text style={styles.permissionButtonText}>
+            {permission.canAskAgain ? '카메라 권한 허용하기' : '설정으로 이동'}
+          </Text>
+        </Pressable>
+      </View>
+    );
   }
 
   return (

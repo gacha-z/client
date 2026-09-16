@@ -43,5 +43,26 @@ export const styles = StyleSheet.create({
   shutterRecording: {
     backgroundColor: '#ff5252',
     opacity: 0.85
+  },
+  permissionContainer: {
+    paddingHorizontal: 24,
+    gap: 16
+  },
+  permissionText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.black,
+    textAlign: 'center'
+  },
+  permissionButton: {
+    backgroundColor: colors.blue500,
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 12
+  },
+  permissionButtonText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.white
   }
 });
