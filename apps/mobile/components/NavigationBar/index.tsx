@@ -16,6 +16,7 @@ import {
   TravelIcon
 } from '@/components/icons';
 import { TABS, tabRouteSegment, type TabItem } from '@/constants/tabs';
+import { useActiveTrip } from '@/hooks';
 
 import { styles } from './index.css';
 
@@ -84,6 +85,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   navigation
 }: CenterTabProps) {
   const missionPending = useAtomValue(missionPendingAtom);
+  const { tripId: activeTripId } = useActiveTrip();
   const router = useRouter();
   const floatAnim = useRef(new Animated.Value(0)).current;
 
@@ -107,9 +109,9 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
       canPreventDefault: true
     });
     if (!isFocused && !event.defaultPrevented) {
-      navigation.navigate(routeName);
+      navigation.navigate(routeName, activeTripId ? { tripId: activeTripId } : undefined);
     }
-  }, [missionPending, router, isFocused, navigation, routeKey, routeName]);
+  }, [missionPending, router, isFocused, navigation, routeKey, routeName, activeTripId]);
 
   return (
     <Pressable
