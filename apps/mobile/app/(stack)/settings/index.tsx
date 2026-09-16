@@ -203,9 +203,7 @@ export default function SettingsScreen() {
             <View style={styles.profileCopy}>
               <Text style={styles.nickname}>{profile.nickname}</Text>
               <Text style={styles.profileMeta}>{profile.email}</Text>
-              <Text style={styles.profileMeta}>
-                {profile.gender} {profile.age}세
-              </Text>
+              <Text style={styles.profileMeta}>{profile.age}세</Text>
             </View>
           </View>
 
