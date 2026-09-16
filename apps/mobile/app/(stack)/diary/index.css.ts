@@ -8,7 +8,20 @@ export const styles = StyleSheet.create({
     maxWidth: 520,
     alignSelf: 'center',
     paddingBottom: 20,
-    gap: 20
+    gap: 16
+  },
+  writeButton: {
+    alignSelf: 'flex-end',
+    borderWidth: 1,
+    borderColor: colors.grey400,
+    borderRadius: 100,
+    paddingHorizontal: 16,
+    paddingVertical: 8
+  },
+  writeLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.grey700
   },
   state: {
     alignItems: 'center',
@@ -24,5 +37,14 @@ export const styles = StyleSheet.create({
     color: colors.grey500,
     fontSize: 14,
     textAlign: 'center'
+  },
+  emptyText: {
+    color: colors.grey500,
+    fontSize: 14,
+    textAlign: 'center',
+    paddingVertical: 24
+  },
+  list: {
+    gap: 16
   }
 });

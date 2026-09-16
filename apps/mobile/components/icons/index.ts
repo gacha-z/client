@@ -10,6 +10,7 @@ export { ClockIcon } from './ClockIcon';
 export { CollectionIcon } from './CollectionIcon';
 export { CollectionItemPlaceholderIcon } from './CollectionItemPlaceholderIcon';
 export { DiaryIcon } from './DiaryIcon';
+export { DownloadIcon } from './DownloadIcon';
 export { ExitIcon } from './ExitIcon';
 export { HomeIcon } from './HomeIcon';
 export { LineArrowIcon } from './LineArrowIcon';

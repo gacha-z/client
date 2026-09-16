@@ -232,7 +232,7 @@ export default function MissionSelectScreen() {
             )}
           </View>
         )}
-        <TodayRecordSection />
+        <TodayRecordSection tripId={tripId} />
       </View>
       <Modal
         visible={isPending && mission.allVerified && isTabFocused}
