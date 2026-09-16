@@ -79,10 +79,17 @@ export {
   type UpdateDevicePermissionsParams
 } from './queries/device';
 export {
-  tripDiariesQueryKey,
-  tripDiariesQueryOptions,
+  tripDiaryListQueryKey,
+  tripDiaryListQueryOptions,
+  tripDiaryDetailQueryKey,
+  tripDiaryDetailQueryOptions,
   createDiary,
-  type CreateDiaryParams
+  updateDiary,
+  deleteDiary,
+  generateDiaryDraft,
+  type CreateDiaryParams,
+  type UpdateDiaryParams,
+  type GenerateDiaryDraftParams
 } from './queries/diary';
 export {
   badgesQueryKey,

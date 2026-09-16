@@ -15,6 +15,11 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     elevation: 2
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
   authorRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -30,6 +35,40 @@ export const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     color: colors.grey900
+  },
+  moreButton: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  menu: {
+    minWidth: 96,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.grey200,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 7,
+    elevation: 30
+  },
+  menuItem: {
+    paddingHorizontal: 12,
+    paddingVertical: 9
+  },
+  menuItemText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.grey700
+  },
+  menuItemTextDanger: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#ff4f45'
   },
   content: {
     fontSize: 14,
