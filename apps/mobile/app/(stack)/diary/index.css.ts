@@ -10,6 +10,31 @@ export const styles = StyleSheet.create({
     paddingBottom: 20,
     gap: 16
   },
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16
+  },
+  dateArrow: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.grey700
+  },
+  dateArrowDisabled: {
+    color: colors.grey300
+  },
+  dateText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.grey400
+  },
+  errorText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#ff4f45',
+    textAlign: 'center'
+  },
   writeButton: {
     alignSelf: 'flex-end',
     borderWidth: 1,

@@ -22,4 +22,4 @@ export type {
   TripUpdateRequest
 } from './travel';
 export type { Badge, CollectionItemEntry } from './collection';
-export type { DiaryEntry } from './diary';
+export type { DiaryVisibility, DiaryListItem, DiaryDetail } from './diary';

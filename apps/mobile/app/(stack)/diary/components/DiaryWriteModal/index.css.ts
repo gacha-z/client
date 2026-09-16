@@ -16,9 +16,27 @@ export const styles = StyleSheet.create({
     color: colors.grey900,
     textAlignVertical: 'top'
   },
+  aiButton: {
+    marginTop: 12,
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: colors.blue500,
+    borderRadius: 100,
+    paddingHorizontal: 16,
+    paddingVertical: 8
+  },
+  aiButtonDisabled: {
+    borderColor: colors.grey300
+  },
+  aiButtonLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.blue500
+  },
   errorText: {
     marginTop: 8,
     fontSize: 12,
-    color: '#ff4f45'
+    color: '#ff4f45',
+    textAlign: 'center'
   }
 });
