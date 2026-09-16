@@ -35,8 +35,14 @@ export default function TravelRecordMembersScreen() {
   const [kickTarget, setKickTarget] = useState<TripMember | null>(null);
   const [transferTarget, setTransferTarget] = useState<TripMember | null>(null);
 
-  const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
-  const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
+  const tripQuery = useQuery({
+    ...tripDetailQueryOptions(tripId, memberId),
+    enabled: Boolean(tripId) && Boolean(memberId)
+  });
+  const membersQuery = useQuery({
+    ...tripMembersQueryOptions(tripId, memberId),
+    enabled: Boolean(tripId) && Boolean(memberId)
+  });
 
   const invalidateTrip = () =>
     Promise.all([

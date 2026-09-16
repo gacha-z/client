@@ -18,6 +18,7 @@ import { RegionCandidateList } from '@/components/RegionCandidateList';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { Toast } from '@/components/Toast';
 import { REGION_CANDIDATE_MOCK, requestRegionCandidateRerollMock } from '@/mocks/regionCandidates';
+import { getDevMemberId } from '@/services/authSession';
 import type { RegionCandidateSlot } from '@/types';
 import { createRegionCandidateSlots, replaceRegionCandidateSlot } from '@/utils';
 
@@ -26,6 +27,7 @@ import { styles } from './index.css';
 export default function RegionCandidatesScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const devMemberId = getDevMemberId();
   const travelCreation = useAtomValue(travelCreationAtom);
   const completeTravelCreation = useSetAtom(completeTravelCreationAtom);
   const [candidateSlots, setCandidateSlots] = useState(() =>
@@ -42,8 +44,8 @@ export default function RegionCandidatesScreen() {
   const tripId = travelCreation.step === 'form' ? '' : travelCreation.tripId;
   const dismissRerollError = useCallback(() => setRerollErrorVisible(false), []);
   const regionsQuery = useQuery({
-    ...randomTripRegionsQueryOptions(tripId),
-    enabled: Boolean(tripId)
+    ...randomTripRegionsQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
   });
   const rerollMutation = useMutation({ mutationFn: rerollTripRegion });
   const selectMutation = useMutation({ mutationFn: selectTripRegion });
@@ -74,12 +76,14 @@ export default function RegionCandidatesScreen() {
     setRerollingSlotId(slot.id);
 
     try {
-      const replacement = slot.region.candidateId
-        ? await rerollMutation.mutateAsync({
-            tripId,
-            tripCandidateId: slot.region.candidateId
-          })
-        : await requestRegionCandidateRerollMock(candidateSlots);
+      const replacement =
+        slot.region.candidateId && devMemberId
+          ? await rerollMutation.mutateAsync({
+              tripId,
+              tripCandidateId: slot.region.candidateId,
+              memberId: devMemberId
+            })
+          : await requestRegionCandidateRerollMock(candidateSlots);
 
       rerolledSlotIdsRef.current.add(slot.id);
       setCandidateSlots((current) => replaceRegionCandidateSlot(current, slot.id, replacement));
@@ -98,10 +102,16 @@ export default function RegionCandidatesScreen() {
     const selectedSlot = candidateSlots.find(({ id }) => id === selectedSlotId);
     if (!selectedSlot || !Number.isInteger(Number(selectedSlot.region.id))) return;
 
+    if (!devMemberId) return;
+
     creatingTravelRef.current = true;
     setIsCreatingTravel(true);
     try {
-      await selectMutation.mutateAsync({ tripId, tripRegionId: selectedSlot.region.id });
+      await selectMutation.mutateAsync({
+        tripId,
+        tripRegionId: selectedSlot.region.id,
+        memberId: devMemberId
+      });
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: tripListRootKey }),
         queryClient.invalidateQueries({ queryKey: tripDetailQueryKey(tripId) })

@@ -35,13 +35,16 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
   const [outcomes, setOutcomes] = useAtom(missionOutcomesAtom);
 
   const candidatesQuery = useQuery({
-    ...missionCandidatesQueryOptions(tripId),
-    enabled: Boolean(tripId)
+    ...missionCandidatesQueryOptions(tripId, memberId ? Number(memberId) : undefined),
+    enabled: Boolean(tripId) && Boolean(memberId)
   });
 
   const setlogsQuery = useQuery({
-    ...missionSetlogsQueryOptions(activeMission?.tripMissionId ?? ''),
-    enabled: Boolean(activeMission)
+    ...missionSetlogsQueryOptions(
+      activeMission?.tripMissionId ?? '',
+      memberId ? Number(memberId) : undefined
+    ),
+    enabled: Boolean(activeMission) && Boolean(memberId)
   });
 
   const round = candidatesQuery.data;
@@ -64,8 +67,10 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
   }, [stage, setStage]);
 
   const selectMutation = useMutation({
-    mutationFn: (candidateId: string) =>
-      selectMissionCandidate({ tripId, missionCandidateId: candidateId }),
+    mutationFn: (candidateId: string) => {
+      if (!memberId) throw new Error('회원 정보를 불러오는 중이에요.');
+      return selectMissionCandidate({ tripId, missionCandidateId: candidateId, memberId });
+    },
     onSuccess: (result) => {
       setActiveMission(result);
     },
@@ -103,8 +108,8 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
 
   const failMutation = useMutation({
     mutationFn: () => {
-      if (!activeMission) throw new Error('진행 중인 미션이 없어요.');
-      return failMission({ tripId, tripMissionId: activeMission.tripMissionId });
+      if (!activeMission || !memberId) throw new Error('진행 중인 미션이 없어요.');
+      return failMission({ tripId, tripMissionId: activeMission.tripMissionId, memberId });
     },
     onSuccess: () => {
       setOutcomes((current) => [...current, 'failure']);

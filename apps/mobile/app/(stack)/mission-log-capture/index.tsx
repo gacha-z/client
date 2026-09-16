@@ -12,6 +12,7 @@ import { activeMissionAtom } from '@travel-gacha/store';
 import { PhotoTargetCard } from '@/components/PhotoTargetCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TripStatusBar } from '@/components/TripStatusBar';
+import { getDevMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -19,13 +20,20 @@ export default function MissionLogCaptureListScreen() {
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = tripIdParam ?? process.env.EXPO_PUBLIC_DEV_TRIP_ID ?? '';
   const router = useRouter();
+  const devMemberId = getDevMemberId();
   const activeMission = useAtomValue(activeMissionAtom);
 
-  const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
-  const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
+  const tripQuery = useQuery({
+    ...tripDetailQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
+  });
+  const membersQuery = useQuery({
+    ...tripMembersQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
+  });
   const setlogsQuery = useQuery({
-    ...missionSetlogsQueryOptions(activeMission?.tripMissionId ?? ''),
-    enabled: Boolean(activeMission)
+    ...missionSetlogsQueryOptions(activeMission?.tripMissionId ?? '', devMemberId),
+    enabled: Boolean(activeMission) && Boolean(devMemberId)
   });
 
   const members = membersQuery.data ?? [];

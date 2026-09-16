@@ -19,7 +19,7 @@ export default function TripCollectionScreen() {
 
   const itemsQuery = useQuery({
     ...tripCollectionItemsQueryOptions({ tripId, memberId }),
-    enabled: Boolean(tripId)
+    enabled: Boolean(tripId) && Boolean(memberId)
   });
 
   const entries: CollectionViewEntry[] = useMemo(

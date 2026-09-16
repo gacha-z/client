@@ -68,6 +68,7 @@ type TripMemberResponse = {
 };
 
 type TripRegionResponse = {
+  tripCandidateId: number;
   tripRegionId: number;
   tripRegionCode: string;
   tripRegionName: string;
@@ -137,6 +138,7 @@ const toTripMember = (response: TripMemberResponse): TripMember => ({
 
 const toRegionCandidate = (response: TripRegionResponse): RegionCandidate => ({
   id: String(response.tripRegionId),
+  candidateId: String(response.tripCandidateId),
   name: response.tripRegionName,
   description: '랜덤으로 추천된 여행 지역이에요.',
   imageUrl: response.imageUrl ?? ''
@@ -156,21 +158,24 @@ export const createTrip = async ({
   memberId
 }: CreateTripParams): Promise<string> => {
   const response = await unwrap(
-    getApiClient().post<ApiEnvelope<TripCreateResponse>>('/api/v1/trips', {
-      title,
-      startDate,
-      endDate,
-      memberLimit: memberCount,
-      missionMin: minimumMissionCount,
-      missionMax: maximumMissionCount,
-      missionStartTime: {
-        hour: firstMissionHour,
-        minute: firstMissionMinute,
-        second: 0,
-        nano: 0
+    getApiClient().post<ApiEnvelope<TripCreateResponse>>(
+      '/api/v1/trips',
+      {
+        title,
+        startDate,
+        endDate,
+        memberLimit: memberCount,
+        missionMin: minimumMissionCount,
+        missionMax: maximumMissionCount,
+        missionStartTime: {
+          hour: firstMissionHour,
+          minute: firstMissionMinute,
+          second: 0,
+          nano: 0
+        }
       },
-      memberId
-    })
+      { params: { userId: memberId } }
+    )
   );
 
   return String(response.tripId);
@@ -178,12 +183,14 @@ export const createTrip = async ({
 
 export const tripDetailQueryKey = (tripId: string) => ['trips', tripId] as const;
 
-export const tripDetailQueryOptions = (tripId: string) =>
+export const tripDetailQueryOptions = (tripId: string, memberId?: number) =>
   queryOptions({
     queryKey: tripDetailQueryKey(tripId),
     queryFn: async (): Promise<TripDetail> => {
       const response = await unwrap(
-        getApiClient().get<ApiEnvelope<TripDetailResponse>>(`/api/v1/trips/${tripId}`)
+        getApiClient().get<ApiEnvelope<TripDetailResponse>>(`/api/v1/trips/${tripId}`, {
+          params: { userId: memberId }
+        })
       );
       return toTripDetail(response);
     },
@@ -200,9 +207,10 @@ export const tripListInfiniteQueryOptions = (params: TripListParams = {}) =>
   infiniteQueryOptions({
     queryKey: tripListQueryKey(params),
     queryFn: async ({ pageParam }): Promise<TripListPage> => {
+      const { memberId, ...rest } = params;
       const response = await unwrap(
         getApiClient().get<ApiEnvelope<TripListResponse>>('/api/v1/trips', {
-          params: { ...params, cursor: pageParam ?? undefined }
+          params: { ...rest, userId: memberId, cursor: pageParam ?? undefined }
         })
       );
 
@@ -221,13 +229,13 @@ export const tripListInfiniteQueryOptions = (params: TripListParams = {}) =>
 
 export const tripRegionsQueryKey = (tripId: string) => ['trips', tripId, 'regions'] as const;
 
-export const randomTripRegionsQueryOptions = (tripId: string) =>
+export const randomTripRegionsQueryOptions = (tripId: string, memberId?: number) =>
   queryOptions({
     queryKey: tripRegionsQueryKey(tripId),
     queryFn: async (): Promise<RegionCandidate[]> => {
       const response = await unwrap(
         getApiClient().get<ApiEnvelope<TripRegionResponse[]>>('/api/v1/trips/regions/random', {
-          params: { tripId: Number(tripId) }
+          params: { tripId: Number(tripId), userId: memberId }
         })
       );
       return response.map(toRegionCandidate);
@@ -238,32 +246,38 @@ export const randomTripRegionsQueryOptions = (tripId: string) =>
 
 export const rerollTripRegion = async ({
   tripId,
-  tripCandidateId
+  tripCandidateId,
+  memberId
 }: {
   tripId: string;
   tripCandidateId: string;
+  memberId: number;
 }): Promise<RegionCandidate> => {
   const response = await unwrap(
-    getApiClient().patch<ApiEnvelope<TripRegionResponse>>('/api/v1/trips/regions/reroll', {
-      tripId: Number(tripId),
-      tripCandidateId: Number(tripCandidateId)
-    })
+    getApiClient().patch<ApiEnvelope<TripRegionResponse>>(
+      '/api/v1/trips/regions/reroll',
+      { tripId: Number(tripId), tripCandidateId: Number(tripCandidateId) },
+      { params: { userId: memberId } }
+    )
   );
   return toRegionCandidate(response);
 };
 
 export const selectTripRegion = async ({
   tripId,
-  tripRegionId
+  tripRegionId,
+  memberId
 }: {
   tripId: string;
   tripRegionId: string;
+  memberId: number;
 }): Promise<string> => {
   const response = await unwrap(
-    getApiClient().patch<ApiEnvelope<TripCreateResponse>>('/api/v1/trips/regions/select', {
-      tripId: Number(tripId),
-      tripRegionId: Number(tripRegionId)
-    })
+    getApiClient().patch<ApiEnvelope<TripCreateResponse>>(
+      '/api/v1/trips/regions/select',
+      { tripId: Number(tripId), tripRegionId: Number(tripRegionId) },
+      { params: { userId: memberId } }
+    )
   );
   return String(response.tripId);
 };
@@ -277,19 +291,21 @@ export const cancelTrip = async ({
 }): Promise<void> => {
   await unwrap(
     getApiClient().patch<ApiEnvelope<unknown>>(`/api/v1/trips/${tripId}/cancel`, undefined, {
-      params: { requestMemberId }
+      params: { userId: requestMemberId }
     })
   );
 };
 
 export const tripMembersQueryKey = (tripId: string) => ['trips', tripId, 'members'] as const;
 
-export const tripMembersQueryOptions = (tripId: string) =>
+export const tripMembersQueryOptions = (tripId: string, memberId?: number) =>
   queryOptions({
     queryKey: tripMembersQueryKey(tripId),
     queryFn: async (): Promise<TripMember[]> => {
       const response = await unwrap(
-        getApiClient().get<ApiEnvelope<TripMemberResponse[]>>(`/api/v1/trips/${tripId}/members`)
+        getApiClient().get<ApiEnvelope<TripMemberResponse[]>>(`/api/v1/trips/${tripId}/members`, {
+          params: { userId: memberId }
+        })
       );
       return response.map(toTripMember);
     },
@@ -299,13 +315,14 @@ export const tripMembersQueryOptions = (tripId: string) =>
 
 export const tripInviteCodeQueryKey = (tripId: string) => ['trips', tripId, 'invite-code'] as const;
 
-export const tripInviteCodeQueryOptions = (tripId: string) =>
+export const tripInviteCodeQueryOptions = (tripId: string, memberId?: number) =>
   queryOptions({
     queryKey: tripInviteCodeQueryKey(tripId),
     queryFn: async (): Promise<string> => {
       const response = await unwrap(
         getApiClient().get<ApiEnvelope<TripInviteCodeResponse>>(
-          `/api/v1/trips/${tripId}/invite-code`
+          `/api/v1/trips/${tripId}/invite-code`,
+          { params: { userId: memberId } }
         )
       );
       return response.inviteCode;

@@ -14,6 +14,7 @@ import {
 import { activeMissionAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { CameraIcon } from '@/components/icons';
+import { getDevMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -35,8 +36,12 @@ export default function MissionLogCaptureScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const activeMission = useAtomValue(activeMissionAtom);
+  const devMemberId = getDevMemberId();
 
-  const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
+  const membersQuery = useQuery({
+    ...tripMembersQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
+  });
   const member = membersQuery.data?.find((item) => item.id === memberId);
 
   const cameraRef = useRef<CameraView>(null);

@@ -56,7 +56,7 @@ export const createMember = async ({ nickname, age }: CreateMemberParams): Promi
 export const getCurrentMember = async (memberId: number): Promise<CurrentMember> => {
   const response = await unwrap(
     getApiClient().get<ApiEnvelope<MemberDetailResponse>>('/api/v1/members/me', {
-      params: { memberId }
+      params: { userId: memberId }
     })
   );
   return toCurrentMember(response);
@@ -83,7 +83,7 @@ export const updateMember = async ({
     getApiClient().patch<ApiEnvelope<MemberDetailResponse>>(
       '/api/v1/members/me',
       { nickname, age },
-      { params: { memberId } }
+      { params: { userId: memberId } }
     )
   );
   return toCurrentMember(response);
@@ -92,7 +92,7 @@ export const updateMember = async ({
 export const deleteMember = async (memberId: number): Promise<void> => {
   await unwrap(
     getApiClient().delete<ApiEnvelope<null>>('/api/v1/members/me', {
-      params: { memberId }
+      params: { userId: memberId }
     })
   );
 };

@@ -64,6 +64,7 @@ export const badgesQueryOptions = (memberId?: number) =>
       );
       return response.map(toBadge);
     },
+    enabled: Boolean(memberId),
     staleTime: 30 * 1000,
     retry: 1
   });
@@ -81,6 +82,7 @@ export const itemsQueryOptions = (memberId?: number) =>
       );
       return response.map(toCollectionItem);
     },
+    enabled: Boolean(memberId),
     staleTime: 30 * 1000,
     retry: 1
   });

@@ -52,8 +52,14 @@ export default function MissionSelectScreen() {
   const queryClient = useQueryClient();
 
   const memberQuery = useQuery(currentMemberQueryOptions(devMemberId));
-  const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
-  const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
+  const tripQuery = useQuery({
+    ...tripDetailQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
+  });
+  const membersQuery = useQuery({
+    ...tripMembersQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
+  });
   const outcomes = useAtomValue(missionOutcomesAtom);
 
   const mission = useTodayMission({
@@ -69,8 +75,8 @@ export default function MissionSelectScreen() {
     tripQuery.data && toDateKey(new Date()) < tripQuery.data.startDate
   );
   const inviteCodeQuery = useQuery({
-    ...tripInviteCodeQueryOptions(tripId),
-    enabled: Boolean(tripId) && isBeforeTripStart
+    ...tripInviteCodeQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId) && isBeforeTripStart
   });
   const kickMutation = useMutation({
     mutationFn: kickTripMember,

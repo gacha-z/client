@@ -37,7 +37,10 @@ export default function DiaryScreen() {
   const [editTarget, setEditTarget] = useState<DiaryCardData | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DiaryCardData | null>(null);
 
-  const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
+  const tripQuery = useQuery({
+    ...tripDetailQueryOptions(tripId, memberId),
+    enabled: Boolean(tripId) && Boolean(memberId)
+  });
   const trip = tripQuery.data;
 
   const totalDays = trip
@@ -57,7 +60,7 @@ export default function DiaryScreen() {
 
   const listQuery = useQuery({
     ...tripDiaryListQueryOptions({ tripId, diaryDate, memberId }),
-    enabled: Boolean(tripId) && Boolean(diaryDate)
+    enabled: Boolean(tripId) && Boolean(diaryDate) && Boolean(memberId)
   });
   const listItems = listQuery.data ?? [];
 

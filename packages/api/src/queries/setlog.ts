@@ -37,13 +37,14 @@ const toSetlogEntry = (response: SetlogResponse): SetlogEntry => ({
 export const missionSetlogsQueryKey = (tripMissionId: string) =>
   ['missions', tripMissionId, 'setlogs'] as const;
 
-export const missionSetlogsQueryOptions = (tripMissionId: string) =>
+export const missionSetlogsQueryOptions = (tripMissionId: string, memberId?: number) =>
   queryOptions({
     queryKey: missionSetlogsQueryKey(tripMissionId),
     queryFn: async (): Promise<SetlogEntry[]> => {
       const response = await unwrap(
         getApiClient().get<ApiEnvelope<SetlogResponse[]>>(
-          `/api/v1/missions/${tripMissionId}/setlogs`
+          `/api/v1/missions/${tripMissionId}/setlogs`,
+          { params: { userId: memberId } }
         )
       );
       return response.map(toSetlogEntry);
@@ -77,10 +78,14 @@ export const tripSetlogsQueryOptions = ({ tripId, memberId }: TripSetlogsParams)
 export const missionSetlogsDownloadQueryKey = (tripMissionId: string) =>
   ['missions', tripMissionId, 'setlogs', 'download'] as const;
 
-export const downloadMissionSetlogs = async (tripMissionId: string): Promise<SetlogEntry[]> => {
+export const downloadMissionSetlogs = async (
+  tripMissionId: string,
+  memberId: number
+): Promise<SetlogEntry[]> => {
   const response = await unwrap(
     getApiClient().get<ApiEnvelope<SetlogResponse[]>>(
-      `/api/v1/missions/${tripMissionId}/setlogs/download`
+      `/api/v1/missions/${tripMissionId}/setlogs/download`,
+      { params: { userId: memberId } }
     )
   );
   return response.map(toSetlogEntry);
@@ -117,6 +122,7 @@ export const uploadSetlog = async ({
 }: UploadSetlogParams): Promise<SetlogEntry> => {
   const isMovFile = fileUri.toLowerCase().endsWith('.mov');
   const formData = new FormData();
+  formData.append('userId', String(Number(memberId)));
   formData.append('file', {
     uri: fileUri,
     name: isMovFile ? 'setlog.mov' : 'setlog.mp4',
@@ -127,8 +133,7 @@ export const uploadSetlog = async ({
     getApiClient().post<ApiEnvelope<SetlogUploadResponse>>('/api/v1/setlogs', formData, {
       params: {
         tripId: Number(tripId),
-        tripMissionId: Number(tripMissionId),
-        memberId: Number(memberId)
+        tripMissionId: Number(tripMissionId)
       },
       headers: { 'Content-Type': 'multipart/form-data' }
     })

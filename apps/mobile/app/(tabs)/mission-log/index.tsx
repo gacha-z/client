@@ -55,14 +55,17 @@ export default function MissionLogScreen() {
 
   const missionIds = selectedDay?.missions.map((mission) => mission.tripMissionId) ?? [];
   const setlogQueries = useQueries({
-    queries: missionIds.map((tripMissionId) => missionSetlogsQueryOptions(tripMissionId))
+    queries: missionIds.map((tripMissionId) => missionSetlogsQueryOptions(tripMissionId, memberId))
   });
   const setlogs = setlogQueries.flatMap((query) => query.data ?? []);
   const isSetlogsPending = setlogQueries.some((query) => query.isPending);
 
   const downloadMutation = useMutation({
     mutationFn: async () => {
-      const results = await Promise.all(missionIds.map((id) => downloadMissionSetlogs(id)));
+      if (!memberId) throw new Error('회원 정보를 불러오는 중이에요.');
+      const results = await Promise.all(
+        missionIds.map((id) => downloadMissionSetlogs(id, memberId))
+      );
       return results.flat();
     },
     onSuccess: async (allSetlogs) => {

@@ -37,11 +37,17 @@ export default function TravelRecordScreen() {
   const [leaveVisible, setLeaveVisible] = useState(false);
   const [copied, setCopied] = useState(false);
   const devMemberId = getDevMemberId();
-  const tripQuery = useQuery({ ...tripDetailQueryOptions(tripId), enabled: Boolean(tripId) });
-  const membersQuery = useQuery({ ...tripMembersQueryOptions(tripId), enabled: Boolean(tripId) });
+  const tripQuery = useQuery({
+    ...tripDetailQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
+  });
+  const membersQuery = useQuery({
+    ...tripMembersQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
+  });
   const inviteCodeQuery = useQuery({
-    ...tripInviteCodeQueryOptions(tripId),
-    enabled: Boolean(tripId)
+    ...tripInviteCodeQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
   });
   const missionHistoryQuery = useQuery({
     ...missionHistoryQueryOptions({ tripId, memberId: devMemberId }),

@@ -10,6 +10,7 @@ import { resetTravelCreationAtom, travelCreationAtom } from '@travel-gacha/store
 import { Bigbutton } from '@/components/Bigbutton';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { Toast, type ToastVariant } from '@/components/Toast';
+import { getDevMemberId } from '@/services/authSession';
 import {
   formatKoreanDateRange,
   formatMissionTime,
@@ -24,6 +25,7 @@ type ToastState = { message: string; variant: ToastVariant } | null;
 
 export default function TravelCreatedScreen() {
   const router = useRouter();
+  const devMemberId = getDevMemberId();
   const travelCreation = useAtomValue(travelCreationAtom);
   const resetTravelCreation = useSetAtom(resetTravelCreationAtom);
   const [copied, setCopied] = useState(false);
@@ -37,12 +39,12 @@ export default function TravelCreatedScreen() {
   const region = travelCreation.step === 'created' ? travelCreation.selectedRegion : null;
   const tripId = travelCreation.step === 'created' ? travelCreation.tripId : '';
   const membersQuery = useQuery({
-    ...tripMembersQueryOptions(tripId),
-    enabled: Boolean(tripId)
+    ...tripMembersQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId)
   });
   const inviteCodeQuery = useQuery({
-    ...tripInviteCodeQueryOptions(tripId),
-    enabled: Boolean(tripId) && (request?.memberCount ?? 0) > 1
+    ...tripInviteCodeQueryOptions(tripId, devMemberId),
+    enabled: Boolean(tripId) && Boolean(devMemberId) && (request?.memberCount ?? 0) > 1
   });
   const dismissToast = useCallback(() => setToast(null), []);
 

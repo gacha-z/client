@@ -61,13 +61,14 @@ const toMissionSelectResult = (response: MissionSelectResponse): MissionSelectRe
 export const missionCandidatesQueryKey = (tripId: string) =>
   ['trips', tripId, 'missions', 'candidates'] as const;
 
-export const missionCandidatesQueryOptions = (tripId: string) =>
+export const missionCandidatesQueryOptions = (tripId: string, memberId?: number) =>
   queryOptions({
     queryKey: missionCandidatesQueryKey(tripId),
     queryFn: async (): Promise<MissionRound> => {
       const response = await unwrap(
         getApiClient().get<ApiEnvelope<MissionCandidateListResponse>>(
-          `/api/v1/trips/${tripId}/missions/candidates`
+          `/api/v1/trips/${tripId}/missions/candidates`,
+          { params: { userId: memberId } }
         )
       );
       return {
@@ -84,15 +85,19 @@ export const missionCandidatesQueryOptions = (tripId: string) =>
 export type SelectMissionCandidateParams = {
   tripId: string;
   missionCandidateId: string;
+  memberId: string;
 };
 
 export const selectMissionCandidate = async ({
   tripId,
-  missionCandidateId
+  missionCandidateId,
+  memberId
 }: SelectMissionCandidateParams): Promise<MissionSelectResult> => {
   const response = await unwrap(
     getApiClient().post<ApiEnvelope<MissionSelectResponse>>(
-      `/api/v1/trips/${tripId}/missions/${missionCandidateId}/select`
+      `/api/v1/trips/${tripId}/missions/${missionCandidateId}/select`,
+      undefined,
+      { params: { userId: Number(memberId) } }
     )
   );
   return toMissionSelectResult(response);
@@ -113,7 +118,7 @@ export const rerollMissionCandidate = async ({
     getApiClient().post<ApiEnvelope<MissionCandidateResponse>>(
       `/api/v1/trips/${tripId}/missions/${missionCandidateId}/reroll`,
       undefined,
-      { params: { memberId: Number(memberId) } }
+      { params: { userId: Number(memberId) } }
     )
   );
   return toMissionCandidate(response);
@@ -137,7 +142,8 @@ export const completeMission = async ({
   await unwrap(
     getApiClient().post<ApiEnvelope<unknown>>(
       `/api/v1/trips/${tripId}/missions/${tripMissionId}/complete`,
-      { memberId: Number(memberId), latitude, longitude }
+      { latitude, longitude },
+      { params: { userId: Number(memberId) } }
     )
   );
 };
@@ -206,12 +212,19 @@ export const missionHistoryQueryOptions = ({
 export type FailMissionParams = {
   tripId: string;
   tripMissionId: string;
+  memberId: string;
 };
 
-export const failMission = async ({ tripId, tripMissionId }: FailMissionParams): Promise<void> => {
+export const failMission = async ({
+  tripId,
+  tripMissionId,
+  memberId
+}: FailMissionParams): Promise<void> => {
   await unwrap(
     getApiClient().post<ApiEnvelope<unknown>>(
-      `/api/v1/trips/${tripId}/missions/${tripMissionId}/fail`
+      `/api/v1/trips/${tripId}/missions/${tripMissionId}/fail`,
+      undefined,
+      { params: { userId: Number(memberId) } }
     )
   );
 };

@@ -78,7 +78,7 @@ export const notificationListInfiniteQueryOptions = ({
 
       const response = await unwrap(
         getApiClient().get<ApiEnvelope<NotificationListResponse>>('/api/v1/notifications', {
-          params: { memberId, cursor: pageParam ?? undefined, size }
+          params: { userId: memberId, cursor: pageParam ?? undefined, size }
         })
       );
 
@@ -105,7 +105,7 @@ export const readNotification = async ({
     getApiClient().patch<ApiEnvelope<null>>(
       `/api/v1/notifications/${notificationId}/read`,
       undefined,
-      { params: { memberId } }
+      { params: { userId: memberId } }
     )
   );
 };
