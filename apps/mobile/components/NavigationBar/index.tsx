@@ -100,7 +100,7 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
 
   const onPress = useCallback(() => {
     if (missionPending && isFocused) {
-      router.push('/mission-log-capture');
+      router.push({ pathname: '/mission-log-capture', params: { tripId: activeTripId } });
       return;
     }
     const event = navigation.emit({
