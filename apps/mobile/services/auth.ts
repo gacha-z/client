@@ -34,6 +34,6 @@ export async function signOut(): Promise<void> {
   }
 }
 
-export async function clearSessionAfterWithdrawal(): Promise<void> {
+export async function clearLocalSession(): Promise<void> {
   await Promise.all([clearAuthSession(), clearAuthToken(), clearRefreshToken(), clearMemberId()]);
 }

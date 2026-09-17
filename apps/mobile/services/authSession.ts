@@ -54,13 +54,13 @@ export function clearAuthSession() {
 }
 
 /**
- * 실제 로그인 연동 전까지, `EXPO_PUBLIC_DEV_JWT`가 설정되어 있으면 그 값을 우선 사용합니다.
- * 없으면 저장된 토큰(추후 실제 로그인 완료 시 saveAuthToken으로 채워짐)을 사용합니다.
+ * 저장된 실제 토큰(로그인/재발급으로 채워짐)을 우선 사용합니다.
+ * 아직 로그인 전이라 저장된 토큰이 없을 때만 `EXPO_PUBLIC_DEV_JWT`로 대체합니다.
  */
 export async function getAuthToken() {
-  const devToken = process.env.EXPO_PUBLIC_DEV_JWT;
-  if (devToken) return devToken;
-  return getItem(AUTH_TOKEN_KEY);
+  const storedToken = await getItem(AUTH_TOKEN_KEY);
+  if (storedToken) return storedToken;
+  return process.env.EXPO_PUBLIC_DEV_JWT ?? null;
 }
 
 export function saveAuthToken(token: string) {

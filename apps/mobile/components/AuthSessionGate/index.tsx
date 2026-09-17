@@ -1,17 +1,39 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { useSetAtom } from 'jotai';
+import { getDefaultStore, useSetAtom } from 'jotai';
 
-import { setAuthTokenProvider } from '@travel-gacha/api';
-import { authStatusAtom } from '@travel-gacha/store';
+import {
+  setAuthTokenProvider,
+  setOnAuthExpired,
+  setOnTokensRefreshed,
+  setRefreshTokenProvider
+} from '@travel-gacha/api';
+import { authStatusAtom, logoutAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
-import { getAuthToken, getMemberId, hasAuthSession } from '@/services/authSession';
+import { clearLocalSession } from '@/services/auth';
+import {
+  getAuthToken,
+  getMemberId,
+  getRefreshToken,
+  hasAuthSession,
+  saveAuthToken,
+  saveRefreshToken
+} from '@/services/authSession';
 import { requestCameraPermission, requestLocationPermission } from '@/services/permissions';
 import { requestPushNotificationRegistration } from '@/services/pushNotifications';
 
 import { styles } from './index.css';
 
 setAuthTokenProvider(getAuthToken);
+setRefreshTokenProvider(getRefreshToken);
+setOnTokensRefreshed(async ({ accessToken, refreshToken }) => {
+  await saveAuthToken(accessToken);
+  await saveRefreshToken(refreshToken);
+});
+setOnAuthExpired(async () => {
+  await clearLocalSession();
+  getDefaultStore().set(logoutAtom);
+});
 
 type AuthSessionGateProps = {
   children: ReactNode;

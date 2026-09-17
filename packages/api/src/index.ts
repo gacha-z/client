@@ -6,6 +6,9 @@ export {
   getApiClient,
   isApiError,
   setAuthTokenProvider,
+  setOnAuthExpired,
+  setOnTokensRefreshed,
+  setRefreshTokenProvider,
   unwrap,
   type ApiEnvelope
 } from './client';
