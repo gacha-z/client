@@ -1,17 +1,16 @@
 import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
 
 import {
   missionSetlogsQueryOptions,
   tripDetailQueryOptions,
   tripMembersQueryOptions
 } from '@travel-gacha/api';
-import { activeMissionAtom } from '@travel-gacha/store';
 import { PhotoTargetCard } from '@/components/PhotoTargetCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TripStatusBar } from '@/components/TripStatusBar';
+import { useActiveMission } from '@/hooks';
 import { getDevMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
@@ -21,7 +20,7 @@ export default function MissionLogCaptureListScreen() {
   const tripId = tripIdParam ?? process.env.EXPO_PUBLIC_DEV_TRIP_ID ?? '';
   const router = useRouter();
   const devMemberId = getDevMemberId();
-  const activeMission = useAtomValue(activeMissionAtom);
+  const { activeMission } = useActiveMission({ tripId, memberId: devMemberId });
 
   const tripQuery = useQuery({
     ...tripDetailQueryOptions(tripId, devMemberId),

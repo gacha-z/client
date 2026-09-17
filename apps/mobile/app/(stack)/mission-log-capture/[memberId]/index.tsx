@@ -4,7 +4,6 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
 
 import {
   isApiError,
@@ -12,9 +11,9 @@ import {
   tripMembersQueryOptions,
   uploadSetlog
 } from '@travel-gacha/api';
-import { activeMissionAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { BackIcon, CameraIcon } from '@/components/icons';
+import { useActiveMission } from '@/hooks';
 import { getDevMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
@@ -50,8 +49,8 @@ export default function MissionLogCaptureScreen() {
   const tripId = tripIdParam ?? process.env.EXPO_PUBLIC_DEV_TRIP_ID ?? '';
   const router = useRouter();
   const queryClient = useQueryClient();
-  const activeMission = useAtomValue(activeMissionAtom);
   const devMemberId = getDevMemberId();
+  const { activeMission } = useActiveMission({ tripId, memberId: devMemberId });
 
   const membersQuery = useQuery({
     ...tripMembersQueryOptions(tripId, devMemberId),

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -10,19 +10,14 @@ import {
   missionCandidatesQueryKey,
   missionCandidatesQueryOptions,
   missionHistoryQueryKey,
-  missionHistoryQueryOptions,
   missionSetlogsQueryOptions,
   rerollMissionCandidate,
   selectMissionCandidate
 } from '@travel-gacha/api';
-import {
-  activeMissionAtom,
-  activeMissionTripIdAtom,
-  missionOutcomesAtom,
-  missionStageAtom,
-  setActiveMissionAtom
-} from '@travel-gacha/store';
+import { missionOutcomesAtom, missionStageAtom } from '@travel-gacha/store';
 import type { MissionStage } from '@travel-gacha/types';
+
+import { useActiveMission } from './useActiveMission';
 
 /** 뮤테이션 실패는 Alert로만 알린다 — 쿼리 로딩/에러 상태만 화면에 인라인으로 표시한다 */
 const alertMutationError = (error: unknown) => {
@@ -38,48 +33,29 @@ type UseTodayMissionOptions = {
 /** mission-select/mission-log-capture가 공유하는 "오늘의 미션" 상태와 액션 */
 export function useTodayMission({ tripId, memberId, totalMemberCount }: UseTodayMissionOptions) {
   const queryClient = useQueryClient();
-  const rawActiveMission = useAtomValue(activeMissionAtom);
-  const activeMissionTripId = useAtomValue(activeMissionTripIdAtom);
-  const setActiveMission = useSetAtom(setActiveMissionAtom);
   const setStage = useSetAtom(missionStageAtom);
   const [outcomes, setOutcomes] = useAtom(missionOutcomesAtom);
 
-  // 다른 여행에서 선택했던 미션이 캐시로 남아있으면(완료/실패 처리 없이 여행이 바뀐 경우) 즉시 무시하고,
-  // 실제 저장소에서도 지운다. useEffect만으로는 지워지기 전 한 프레임 동안 잘못된 stage가 보일 수 있어
-  // 아래 계산에는 effectiveActiveMission을 쓴다.
-  const isActiveMissionForThisTrip = !activeMissionTripId || activeMissionTripId === tripId;
-  const activeMission = isActiveMissionForThisTrip ? rawActiveMission : null;
-
-  useEffect(() => {
-    if (activeMissionTripId && activeMissionTripId !== tripId) {
-      setActiveMission(null);
-    }
-  }, [activeMissionTripId, tripId, setActiveMission]);
+  const numericMemberId = memberId ? Number(memberId) : undefined;
 
   const candidatesQuery = useQuery({
-    ...missionCandidatesQueryOptions(tripId, memberId ? Number(memberId) : undefined),
+    ...missionCandidatesQueryOptions(tripId, numericMemberId),
     enabled: Boolean(tripId) && Boolean(memberId)
   });
 
-  // candidates API는 오늘 목표 라운드를 다 채우면 데이터 대신 409를 던진다 — 이때만
-  // 미션 이력에서 오늘(가장 최근 dayNo) 라운드 수를 가져와 진행도를 채운다.
+  // "지금 진행 중인 미션"은 이력(/missions/history)의 오늘자 IN_PROGRESS 항목이 유일한 출처다.
+  const { activeMission, todayHistory } = useActiveMission({ tripId, memberId: numericMemberId });
+
+  // candidates API는 오늘 목표 라운드를 모두 완료/실패 처리했을 때만 409를 던진다 — 이때는
+  // 이력의 오늘자 라운드 수로 진행도를 채운다.
   const isDailyQuotaCompleted =
+    !activeMission &&
     candidatesQuery.isError &&
     isApiError(candidatesQuery.error) &&
     candidatesQuery.error.status === 409;
 
-  const historyQuery = useQuery({
-    ...missionHistoryQueryOptions({ tripId, memberId: memberId ? Number(memberId) : undefined }),
-    enabled: Boolean(tripId) && Boolean(memberId) && isDailyQuotaCompleted
-  });
-
-  const todayHistory = historyQuery.data?.[historyQuery.data.length - 1];
-
   const setlogsQuery = useQuery({
-    ...missionSetlogsQueryOptions(
-      activeMission?.tripMissionId ?? '',
-      memberId ? Number(memberId) : undefined
-    ),
+    ...missionSetlogsQueryOptions(activeMission?.tripMissionId ?? '', numericMemberId),
     enabled: Boolean(activeMission) && Boolean(memberId)
   });
 
@@ -108,8 +84,8 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
       if (!memberId) throw new Error('회원 정보를 불러오는 중이에요.');
       return selectMissionCandidate({ tripId, missionCandidateId: candidateId, memberId });
     },
-    onSuccess: (result) => {
-      setActiveMission({ tripId, mission: result });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: missionHistoryQueryKey(tripId) });
     },
     onError: alertMutationError
   });
@@ -137,7 +113,6 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
     },
     onSuccess: () => {
       setOutcomes((current) => [...current, 'success']);
-      setActiveMission(null);
       queryClient.invalidateQueries({ queryKey: missionCandidatesQueryKey(tripId) });
       queryClient.invalidateQueries({ queryKey: missionHistoryQueryKey(tripId) });
     },
@@ -151,7 +126,6 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
     },
     onSuccess: () => {
       setOutcomes((current) => [...current, 'failure']);
-      setActiveMission(null);
       queryClient.invalidateQueries({ queryKey: missionCandidatesQueryKey(tripId) });
       queryClient.invalidateQueries({ queryKey: missionHistoryQueryKey(tripId) });
     },
