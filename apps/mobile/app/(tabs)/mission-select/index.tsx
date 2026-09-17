@@ -1,7 +1,7 @@
 // apps/mobile/app/(tabs)/mission-select/index.tsx
 import { useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native';
-import { useLocalSearchParams, usePathname } from 'expo-router';
+import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import * as Location from 'expo-location';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
@@ -41,6 +41,7 @@ function withMissionPicker(members: TripMember[], dayNo: number): TripMember[] {
 }
 
 export default function MissionSelectScreen() {
+  const router = useRouter();
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = tripIdParam ?? process.env.EXPO_PUBLIC_DEV_TRIP_ID ?? '';
   // RN Modal은 앱 전역에 뜨므로, 이 탭이 화면 맨 위일 때만 클리어 모달을 띄운다.
@@ -142,8 +143,10 @@ export default function MissionSelectScreen() {
         <TripStatusBar
           tripName={tripQuery.data?.title ?? ''}
           day={mission.dayNo}
-          showMore={isIdle}
-          onPressMore={() => {}}
+          showMore={isIdle && isOwner}
+          onPressMore={() =>
+            router.push({ pathname: '/travel-record/members', params: { tripId } })
+          }
         />
         <ProgressCard
           completed={mission.completedCount}
