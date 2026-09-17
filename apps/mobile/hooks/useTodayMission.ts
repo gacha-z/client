@@ -9,6 +9,8 @@ import {
   isApiError,
   missionCandidatesQueryKey,
   missionCandidatesQueryOptions,
+  missionHistoryQueryKey,
+  missionHistoryQueryOptions,
   missionSetlogsQueryOptions,
   rerollMissionCandidate,
   selectMissionCandidate
@@ -59,6 +61,20 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
     enabled: Boolean(tripId) && Boolean(memberId)
   });
 
+  // candidates API는 오늘 목표 라운드를 다 채우면 데이터 대신 409를 던진다 — 이때만
+  // 미션 이력에서 오늘(가장 최근 dayNo) 라운드 수를 가져와 진행도를 채운다.
+  const isDailyQuotaCompleted =
+    candidatesQuery.isError &&
+    isApiError(candidatesQuery.error) &&
+    candidatesQuery.error.status === 409;
+
+  const historyQuery = useQuery({
+    ...missionHistoryQueryOptions({ tripId, memberId: memberId ? Number(memberId) : undefined }),
+    enabled: Boolean(tripId) && Boolean(memberId) && isDailyQuotaCompleted
+  });
+
+  const todayHistory = historyQuery.data?.[historyQuery.data.length - 1];
+
   const setlogsQuery = useQuery({
     ...missionSetlogsQueryOptions(
       activeMission?.tripMissionId ?? '',
@@ -69,9 +85,10 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
 
   const round = candidatesQuery.data;
   const activeCandidates = round?.candidates.filter((candidate) => !candidate.isRerolled) ?? [];
-  const completedCount = round ? round.assignedOrder - 1 : 0;
-  const totalCount = round?.targetRoundCount ?? 0;
-  const limitReached = Boolean(round) && !activeMission && completedCount >= totalCount;
+  const completedCount = round ? round.assignedOrder - 1 : (todayHistory?.missions.length ?? 0);
+  const totalCount = round?.targetRoundCount ?? todayHistory?.missions.length ?? 0;
+  const limitReached =
+    isDailyQuotaCompleted || (Boolean(round) && !activeMission && completedCount >= totalCount);
 
   const stage: MissionStage = activeMission
     ? 'pending'
@@ -122,6 +139,7 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
       setOutcomes((current) => [...current, 'success']);
       setActiveMission(null);
       queryClient.invalidateQueries({ queryKey: missionCandidatesQueryKey(tripId) });
+      queryClient.invalidateQueries({ queryKey: missionHistoryQueryKey(tripId) });
     },
     onError: alertMutationError
   });
@@ -135,13 +153,14 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
       setOutcomes((current) => [...current, 'failure']);
       setActiveMission(null);
       queryClient.invalidateQueries({ queryKey: missionCandidatesQueryKey(tripId) });
+      queryClient.invalidateQueries({ queryKey: missionHistoryQueryKey(tripId) });
     },
     onError: alertMutationError
   });
 
   return {
     stage,
-    dayNo: round?.dayNo ?? 1,
+    dayNo: round?.dayNo ?? todayHistory?.dayNo ?? 1,
     candidates: activeCandidates,
     selectedMission: activeMission,
     verifiedMemberIds,
