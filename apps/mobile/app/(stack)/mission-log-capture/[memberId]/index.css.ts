@@ -13,6 +13,17 @@ export const styles = StyleSheet.create({
   cameraPreview: {
     ...StyleSheet.absoluteFill
   },
+  backButton: {
+    position: 'absolute',
+    top: 60,
+    left: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   header: {
     alignItems: 'center'
   },

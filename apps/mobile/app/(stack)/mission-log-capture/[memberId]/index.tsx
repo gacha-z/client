@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Linking, Pressable, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 
@@ -13,12 +14,26 @@ import {
 } from '@travel-gacha/api';
 import { activeMissionAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
-import { CameraIcon } from '@/components/icons';
+import { BackIcon, CameraIcon } from '@/components/icons';
 import { getDevMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
 const RECORD_SECONDS = 3;
+
+/** 촬영화면 회전 시 오버레이(글씨/아이콘)를 사람 기준으로 정자 유지시키기 위한 보정 각도 */
+function rotationForOrientation(orientation: ScreenOrientation.Orientation): number {
+  switch (orientation) {
+    case ScreenOrientation.Orientation.LANDSCAPE_LEFT:
+      return 90;
+    case ScreenOrientation.Orientation.LANDSCAPE_RIGHT:
+      return -90;
+    case ScreenOrientation.Orientation.PORTRAIT_DOWN:
+      return 180;
+    default:
+      return 0;
+  }
+}
 
 const alertCaptureError = (error: unknown) => {
   Alert.alert(
@@ -47,12 +62,32 @@ export default function MissionLogCaptureScreen() {
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const [overlayRotation, setOverlayRotation] = useState(0);
 
   useEffect(() => {
     if (permission && !permission.granted && permission.canAskAgain) {
       requestPermission();
     }
   }, [permission, requestPermission]);
+
+  // 이 화면에서만 회전을 허용하고, 나가면 앱 기본값(세로 고정)으로 되돌린다.
+  useEffect(() => {
+    ScreenOrientation.unlockAsync();
+    ScreenOrientation.getOrientationAsync().then((orientation) =>
+      setOverlayRotation(rotationForOrientation(orientation))
+    );
+
+    const subscription = ScreenOrientation.addOrientationChangeListener((event) =>
+      setOverlayRotation(rotationForOrientation(event.orientationInfo.orientation))
+    );
+
+    return () => {
+      ScreenOrientation.removeOrientationChangeListener(subscription);
+      void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+    };
+  }, []);
+
+  const overlayRotationStyle = { transform: [{ rotate: `${overlayRotation}deg` }] };
 
   const uploadMutation = useMutation({
     mutationFn: (fileUri: string) => {
@@ -132,6 +167,14 @@ export default function MissionLogCaptureScreen() {
   if (!permission.granted) {
     return (
       <View style={[styles.container, styles.permissionContainer]}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="뒤로가기"
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <BackIcon size={20} color={colors.white} />
+        </Pressable>
         <Text style={styles.permissionText}>미션로그 촬영을 위해 카메라 접근 권한이 필요해요.</Text>
         <Pressable
           accessibilityRole="button"
@@ -148,13 +191,25 @@ export default function MissionLogCaptureScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.cameraPreview} mode="video" facing="front" mute />
+      <CameraView ref={cameraRef} style={styles.cameraPreview} mode="video" facing="back" mute />
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="뒤로가기"
+        style={styles.backButton}
+        onPress={() => router.back()}
+      >
+        <View style={overlayRotationStyle}>
+          <BackIcon size={20} color={colors.white} />
+        </View>
+      </Pressable>
       <View style={styles.header}>
-        <Text style={styles.name}>{member?.name ?? ''}</Text>
-        <Text style={styles.mission}>MISSION 1</Text>
-        {isRecording && secondsLeft !== null && secondsLeft > 0 && (
-          <Text style={styles.countdown}>{secondsLeft}</Text>
-        )}
+        <View style={overlayRotationStyle}>
+          <Text style={styles.name}>{member?.name ?? ''}</Text>
+          <Text style={styles.mission}>MISSION 1</Text>
+          {isRecording && secondsLeft !== null && secondsLeft > 0 && (
+            <Text style={styles.countdown}>{secondsLeft}</Text>
+          )}
+        </View>
       </View>
       <Pressable
         accessibilityRole="button"
@@ -164,7 +219,9 @@ export default function MissionLogCaptureScreen() {
         onPress={handleShutter}
         disabled={isBusy}
       >
-        <CameraIcon size={32} color={colors.white} />
+        <View style={overlayRotationStyle}>
+          <CameraIcon size={32} color={colors.white} />
+        </View>
       </Pressable>
     </View>
   );
