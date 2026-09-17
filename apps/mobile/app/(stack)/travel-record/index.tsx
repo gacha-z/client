@@ -5,11 +5,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
-  cancelTrip,
   isApiError,
   leaveTrip,
   missionHistoryQueryOptions,
-  tripDetailQueryKey,
   tripDetailQueryOptions,
   tripInviteCodeQueryOptions,
   tripListRootKey,
@@ -33,7 +31,6 @@ export default function TravelRecordScreen() {
   const queryClient = useQueryClient();
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = getParam(tripIdParam) ?? '';
-  const [cancelVisible, setCancelVisible] = useState(false);
   const [leaveVisible, setLeaveVisible] = useState(false);
   const [copied, setCopied] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -59,17 +56,6 @@ export default function TravelRecordScreen() {
     ...tripSetlogsQueryOptions({ tripId, memberId: devMemberId }),
     enabled: Boolean(tripId)
   });
-  const cancelMutation = useMutation({
-    mutationFn: cancelTrip,
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: tripListRootKey }),
-        queryClient.invalidateQueries({ queryKey: tripDetailQueryKey(tripId) })
-      ]);
-      setCancelVisible(false);
-      router.replace('/travel');
-    }
-  });
   const leaveMutation = useMutation({
     mutationFn: leaveTrip,
     onSuccess: async () => {
@@ -83,11 +69,6 @@ export default function TravelRecordScreen() {
   const isOwner = Boolean(
     trip && devMemberId !== undefined && trip.ownerMemberId === String(devMemberId)
   );
-  const handleCancel = () => {
-    if (!devMemberId || !tripId) return;
-    cancelMutation.mutate({ tripId, requestMemberId: devMemberId });
-  };
-
   const handleLeave = () => {
     if (!devMemberId || !tripId) return;
     leaveMutation.mutate({ tripId, memberId: devMemberId });
@@ -243,42 +224,12 @@ export default function TravelRecordScreen() {
           />
         </View>
 
-        {isOwner && trip.status === 'CREATED' ? (
-          <Pressable style={styles.cancelButton} onPress={() => setCancelVisible(true)}>
-            <Text style={styles.cancelLabel}>여행 취소하기</Text>
-          </Pressable>
-        ) : null}
-
         {!isOwner && trip.status === 'CREATED' ? (
           <Pressable style={styles.cancelButton} onPress={() => setLeaveVisible(true)}>
             <Text style={styles.cancelLabel}>여행 나가기</Text>
           </Pressable>
         ) : null}
       </View>
-
-      <Modal
-        visible={cancelVisible}
-        title="여행을 취소하시겠어요?"
-        onClose={() => setCancelVisible(false)}
-        onCancel={() => setCancelVisible(false)}
-        onConfirm={handleCancel}
-        cancelText="돌아가기"
-        confirmText="여행 취소"
-        confirmVariant="danger"
-        confirmLoading={cancelMutation.isPending}
-        closeOnBackdropPress={!cancelMutation.isPending}
-      >
-        <Text style={styles.modalDescription}>
-          취소된 여행의 멤버와 기록은 보존되지만 다시 참여할 수 없어요.
-        </Text>
-        {cancelMutation.isError ? (
-          <Text style={styles.errorText}>
-            {isApiError(cancelMutation.error)
-              ? cancelMutation.error.message
-              : '여행을 취소하지 못했어요.'}
-          </Text>
-        ) : null}
-      </Modal>
 
       <Modal
         visible={leaveVisible}

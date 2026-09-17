@@ -4,11 +4,13 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  cancelTrip,
   isApiError,
   kickTripMember,
   transferTripOwner,
   tripDetailQueryKey,
   tripDetailQueryOptions,
+  tripListRootKey,
   tripMembersQueryKey,
   tripMembersQueryOptions,
   updateTrip
@@ -32,6 +34,7 @@ export default function TravelRecordMembersScreen() {
   const memberId = getDevMemberId();
 
   const [editVisible, setEditVisible] = useState(false);
+  const [cancelVisible, setCancelVisible] = useState(false);
   const [kickTarget, setKickTarget] = useState<TripMember | null>(null);
   const [transferTarget, setTransferTarget] = useState<TripMember | null>(null);
 
@@ -90,10 +93,33 @@ export default function TravelRecordMembersScreen() {
     }
   });
 
+  const cancelMutation = useMutation({
+    mutationFn: cancelTrip,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: tripListRootKey }),
+        queryClient.invalidateQueries({ queryKey: tripDetailQueryKey(tripId) })
+      ]);
+      setCancelVisible(false);
+      router.replace('/travel');
+    },
+    onError: (error) => {
+      Alert.alert(
+        '여행 취소 실패',
+        isApiError(error) ? error.message : '잠시 후 다시 시도해주세요.'
+      );
+    }
+  });
+
   const trip = tripQuery.data;
   const isOwner = Boolean(
     trip && memberId !== undefined && trip.ownerMemberId === String(memberId)
   );
+
+  const handleCancelTrip = () => {
+    if (!memberId || !tripId) return;
+    cancelMutation.mutate({ tripId, requestMemberId: memberId });
+  };
 
   const handleSaveTrip = (values: TripEditFormValues) => {
     if (!memberId || !tripId) return;
@@ -177,6 +203,17 @@ export default function TravelRecordMembersScreen() {
             </View>
           ))}
         </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>여행 취소</Text>
+          {trip.status === 'CREATED' ? (
+            <Pressable style={styles.cancelButton} onPress={() => setCancelVisible(true)}>
+              <Text style={styles.cancelLabel}>여행 취소하기</Text>
+            </Pressable>
+          ) : (
+            <Text style={styles.emptyText}>이미 종료되었거나 취소된 여행이에요.</Text>
+          )}
+        </View>
       </View>
 
       <TripEditModal
@@ -228,6 +265,23 @@ export default function TravelRecordMembersScreen() {
       >
         <Text style={styles.modalDescription}>
           위임하면 방장 권한이 넘어가고, 이후에는 이 관리 화면에 접근할 수 없어요.
+        </Text>
+      </Modal>
+
+      <Modal
+        visible={cancelVisible}
+        title="여행을 취소하시겠어요?"
+        onClose={() => setCancelVisible(false)}
+        onCancel={() => setCancelVisible(false)}
+        onConfirm={handleCancelTrip}
+        cancelText="돌아가기"
+        confirmText="여행 취소"
+        confirmVariant="danger"
+        confirmLoading={cancelMutation.isPending}
+        closeOnBackdropPress={!cancelMutation.isPending}
+      >
+        <Text style={styles.modalDescription}>
+          취소된 여행의 멤버와 기록은 보존되지만 다시 참여할 수 없어요.
         </Text>
       </Modal>
     </ScreenLayout>

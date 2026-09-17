@@ -50,6 +50,14 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 79, 69, 0.1)'
   },
   kickLabel: { color: '#ff4f45', fontSize: 12, fontWeight: '700' },
+  cancelButton: {
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: '#ff4f45',
+    borderRadius: 12
+  },
+  cancelLabel: { color: '#ff4f45', fontSize: 15, fontWeight: '700' },
   modalDescription: { color: colors.grey600, fontSize: 14, lineHeight: 21 },
   state: { alignItems: 'center', justifyContent: 'center', gap: 10, padding: 32 },
   stateTitle: { color: colors.grey700, fontSize: 16, fontWeight: '700', textAlign: 'center' }
