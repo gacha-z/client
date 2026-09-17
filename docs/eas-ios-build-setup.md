@@ -93,3 +93,17 @@ TestFlight 업로드까지는 완료. 정식 심사 제출은 App Store Connect�
 ### 1.6 development/preview 프로필 credentials 미설정
 
 `production` 프로필만 `credentialsSource: "local"`로 설정함. `development`/`preview` 프로필로 빌드하려면 동일하게 로컬 자격증명 설정이 필요 (또는 별도 Ad Hoc 인증서/프로파일 생성).
+
+## 2. 릴리스 빌드 요청 시 기본 동작 (2026-09-17 확정)
+
+인증서/API Key가 모두 로컬 파일로 연결되어 있어(위 3, 4번 항목) `eas build`/`eas submit`이 Apple 로그인 프롬프트 없이 완전히 비대화형으로 끝까지 진행된다. 그래서 "빌드해줘" 요청을 받으면, 아래 절차를 **매 단계 재확인 없이** 바로 실행한다 — 빌드 실패나 자격증명 에러 등 실제 문제가 나면 그 시점에 멈추고 사용자에게 보고한다.
+
+```bash
+cd apps/mobile
+npx eas-cli build --platform ios --profile production --non-interactive --auto-submit
+```
+
+- `--auto-submit`이 빌드 완료 직후 같은 이름(`production`)의 submit 프로필로 자동 제출까지 처리한다 (`eas build` → `eas submit`을 따로 실행할 필요 없음).
+- 이 명령은 **App Store Connect(TestFlight) 업로드까지만** 진행한다. 실제 심사 제출(스크린샷/설명/심사 노트 작성)은 App Store Connect에서 별도 수동 작업이 필요하며, 이 자동 진행 범위에 포함되지 않는다 — 심사 제출까지 원하면 그 부분은 별도로 요청받아 진행한다.
+- 빌드는 EAS 서버에서 15~30분 정도 걸리므로 백그라운드로 실행하고 완료 후 결과를 보고한다.
+- 세션에서 그날 바꾼 코드가 실기기 검증 없이(타입체크/린트만 통과한 상태로) 바로 올라갈 수 있음을 전제로 한다 — 검증은 사용자가 TestFlight에서 직접 확인하는 흐름으로 합의됨.
