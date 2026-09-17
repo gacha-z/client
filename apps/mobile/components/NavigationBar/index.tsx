@@ -1,7 +1,7 @@
 import type { BottomTabBarProps } from 'expo-router/tabs';
 import { useRouter } from 'expo-router';
 import { useAtomValue } from 'jotai';
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -15,6 +15,7 @@ import {
   MissionLogIcon,
   TravelIcon
 } from '@/components/icons';
+import { Toast } from '@/components/Toast';
 import { TABS, tabRouteSegment, type TabItem } from '@/constants/tabs';
 import { useActiveTrip } from '@/hooks';
 
@@ -85,9 +86,14 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   navigation
 }: CenterTabProps) {
   const missionPending = useAtomValue(missionPendingAtom);
-  const { tripId: activeTripId } = useActiveTrip();
+  const { tripId: activeTripId, isPending: isActiveTripPending } = useActiveTrip();
   const router = useRouter();
   const floatAnim = useRef(new Animated.Value(0)).current;
+  const [noActiveTripToastVisible, setNoActiveTripToastVisible] = useState(false);
+
+  // missionPendingAtom은 여행이 바뀌거나 사라져도 초기화되지 않으므로, 실제로 진행중인
+  // 여행이 있을 때만 "인증 대기중" 상태로 인정한다.
+  const canVerifyMission = missionPending && Boolean(activeTripId);
 
   useEffect(() => {
     Animated.spring(floatAnim, {
@@ -99,8 +105,12 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   }, [isFocused, floatAnim]);
 
   const onPress = useCallback(() => {
-    if (missionPending && isFocused) {
+    if (canVerifyMission && isFocused) {
       router.push({ pathname: '/mission-log-capture', params: { tripId: activeTripId } });
+      return;
+    }
+    if (!activeTripId && !isActiveTripPending) {
+      setNoActiveTripToastVisible(true);
       return;
     }
     const event = navigation.emit({
@@ -111,21 +121,38 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
     if (!isFocused && !event.defaultPrevented) {
       navigation.navigate(routeName, activeTripId ? { tripId: activeTripId } : undefined);
     }
-  }, [missionPending, router, isFocused, navigation, routeKey, routeName, activeTripId]);
+  }, [
+    canVerifyMission,
+    router,
+    isFocused,
+    activeTripId,
+    isActiveTripPending,
+    navigation,
+    routeKey,
+    routeName
+  ]);
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={isFocused ? { selected: true } : {}}
-      onPress={onPress}
-      style={styles.centerTab}
-    >
-      <Animated.View style={[styles.fabRing, { transform: [{ translateY: floatAnim }] }]}>
-        <View style={styles.fab}>
-          {missionPending && isFocused ? <CameraIcon size={30} /> : <CardsIcon size={30} />}
-        </View>
-      </Animated.View>
-    </Pressable>
+    <>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={isFocused ? { selected: true } : {}}
+        onPress={onPress}
+        style={styles.centerTab}
+      >
+        <Animated.View style={[styles.fabRing, { transform: [{ translateY: floatAnim }] }]}>
+          <View style={styles.fab}>
+            {canVerifyMission && isFocused ? <CameraIcon size={30} /> : <CardsIcon size={30} />}
+          </View>
+        </Animated.View>
+      </Pressable>
+      <Toast
+        visible={noActiveTripToastVisible}
+        message="진행 중인 여행이 없어요. 여행을 먼저 만들거나 참여해보세요."
+        variant="error"
+        onDismiss={() => setNoActiveTripToastVisible(false)}
+      />
+    </>
   );
 });
 
