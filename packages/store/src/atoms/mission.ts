@@ -5,6 +5,7 @@ import { atomWithStorage, createJSONStorage, unwrap } from 'jotai/utils';
 import type { MissionOutcome, MissionSelectResult, MissionStage } from '@travel-gacha/types';
 
 const missionStorage = createJSONStorage<MissionSelectResult | null>(() => AsyncStorage);
+const missionTripIdStorage = createJSONStorage<string | null>(() => AsyncStorage);
 
 /**
  * 오늘의 미션 진행 단계 — API 연동 후에는 useTodayMission 훅이 서버 응답을 기반으로
@@ -33,3 +34,28 @@ const persistedActiveMissionAtom = atomWithStorage<MissionSelectResult | null>(
   missionStorage
 );
 export const activeMissionAtom = unwrap(persistedActiveMissionAtom, (prev) => prev ?? null);
+
+/**
+ * activeMissionAtom이 어느 여행(tripId)에서 선택된 미션인지 함께 기록한다.
+ * MissionSelectResult 자체는 tripId를 포함하지 않아(백엔드 응답 그대로 캐시) 별도 보관이 필요하다.
+ * 이 값과 현재 진행중인 tripId가 다르면 다른 여행에서 남은 캐시이므로 지워야 한다
+ * (useTodayMission의 정리 로직 참고).
+ */
+const persistedActiveMissionTripIdAtom = atomWithStorage<string | null>(
+  'activeMissionTripId',
+  null,
+  missionTripIdStorage
+);
+export const activeMissionTripIdAtom = unwrap(
+  persistedActiveMissionTripIdAtom,
+  (prev) => prev ?? null
+);
+
+/** activeMission과 그 소속 tripId를 항상 함께 쓰기 위한 전용 쓰기 atom. null이면 둘 다 지운다. */
+export const setActiveMissionAtom = atom(
+  null,
+  (_get, set, payload: { tripId: string; mission: MissionSelectResult } | null) => {
+    set(persistedActiveMissionAtom, payload?.mission ?? null);
+    set(persistedActiveMissionTripIdAtom, payload?.tripId ?? null);
+  }
+);

@@ -21,7 +21,13 @@ export {
   travelCreationAtom,
   type TravelCreationState
 } from './atoms/travelCreate';
-export { activeMissionAtom, missionOutcomesAtom, missionStageAtom } from './atoms/mission';
+export {
+  activeMissionAtom,
+  activeMissionTripIdAtom,
+  missionOutcomesAtom,
+  missionStageAtom,
+  setActiveMissionAtom
+} from './atoms/mission';
 export { createQueryClient } from './query-client';
 export { AppProviders } from './providers';
 export type { MockUserProfile } from './mocks/user';

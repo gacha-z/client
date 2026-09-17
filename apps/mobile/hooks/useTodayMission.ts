@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -13,7 +13,13 @@ import {
   rerollMissionCandidate,
   selectMissionCandidate
 } from '@travel-gacha/api';
-import { activeMissionAtom, missionOutcomesAtom, missionStageAtom } from '@travel-gacha/store';
+import {
+  activeMissionAtom,
+  activeMissionTripIdAtom,
+  missionOutcomesAtom,
+  missionStageAtom,
+  setActiveMissionAtom
+} from '@travel-gacha/store';
 import type { MissionStage } from '@travel-gacha/types';
 
 /** 뮤테이션 실패는 Alert로만 알린다 — 쿼리 로딩/에러 상태만 화면에 인라인으로 표시한다 */
@@ -30,9 +36,23 @@ type UseTodayMissionOptions = {
 /** mission-select/mission-log-capture가 공유하는 "오늘의 미션" 상태와 액션 */
 export function useTodayMission({ tripId, memberId, totalMemberCount }: UseTodayMissionOptions) {
   const queryClient = useQueryClient();
-  const [activeMission, setActiveMission] = useAtom(activeMissionAtom);
+  const rawActiveMission = useAtomValue(activeMissionAtom);
+  const activeMissionTripId = useAtomValue(activeMissionTripIdAtom);
+  const setActiveMission = useSetAtom(setActiveMissionAtom);
   const setStage = useSetAtom(missionStageAtom);
   const [outcomes, setOutcomes] = useAtom(missionOutcomesAtom);
+
+  // 다른 여행에서 선택했던 미션이 캐시로 남아있으면(완료/실패 처리 없이 여행이 바뀐 경우) 즉시 무시하고,
+  // 실제 저장소에서도 지운다. useEffect만으로는 지워지기 전 한 프레임 동안 잘못된 stage가 보일 수 있어
+  // 아래 계산에는 effectiveActiveMission을 쓴다.
+  const isActiveMissionForThisTrip = !activeMissionTripId || activeMissionTripId === tripId;
+  const activeMission = isActiveMissionForThisTrip ? rawActiveMission : null;
+
+  useEffect(() => {
+    if (activeMissionTripId && activeMissionTripId !== tripId) {
+      setActiveMission(null);
+    }
+  }, [activeMissionTripId, tripId, setActiveMission]);
 
   const candidatesQuery = useQuery({
     ...missionCandidatesQueryOptions(tripId, memberId ? Number(memberId) : undefined),
@@ -72,7 +92,7 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
       return selectMissionCandidate({ tripId, missionCandidateId: candidateId, memberId });
     },
     onSuccess: (result) => {
-      setActiveMission(result);
+      setActiveMission({ tripId, mission: result });
     },
     onError: alertMutationError
   });

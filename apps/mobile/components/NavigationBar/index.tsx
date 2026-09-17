@@ -5,7 +5,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { missionPendingAtom } from '@travel-gacha/store';
+import { activeMissionTripIdAtom, missionPendingAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import {
   CameraIcon,
@@ -86,14 +86,17 @@ const NavigationBarCenter = memo(function NavigationBarCenter({
   navigation
 }: CenterTabProps) {
   const missionPending = useAtomValue(missionPendingAtom);
+  const activeMissionTripId = useAtomValue(activeMissionTripIdAtom);
   const { tripId: activeTripId, isPending: isActiveTripPending } = useActiveTrip();
   const router = useRouter();
   const floatAnim = useRef(new Animated.Value(0)).current;
   const [noActiveTripToastVisible, setNoActiveTripToastVisible] = useState(false);
 
   // missionPendingAtom은 여행이 바뀌거나 사라져도 초기화되지 않으므로, 실제로 진행중인
-  // 여행이 있을 때만 "인증 대기중" 상태로 인정한다.
-  const canVerifyMission = missionPending && Boolean(activeTripId);
+  // 여행이 있고 + 그 캐시된 미션이 지금 진행중인 여행 것일 때만 "인증 대기중" 상태로 인정한다.
+  // (예: A 여행에서 미션 선택 후 완료 처리 없이 B 여행이 새로 진행중이 된 경우, 캐시가 A 것으로 남아있을 수 있다)
+  const canVerifyMission =
+    missionPending && Boolean(activeTripId) && activeMissionTripId === activeTripId;
 
   useEffect(() => {
     Animated.spring(floatAnim, {
