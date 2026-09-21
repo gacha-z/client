@@ -5,8 +5,10 @@ const AUTH_SESSION_KEY = 'travel-gacha.auth-session';
 const AUTH_TOKEN_KEY = 'travel-gacha.auth-token';
 const REFRESH_TOKEN_KEY = 'travel-gacha.refresh-token';
 const MEMBER_ID_KEY = 'travel-gacha.member-id';
+const EMAIL_KEY = 'travel-gacha.email';
 const STORED_VALUE = 'true';
 let cachedMemberId: number | undefined;
+let cachedEmail: string | undefined;
 
 function getWebStorage() {
   if (typeof globalThis.localStorage === 'undefined') return null;
@@ -103,6 +105,25 @@ export async function saveMemberId(memberId: number): Promise<void> {
 export async function clearMemberId(): Promise<void> {
   cachedMemberId = undefined;
   await deleteItem(MEMBER_ID_KEY);
+}
+
+/** Apple 로그인은 최초 인증 시에만 이메일을 내려주므로, 받은 값을 저장해두고 이후 세션 복원 시 재사용한다. */
+export async function getEmail(): Promise<string | undefined> {
+  if (cachedEmail) return cachedEmail;
+
+  const storedEmail = await getItem(EMAIL_KEY);
+  cachedEmail = storedEmail ?? undefined;
+  return cachedEmail;
+}
+
+export async function saveEmail(email: string): Promise<void> {
+  cachedEmail = email;
+  await setItem(EMAIL_KEY, email);
+}
+
+export async function clearEmail(): Promise<void> {
+  cachedEmail = undefined;
+  await deleteItem(EMAIL_KEY);
 }
 
 /** 로그인 연동 전, 저장된 회원 ID 또는 .env 값을 동기적으로 조회합니다. */

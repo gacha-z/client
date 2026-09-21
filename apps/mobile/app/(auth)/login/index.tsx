@@ -38,8 +38,8 @@ export default function LoginScreen() {
         throw new Error('Apple로부터 로그인 토큰을 받지 못했어요.');
       }
 
-      const result = await signInWithApple(credential.identityToken);
-      completeLogin(result);
+      const result = await signInWithApple(credential.identityToken, credential.email);
+      completeLogin({ ...result, email: credential.email });
     } catch (error) {
       if (
         error &&

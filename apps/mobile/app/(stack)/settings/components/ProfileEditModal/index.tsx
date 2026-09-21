@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
-import type { MockUserProfile } from '@travel-gacha/store';
+import type { UserProfile } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { Modal } from '@/components/Modal';
 
 import { styles } from './index.css';
 
-type ProfileUpdate = Pick<MockUserProfile, 'nickname' | 'age'>;
+type ProfileUpdate = Pick<UserProfile, 'nickname' | 'age'>;
 
 type ProfileEditModalProps = {
   visible: boolean;
-  profile: MockUserProfile;
+  profile: UserProfile;
   loading?: boolean;
   onClose: () => void;
   onSave: (profile: ProfileUpdate) => void;

@@ -12,7 +12,8 @@ export {
   permissionSettingsAtom,
   resetSettingsAtom,
   userProfileAtom,
-  type PermissionSettings
+  type PermissionSettings,
+  type UserProfile
 } from './atoms/settings';
 export {
   completeTravelCreationAtom,
@@ -24,4 +25,3 @@ export {
 export { missionOutcomesAtom, missionStageAtom } from './atoms/mission';
 export { createQueryClient } from './query-client';
 export { AppProviders } from './providers';
-export type { MockUserProfile } from './mocks/user';
