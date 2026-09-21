@@ -17,7 +17,7 @@ import {
 import { Modal } from '@/components/Modal';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { InfoRow, StatusBadge } from '@/components/TravelPrimitives';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import { buildTravelRecord, toTravelListItem } from '@/utils';
 
 import { TravelRecord } from './components/TravelRecord';
@@ -35,7 +35,7 @@ export default function TravelRecordScreen() {
   const [copied, setCopied] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const recordSectionY = useRef(0);
-  const devMemberId = getDevMemberId();
+  const devMemberId = getCachedMemberId();
   const tripQuery = useQuery({
     ...tripDetailQueryOptions(tripId, devMemberId),
     enabled: Boolean(tripId) && Boolean(devMemberId)

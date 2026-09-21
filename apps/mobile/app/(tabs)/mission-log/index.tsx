@@ -10,7 +10,7 @@ import {
   tripListInfiniteQueryOptions
 } from '@travel-gacha/api';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import { toTravelListItem } from '@/utils';
 
 import { MissionLogHeader } from './components/MissionLogHeader';
@@ -20,7 +20,7 @@ import { styles } from './index.css';
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 export default function MissionLogScreen() {
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
   const [selectedTripId, setSelectedTripId] = useState<string | undefined>(undefined);
   const [dayIndex, setDayIndex] = useState(0);
 

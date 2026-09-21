@@ -9,7 +9,7 @@ import { RandomIcon } from '@/components/icons';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TravelCard } from '@/components/TravelCard';
 import { TravelScheduleCalendar } from '@/components/TravelScheduleCalendar';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import { toDateKey, toTravelListItem } from '@/utils';
 
 import { styles } from './index.css';
@@ -23,7 +23,7 @@ export default function HomeScreen() {
       status: 'CREATED',
       dateFrom: toDateKey(new Date()),
       size: 50,
-      memberId: getDevMemberId()
+      memberId: getCachedMemberId()
     })
   );
   const scheduledTrips =

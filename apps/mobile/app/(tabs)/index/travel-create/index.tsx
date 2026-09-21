@@ -19,7 +19,7 @@ import {
 } from '@/constants';
 import { RandomIcon } from '@/components/icons';
 import { useTravelCreateForm } from '@/hooks';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import { formatTravelDate } from '@/utils';
 
 import { styles } from './index.css';
@@ -104,7 +104,7 @@ export default function TravelCreateScreen() {
     setIsGeneratingCandidates(true);
 
     createTripMutation.mutate(
-      { ...request, memberId: getDevMemberId() },
+      { ...request, memberId: getCachedMemberId() },
       {
         onSuccess: (tripId) => {
           queryClient.invalidateQueries({ queryKey: tripListRootKey });

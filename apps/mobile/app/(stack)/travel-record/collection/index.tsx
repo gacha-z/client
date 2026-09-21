@@ -8,14 +8,14 @@ import { CollectionGrid } from '@/components/Collection/CollectionGrid';
 import { CollectionSummary } from '@/components/Collection/CollectionSummary';
 import type { CollectionViewEntry } from '@/components/Collection/CollectionCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
 export default function TripCollectionScreen() {
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = tripIdParam ?? '';
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
 
   const itemsQuery = useQuery({
     ...tripCollectionItemsQueryOptions({ tripId, memberId }),

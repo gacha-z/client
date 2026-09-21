@@ -11,7 +11,7 @@ import { PhotoTargetCard } from '@/components/PhotoTargetCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TripStatusBar } from '@/components/TripStatusBar';
 import { useActiveMission } from '@/hooks';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -19,7 +19,7 @@ export default function MissionLogCaptureListScreen() {
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = tripIdParam ?? process.env.EXPO_PUBLIC_DEV_TRIP_ID ?? '';
   const router = useRouter();
-  const devMemberId = getDevMemberId();
+  const devMemberId = getCachedMemberId();
   const { activeMission } = useActiveMission({ tripId, memberId: devMemberId });
 
   const tripQuery = useQuery({

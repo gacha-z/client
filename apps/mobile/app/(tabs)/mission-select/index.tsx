@@ -27,7 +27,7 @@ import { ScreenLayout } from '@/components/ScreenLayout';
 import { TodayRecordSection } from '@/components/TodayRecordSection';
 import { TripStatusBar } from '@/components/TripStatusBar';
 import { useTodayMission } from '@/hooks';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import { toDateKey } from '@/utils';
 
 import { MemberInviteSection } from './components/MemberInviteSection';
@@ -49,7 +49,7 @@ export default function MissionSelectScreen() {
   const isTabFocused = pathname === '/mission-select';
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [kickTarget, setKickTarget] = useState<TripMember | null>(null);
-  const devMemberId = getDevMemberId();
+  const devMemberId = getCachedMemberId();
   const queryClient = useQueryClient();
 
   const memberQuery = useQuery(currentMemberQueryOptions(devMemberId));

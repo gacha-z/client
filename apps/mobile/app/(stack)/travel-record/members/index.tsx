@@ -18,7 +18,7 @@ import {
 import type { TripMember } from '@travel-gacha/types';
 import { Modal } from '@/components/Modal';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { TripEditModal, type TripEditFormValues } from './components/TripEditModal';
 import { styles } from './index.css';
@@ -31,7 +31,7 @@ export default function TravelRecordMembersScreen() {
   const queryClient = useQueryClient();
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = getParam(tripIdParam) ?? '';
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
 
   const [editVisible, setEditVisible] = useState(false);
   const [cancelVisible, setCancelVisible] = useState(false);

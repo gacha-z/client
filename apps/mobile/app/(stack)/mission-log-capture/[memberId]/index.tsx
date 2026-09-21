@@ -14,7 +14,7 @@ import {
 import { colors } from '@travel-gacha/ui';
 import { BackIcon, CameraIcon } from '@/components/icons';
 import { useActiveMission } from '@/hooks';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -49,7 +49,7 @@ export default function MissionLogCaptureScreen() {
   const tripId = tripIdParam ?? process.env.EXPO_PUBLIC_DEV_TRIP_ID ?? '';
   const router = useRouter();
   const queryClient = useQueryClient();
-  const devMemberId = getDevMemberId();
+  const devMemberId = getCachedMemberId();
   const { activeMission } = useActiveMission({ tripId, memberId: devMemberId });
 
   const membersQuery = useQuery({

@@ -4,7 +4,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { isApiError, tripListInfiniteQueryOptions } from '@travel-gacha/api';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TravelCard } from '@/components/TravelCard';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import { toTravelListItem } from '@/utils';
 
 import { styles } from './index.css';
@@ -13,7 +13,7 @@ export default function TravelListScreen() {
   const tripListQuery = useInfiniteQuery(
     tripListInfiniteQueryOptions({
       size: 10,
-      memberId: getDevMemberId()
+      memberId: getCachedMemberId()
     })
   );
   const trips = tripListQuery.data?.pages.flatMap((page) => page.trips).map(toTravelListItem) ?? [];

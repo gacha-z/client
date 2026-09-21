@@ -94,7 +94,7 @@ export async function getMemberId(): Promise<number | undefined> {
     return storedMemberId;
   }
 
-  return getDevMemberId();
+  return getCachedMemberId();
 }
 
 export async function saveMemberId(memberId: number): Promise<void> {
@@ -126,8 +126,12 @@ export async function clearEmail(): Promise<void> {
   await deleteItem(EMAIL_KEY);
 }
 
-/** 로그인 연동 전, 저장된 회원 ID 또는 .env 값을 동기적으로 조회합니다. */
-export function getDevMemberId(): number | undefined {
+/**
+ * 회원 ID를 동기적으로 조회합니다. 앱 시작 시 `AuthSessionGate`가 `getMemberId()`로 미리 채워둔
+ * 캐시를 우선 반환하므로 실제 로그인 세션에서도 정상 동작합니다 — 캐시가 비어있을 때만(예: 인증
+ * 연동 전 로컬 개발) `EXPO_PUBLIC_DEV_MEMBER_ID`로 대체합니다.
+ */
+export function getCachedMemberId(): number | undefined {
   if (cachedMemberId) return cachedMemberId;
   const memberId = Number(process.env.EXPO_PUBLIC_DEV_MEMBER_ID);
   return Number.isInteger(memberId) && memberId > 0 ? memberId : undefined;

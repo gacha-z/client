@@ -10,7 +10,7 @@ import {
 } from '@travel-gacha/api';
 
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import type { AppNotification } from '@/types/notification';
 
 import { NotificationList } from './components/NotificationList';
@@ -18,7 +18,7 @@ import { styles } from './index.css';
 
 export default function NotificationScreen() {
   const queryClient = useQueryClient();
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
   const [optimisticReadIds, setOptimisticReadIds] = useState<Set<string>>(() => new Set());
   const notificationsQuery = useInfiniteQuery(
     notificationListInfiniteQueryOptions({ memberId, size: 20 })

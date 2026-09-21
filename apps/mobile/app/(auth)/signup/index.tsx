@@ -16,7 +16,7 @@ import { updateMember } from '@travel-gacha/api';
 import { authStatusAtom, completeSignupAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
@@ -56,7 +56,7 @@ export default function SignupScreen() {
     setSubmitError(null);
 
     try {
-      const memberId = getDevMemberId();
+      const memberId = getCachedMemberId();
       if (!memberId) throw new Error('회원 ID를 찾을 수 없어요. 다시 로그인해주세요.');
       await updateMember({ memberId, nickname: normalizedNickname, age: parsedAge });
       completeSignup();

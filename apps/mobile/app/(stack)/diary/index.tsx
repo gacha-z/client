@@ -13,7 +13,7 @@ import {
 } from '@travel-gacha/api';
 import { Modal } from '@/components/Modal';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { DiaryCard, type DiaryCardData } from './components/DiaryCard';
 import { DiaryWriteModal } from './components/DiaryWriteModal';
@@ -29,7 +29,7 @@ const toIsoDate = (date: Date) =>
 export default function DiaryScreen() {
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = tripIdParam ?? '';
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
   const queryClient = useQueryClient();
 
   const [dayIndex, setDayIndex] = useState(0);

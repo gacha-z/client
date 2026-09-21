@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { isApiError, missionHistoryQueryOptions } from '@travel-gacha/api';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { MissionListCard, type MissionListCardData } from './components/MissionListCard';
 import { styles } from './index.css';
@@ -13,7 +13,7 @@ import { styles } from './index.css';
 export default function MissionListScreen() {
   const { tripId: tripIdParam } = useLocalSearchParams<{ tripId?: string }>();
   const tripId = tripIdParam ?? '';
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
 
   const [dayIndex, setDayIndex] = useState(0);
 

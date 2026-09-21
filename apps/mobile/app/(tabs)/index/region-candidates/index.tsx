@@ -18,7 +18,7 @@ import { RegionCandidateList } from '@/components/RegionCandidateList';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { Toast } from '@/components/Toast';
 import { REGION_CANDIDATE_MOCK, requestRegionCandidateRerollMock } from '@/mocks/regionCandidates';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import type { RegionCandidateSlot } from '@/types';
 import { createRegionCandidateSlots, replaceRegionCandidateSlot } from '@/utils';
 
@@ -27,7 +27,7 @@ import { styles } from './index.css';
 export default function RegionCandidatesScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const devMemberId = getDevMemberId();
+  const devMemberId = getCachedMemberId();
   const travelCreation = useAtomValue(travelCreationAtom);
   const completeTravelCreation = useSetAtom(completeTravelCreationAtom);
   const [candidateSlots, setCandidateSlots] = useState(() =>

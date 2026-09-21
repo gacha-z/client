@@ -8,14 +8,14 @@ import { CollectionSummary } from '@/components/Collection/CollectionSummary';
 import type { CollectionViewEntry } from '@/components/Collection/CollectionCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { COLLECTION_FILTERS, type CollectionFilterValue } from '@/constants';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { CollectionFilter } from './components/CollectionFilter';
 import { styles } from './index.css';
 
 export default function CollectionScreen() {
   const [filter, setFilter] = useState<CollectionFilterValue>('ALL');
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
 
   const [badgesQuery, itemsQuery] = useQueries({
     queries: [badgesQueryOptions(memberId), itemsQueryOptions(memberId)]

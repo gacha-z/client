@@ -10,7 +10,7 @@ import { resetTravelCreationAtom, travelCreationAtom } from '@travel-gacha/store
 import { Bigbutton } from '@/components/Bigbutton';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { Toast, type ToastVariant } from '@/components/Toast';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import {
   formatKoreanDateRange,
   formatMissionTime,
@@ -25,7 +25,7 @@ type ToastState = { message: string; variant: ToastVariant } | null;
 
 export default function TravelCreatedScreen() {
   const router = useRouter();
-  const devMemberId = getDevMemberId();
+  const devMemberId = getCachedMemberId();
   const travelCreation = useAtomValue(travelCreationAtom);
   const resetTravelCreation = useSetAtom(resetTravelCreationAtom);
   const [copied, setCopied] = useState(false);

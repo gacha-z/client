@@ -20,7 +20,7 @@ import { colors } from '@travel-gacha/ui';
 import { ArrowDownIcon } from '@/components/icons';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { clearLocalSession, signOut } from '@/services/auth';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import { clearDeviceId } from '@/services/deviceSession';
 import { requestCameraPermission, requestLocationPermission } from '@/services/permissions';
 import { requestPushNotificationRegistration } from '@/services/pushNotifications';
@@ -41,7 +41,7 @@ export default function SettingsScreen() {
   const [profileEditorVisible, setProfileEditorVisible] = useState(false);
   const [confirmationType, setConfirmationType] = useState<ConfirmationType>(null);
   const [pendingAction, setPendingAction] = useState<Exclude<ConfirmationType, null> | null>(null);
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
   const memberQuery = useQuery(currentMemberQueryOptions(memberId));
   const profileMutation = useMutation({
     mutationFn: updateMember,

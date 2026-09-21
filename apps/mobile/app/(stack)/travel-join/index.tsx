@@ -7,14 +7,14 @@ import { isApiError, joinTrip } from '@travel-gacha/api';
 import { colors } from '@travel-gacha/ui';
 import { Bigbutton } from '@/components/Bigbutton';
 import { ScreenLayout } from '@/components/ScreenLayout';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 
 import { styles } from './index.css';
 
 export default function TravelJoinScreen() {
   const router = useRouter();
   const [code, setCode] = useState('');
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
 
   const joinMutation = useMutation({
     mutationFn: joinTrip,

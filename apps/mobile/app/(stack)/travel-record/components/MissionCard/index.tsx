@@ -6,7 +6,7 @@ import type { MissionHistoryStatus } from '@travel-gacha/types';
 import { Tag } from '@/components/Tag';
 import { InfoRow } from '@/components/TravelPrimitives';
 import { commonStyles } from '@/components/TravelPrimitives/index.css';
-import { getDevMemberId } from '@/services/authSession';
+import { getCachedMemberId } from '@/services/authSession';
 import type { MissionRecord } from '@/types';
 
 import { styles } from './index.css';
@@ -23,7 +23,7 @@ const STATUS_LABEL: Record<MissionHistoryStatus, string> = {
 };
 
 export function MissionCard({ mission }: MissionCardProps) {
-  const memberId = getDevMemberId();
+  const memberId = getCachedMemberId();
 
   const downloadMutation = useMutation({
     mutationFn: downloadSetlog,
