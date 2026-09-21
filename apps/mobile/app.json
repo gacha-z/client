@@ -4,7 +4,7 @@
     "slug": "travel-gacha",
     "icon": "./assets/images/icon.png",
     "scheme": "travel-gacha",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "platforms": ["ios", "android", "web"],
