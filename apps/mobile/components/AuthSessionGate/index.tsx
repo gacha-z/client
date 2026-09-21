@@ -10,6 +10,7 @@ import {
 } from '@travel-gacha/api';
 import { authStatusAtom, logoutAtom, userProfileAtom } from '@travel-gacha/store';
 import { colors } from '@travel-gacha/ui';
+import { usePermissionSync } from '@/hooks/usePermissionSync';
 import { clearLocalSession } from '@/services/auth';
 import {
   getAuthToken,
@@ -45,6 +46,8 @@ export function AuthSessionGate({ children }: AuthSessionGateProps) {
   const setAuthStatus = useSetAtom(authStatusAtom);
   const setUserProfile = useSetAtom(userProfileAtom);
   const [restored, setRestored] = useState(false);
+
+  usePermissionSync();
 
   useEffect(() => {
     let mounted = true;

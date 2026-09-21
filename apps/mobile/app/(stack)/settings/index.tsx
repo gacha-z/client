@@ -22,16 +22,8 @@ import { ScreenLayout } from '@/components/ScreenLayout';
 import { clearLocalSession, signOut } from '@/services/auth';
 import { getDevMemberId } from '@/services/authSession';
 import { clearDeviceId } from '@/services/deviceSession';
-import {
-  getCameraPermissionGranted,
-  getLocationPermissionGranted,
-  requestCameraPermission,
-  requestLocationPermission
-} from '@/services/permissions';
-import {
-  getPushNotificationStatus,
-  requestPushNotificationRegistration
-} from '@/services/pushNotifications';
+import { requestCameraPermission, requestLocationPermission } from '@/services/permissions';
+import { requestPushNotificationRegistration } from '@/services/pushNotifications';
 import { AccountConfirmModal } from './components/AccountConfirmModal';
 import { PermissionToggle } from './components/PermissionToggle';
 import { ProfileEditModal } from './components/ProfileEditModal';
@@ -73,20 +65,6 @@ export default function SettingsScreen() {
       age: memberQuery.data.age
     }));
   }, [memberQuery.data, setProfile]);
-
-  useEffect(() => {
-    let mounted = true;
-    void Promise.all([
-      getCameraPermissionGranted(),
-      getLocationPermissionGranted(),
-      getPushNotificationStatus()
-    ]).then(([camera, location, pushNotification]) => {
-      if (mounted) setPermissions({ camera, location, pushNotification });
-    });
-    return () => {
-      mounted = false;
-    };
-  }, [setPermissions]);
 
   const saveProfile = (update: Pick<typeof profile, 'nickname' | 'age'>) => {
     if (!memberId) {
