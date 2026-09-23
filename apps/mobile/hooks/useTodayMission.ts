@@ -121,8 +121,8 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
       setOutcomes((current) => [...current, 'success']);
       queryClient.invalidateQueries({ queryKey: missionCandidatesQueryKey(tripId) });
       queryClient.invalidateQueries({ queryKey: missionHistoryQueryKey(tripId) });
-    },
-    onError: alertMutationError
+    }
+    // 실패는 mission-select 화면이 전용 실패 모달로 보여준다 (alertMutationError 미사용)
   });
 
   const failMutation = useMutation({

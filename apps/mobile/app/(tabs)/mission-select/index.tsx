@@ -1,5 +1,5 @@
 // apps/mobile/app/(tabs)/mission-select/index.tsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import * as Location from 'expo-location';
@@ -49,6 +49,9 @@ export default function MissionSelectScreen() {
   const isTabFocused = pathname === '/mission-select';
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [kickTarget, setKickTarget] = useState<TripMember | null>(null);
+  const [preConfirmDismissed, setPreConfirmDismissed] = useState(false);
+  const [completionResult, setCompletionResult] = useState<'success' | 'failure' | null>(null);
+  const [failureMessage, setFailureMessage] = useState('');
   const devMemberId = getCachedMemberId();
   const queryClient = useQueryClient();
 
@@ -68,6 +71,12 @@ export default function MissionSelectScreen() {
     memberId: memberQuery.data?.id ?? null,
     totalMemberCount: membersQuery.data?.length ?? 0
   });
+
+  // 새 미션이 시작되면 이전 미션의 닫힘/결과 상태를 초기화해 사전확인 모달이 다시 뜨도록 한다.
+  useEffect(() => {
+    setPreConfirmDismissed(false);
+    setCompletionResult(null);
+  }, [mission.selectedMission?.tripMissionId]);
 
   const isOwner = Boolean(
     tripQuery.data && memberQuery.data && tripQuery.data.ownerMemberId === memberQuery.data.id
@@ -113,6 +122,8 @@ export default function MissionSelectScreen() {
   };
 
   const handleComplete = async () => {
+    setPreConfirmDismissed(true);
+
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
@@ -128,10 +139,18 @@ export default function MissionSelectScreen() {
 
     try {
       const position = await Location.getCurrentPositionAsync({});
-      mission.complete({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      });
+      mission.complete(
+        { latitude: position.coords.latitude, longitude: position.coords.longitude },
+        {
+          onSuccess: () => setCompletionResult('success'),
+          onError: (error) => {
+            setFailureMessage(
+              isApiError(error) ? error.message : '위치 인증에 실패했어요. 다시 시도해주세요.'
+            );
+            setCompletionResult('failure');
+          }
+        }
+      );
     } catch {
       Alert.alert('오류', '현재 위치를 가져오지 못했어요. 다시 시도해주세요.');
     }
@@ -251,18 +270,47 @@ export default function MissionSelectScreen() {
         <TodayRecordSection tripId={tripId} />
       </View>
       <Modal
-        visible={isPending && mission.allVerified && isTabFocused}
-        onClose={handleComplete}
-        title="미션을 클리어했어요!"
+        visible={
+          isPending &&
+          mission.allVerified &&
+          isTabFocused &&
+          !preConfirmDismissed &&
+          completionResult === null
+        }
+        onClose={() => setPreConfirmDismissed(true)}
+        title="전원 인증 완료, 미션 완료할까요?"
         titleColor={colors.slateDark}
         onConfirm={handleComplete}
         confirmText="미션 완료"
         confirmButtonColor={colors.cyan500}
-        closeOnBackdropPress={false}
+        confirmLoading={mission.isCompleting}
+      >
+        <Text style={styles.modalBody}>
+          모든 멤버의 미션로그 인증이 끝났어요{'\n'}지금 위치에서 미션을 완료할까요?
+        </Text>
+      </Modal>
+      <Modal
+        visible={completionResult === 'success'}
+        onClose={() => setCompletionResult(null)}
+        title="미션을 클리어했어요!"
+        titleColor={colors.slateDark}
+        onConfirm={() => setCompletionResult(null)}
+        confirmText="확인"
+        confirmButtonColor={colors.cyan500}
       >
         <Text style={styles.modalBody}>
           축하합니다 🎉🎉{'\n'}아이템 획득 후, 새로운 미션에 도전해보아요!
         </Text>
+      </Modal>
+      <Modal
+        visible={completionResult === 'failure'}
+        onClose={() => setCompletionResult(null)}
+        title="미션 완료에 실패했어요"
+        onConfirm={handleComplete}
+        confirmText="다시 시도"
+        confirmLoading={mission.isCompleting}
+      >
+        <Text style={styles.modalBody}>{failureMessage}</Text>
       </Modal>
       <Modal
         visible={Boolean(kickTarget)}
