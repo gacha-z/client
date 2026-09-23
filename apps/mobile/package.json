@@ -38,6 +38,7 @@
     "expo-screen-orientation": "catalog:expo",
     "expo-secure-store": "catalog:expo",
     "expo-status-bar": "catalog:expo",
+    "expo-video": "catalog:expo",
     "jotai": "catalog:",
     "react": "catalog:expo",
     "react-dom": "catalog:expo",

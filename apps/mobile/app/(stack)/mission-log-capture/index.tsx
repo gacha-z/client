@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -10,6 +11,7 @@ import {
 import { PhotoTargetCard } from '@/components/PhotoTargetCard';
 import { ScreenLayout } from '@/components/ScreenLayout';
 import { TripStatusBar } from '@/components/TripStatusBar';
+import { VideoPreviewModal } from '@/components/VideoPreviewModal';
 import { useActiveMission } from '@/hooks';
 import { getCachedMemberId } from '@/services/authSession';
 
@@ -21,6 +23,7 @@ export default function MissionLogCaptureListScreen() {
   const router = useRouter();
   const devMemberId = getCachedMemberId();
   const { activeMission } = useActiveMission({ tripId, memberId: devMemberId });
+  const [previewUri, setPreviewUri] = useState<string | null>(null);
 
   const tripQuery = useQuery({
     ...tripDetailQueryOptions(tripId, devMemberId),
@@ -36,7 +39,8 @@ export default function MissionLogCaptureListScreen() {
   });
 
   const members = membersQuery.data ?? [];
-  const verifiedMemberIds = (setlogsQuery.data ?? []).map((entry) => entry.memberId);
+  const setlogs = setlogsQuery.data ?? [];
+  const verifiedMemberIds = setlogs.map((entry) => entry.memberId);
 
   return (
     <ScreenLayout title="미션로그 촬영하기" showBack headerActions scrollable>
@@ -49,23 +53,32 @@ export default function MissionLogCaptureListScreen() {
             .slice(0, index)
             .every((prior) => verifiedMemberIds.includes(prior.id));
           const isReadyToCapture = !isVerified && priorMembersVerified;
+          const videoUri = setlogs.find((entry) => entry.memberId === member.id)?.fileUrl;
 
           return (
             <PhotoTargetCard
               key={member.id}
               name={member.name}
               time={isVerified ? '촬영완료' : '09:00'}
+              videoUri={videoUri}
               ready={isReadyToCapture}
               onPress={() =>
-                router.push({
-                  pathname: '/mission-log-capture/[memberId]',
-                  params: { memberId: member.id, tripId }
-                })
+                videoUri
+                  ? setPreviewUri(videoUri)
+                  : router.push({
+                      pathname: '/mission-log-capture/[memberId]',
+                      params: { memberId: member.id, tripId }
+                    })
               }
             />
           );
         })}
       </View>
+      <VideoPreviewModal
+        visible={Boolean(previewUri)}
+        videoUri={previewUri}
+        onClose={() => setPreviewUri(null)}
+      />
     </ScreenLayout>
   );
 }

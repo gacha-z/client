@@ -10,6 +10,7 @@ import {
   tripListInfiniteQueryOptions
 } from '@travel-gacha/api';
 import { ScreenLayout } from '@/components/ScreenLayout';
+import { VideoPreviewModal } from '@/components/VideoPreviewModal';
 import { getCachedMemberId } from '@/services/authSession';
 import { toTravelListItem } from '@/utils';
 
@@ -23,6 +24,7 @@ export default function MissionLogScreen() {
   const memberId = getCachedMemberId();
   const [selectedTripId, setSelectedTripId] = useState<string | undefined>(undefined);
   const [dayIndex, setDayIndex] = useState(0);
+  const [previewUri, setPreviewUri] = useState<string | null>(null);
 
   const tripListQuery = useInfiniteQuery(tripListInfiniteQueryOptions({ size: 20, memberId }));
   const trips = useMemo(
@@ -126,12 +128,21 @@ export default function MissionLogScreen() {
             ) : null}
             <View style={styles.list}>
               {setlogs.map((setlog) => (
-                <MissionLogCard key={setlog.id} setlog={setlog} />
+                <MissionLogCard
+                  key={setlog.id}
+                  setlog={setlog}
+                  onPress={() => setPreviewUri(setlog.fileUrl)}
+                />
               ))}
             </View>
           </>
         ) : null}
       </View>
+      <VideoPreviewModal
+        visible={Boolean(previewUri)}
+        videoUri={previewUri}
+        onClose={() => setPreviewUri(null)}
+      />
     </ScreenLayout>
   );
 }

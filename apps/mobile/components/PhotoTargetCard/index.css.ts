@@ -40,6 +40,25 @@ export const styles = StyleSheet.create({
     color: colors.white,
     textAlignVertical: 'center'
   },
+  thumbnailWrap: {
+    flex: 1,
+    width: '100%',
+    borderRadius: 10,
+    overflow: 'hidden',
+    position: 'relative'
+  },
+  thumbnailCaption: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.white,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    paddingHorizontal: 8,
+    paddingVertical: 4
+  },
   readyBadge: {
     borderWidth: 1,
     borderColor: '#979eb1',

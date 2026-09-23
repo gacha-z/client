@@ -32,5 +32,23 @@ export const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '700',
     color: colors.white
+  },
+  thumbnailWrap: {
+    flex: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
+    position: 'relative'
+  },
+  thumbnailCaption: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.white,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    paddingHorizontal: 8,
+    paddingVertical: 4
   }
 });
