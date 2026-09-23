@@ -61,8 +61,14 @@ export function useTodayMission({ tripId, memberId, totalMemberCount }: UseToday
 
   const round = candidatesQuery.data;
   const activeCandidates = round?.candidates.filter((candidate) => !candidate.isRerolled) ?? [];
-  const completedCount = round ? round.assignedOrder - 1 : (todayHistory?.missions.length ?? 0);
   const totalCount = round?.targetRoundCount ?? todayHistory?.missions.length ?? 0;
+  // 할당량이 소진된 상태(409)라면 마지막 라운드는 다음 라운드로 넘어가지 못해 round.assignedOrder가
+  // 갱신되지 않은 채로 캐시에 남는다 — 이 경우 정의상 "완료 = 전체"이므로 totalCount로 맞춘다.
+  const completedCount = isDailyQuotaCompleted
+    ? totalCount
+    : round
+      ? round.assignedOrder - 1
+      : (todayHistory?.missions.length ?? 0);
   const limitReached =
     isDailyQuotaCompleted || (Boolean(round) && !activeMission && completedCount >= totalCount);
 
